@@ -2,6 +2,24 @@
 
 A mobile-first React web application for creating and interacting with AI-powered RPG characters. Built with Vite and React Router.
 
+---
+
+## 🚀 For Developers - Integration Docs
+
+**Ready to connect to your existing Node server, Discord bot, and APIs?**
+
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Complete integration instructions
+- **[API_CONTRACT.md](./API_CONTRACT.md)** - API endpoint specifications and data formats
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deploy to m.characterfoundry.io or app stores
+
+**TL;DR for dev team:**
+1. Set `REACT_APP_API_URL` in `.env`
+2. Update 3 locations marked with `TODO` in the code
+3. Configure CORS on your Node server
+4. Deploy
+
+---
+
 ## Features
 
 ### Mobile Landing Page (m.characterfoundry.io)
