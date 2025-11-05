@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
+import CharacterModes from './CharacterModes'
 import './CharacterCard.css'
 
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
-  const [mode, setMode] = useState('portrait') // portrait or battle
+  const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
+  const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
   const [mood, setMood] = useState('Contemplative')
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
@@ -29,13 +31,89 @@ function CharacterCard() {
           hp: { current: 104, max: 104 },
           ac: 18,
           portrait: '🛡️',
+          stats: {
+            str: 20,
+            dex: 16,
+            con: 18,
+            int: 12,
+            wis: 14,
+            cha: 16
+          },
+          proficiencyBonus: 4,
+          proficiencies: ['Athletics', 'Intimidation', 'Perception', 'Survival'],
           abilities: [
-            { icon: '⚔️', name: 'Sword Strike' },
-            { icon: '🔥', name: 'Divine Fury' },
-            { icon: '🗡️', name: 'Spear Thrust' },
-            { icon: '🛡️', name: 'Shield Wall' },
-            { icon: '📖', name: 'Tell Story' },
-            { icon: '🗺️', name: 'Current Quest' }
+            {
+              abilityId: 'sword-strike',
+              name: 'Sword Strike',
+              category: 'attack',
+              equipped: true,
+              details: {
+                name: 'Sword Strike',
+                shortDescription: 'A powerful melee attack with divine-forged blade',
+                school: 'Evocation',
+                iconLayers: [['⚔️']]
+              }
+            },
+            {
+              abilityId: 'divine-fury',
+              name: 'Divine Fury',
+              category: 'spell',
+              equipped: true,
+              details: {
+                name: 'Divine Fury',
+                shortDescription: 'Channel divine wrath into a devastating strike',
+                school: 'Evocation',
+                level: 3,
+                iconLayers: [['🔥']]
+              }
+            },
+            {
+              abilityId: 'spear-thrust',
+              name: 'Spear Thrust',
+              category: 'attack',
+              equipped: true,
+              details: {
+                name: 'Spear Thrust',
+                shortDescription: 'Legendary spear attack from Troy',
+                school: 'Evocation',
+                iconLayers: [['🗡️']]
+              }
+            },
+            {
+              abilityId: 'shield-wall',
+              name: 'Shield Wall',
+              category: 'spell',
+              equipped: true,
+              details: {
+                name: 'Shield Wall',
+                shortDescription: 'Protective stance that deflects attacks',
+                school: 'Abjuration',
+                level: 2,
+                iconLayers: [['🛡️']]
+              }
+            },
+            {
+              abilityId: 'tell-story',
+              name: 'Tell Story',
+              category: 'social',
+              equipped: true,
+              details: {
+                name: 'Tell Story',
+                shortDescription: 'Share tales from legendary battles',
+                iconLayers: [['📖']]
+              }
+            },
+            {
+              abilityId: 'current-quest',
+              name: 'Current Quest',
+              category: 'social',
+              equipped: true,
+              details: {
+                name: 'Current Quest',
+                shortDescription: 'Discuss the journey to freedom',
+                iconLayers: [['🗺️']]
+              }
+            }
           ],
           initialMessage: {
             type: 'character',
@@ -249,16 +327,34 @@ function CharacterCard() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="quick-actions">
-            {character.abilities.map((ability, index) => (
+          <div className="interaction-modes">
+            <div className="mode-tabs">
               <button
-                key={index}
-                className="action-btn"
-                onClick={() => handleAbilityClick(ability)}
+                className={`mode-tab ${interactionMode === 'conversation' ? 'active' : ''}`}
+                onClick={() => setInteractionMode('conversation')}
               >
-                {ability.icon} {ability.name}
+                💬 Conversation
               </button>
-            ))}
+              <button
+                className={`mode-tab ${interactionMode === 'battle' ? 'active' : ''}`}
+                onClick={() => setInteractionMode('battle')}
+              >
+                ⚔️ Battle
+              </button>
+              <button
+                className={`mode-tab ${interactionMode === 'skills' ? 'active' : ''}`}
+                onClick={() => setInteractionMode('skills')}
+              >
+                🎲 Skills
+              </button>
+            </div>
+
+            <CharacterModes
+              character={character}
+              mode={interactionMode}
+              onMessage={addMessage}
+              abilities={character.abilities}
+            />
           </div>
 
           <form className="chat-input" onSubmit={handleSendMessage}>
