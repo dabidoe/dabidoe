@@ -1,0 +1,254 @@
+.ability-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ability-card .action-btn {
+  flex: 1;
+}
+
+.ability-card.expanded {
+  flex-direction: column;
+  align-items: stretch;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.ability-card.disabled .action-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(45deg, #555, #666);
+}
+
+.expand-indicator {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #d4af37;
+  padding: 4px 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.expand-indicator:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Ability Details (Expanded View) */
+.ability-details {
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 8px;
+  border: 2px solid #d4af37;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ability-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.ability-header h4 {
+  color: #d4af37;
+  font-size: 18px;
+  margin: 0;
+}
+
+.close-details {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-details:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Ability Info Badges */
+.ability-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.info-badge {
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.info-badge.category {
+  background: rgba(52, 152, 219, 0.2);
+  border-color: #3498db;
+  color: #3498db;
+}
+
+/* Ability Stats */
+.ability-stats {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  color: #ccc;
+  font-size: 13px;
+}
+
+.stat-row:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+/* Descriptions */
+.ability-description {
+  margin-bottom: 12px;
+  color: #ddd;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ability-description strong {
+  color: #d4af37;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ability-description p {
+  margin: 0;
+}
+
+.ability-description.long pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ccc;
+}
+
+/* Uses Bar */
+.ability-uses {
+  margin-bottom: 12px;
+}
+
+.uses-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.uses-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37 0%, #ffd700 100%);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+.uses-text {
+  font-size: 12px;
+  color: #d4af37;
+  font-weight: 600;
+}
+
+/* Use Ability Button */
+.use-ability-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+  border: none;
+  border-radius: 8px;
+  color: #1a1a2e;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.use-ability-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.6);
+}
+
+.use-ability-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.use-ability-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #555;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .ability-details {
+    padding: 12px;
+  }
+
+  .ability-header h4 {
+    font-size: 16px;
+  }
+
+  .stat-row {
+    font-size: 12px;
+  }
+
+  .ability-description {
+    font-size: 12px;
+  }
+}
