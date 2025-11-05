@@ -114,7 +114,7 @@ function convertSpell(spell, userId = 'system') {
     guid: uuidv4(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    iconLayers: [generateDefaultIcon(spell.school)],
+    iconLayers: generateIconForSpell(spell.school),
     tokens: 1,
 
     // Source
@@ -210,7 +210,7 @@ function convertItem(item, userId = 'system') {
     guid: uuidv4(),
     createdAt: new Date(),
     updatedAt: new Date(),
-    iconLayers: [generateDefaultIcon(item.type)],
+    iconLayers: generateIconForItem(item.type),
     tokens: 1,
 
     // Source
@@ -225,12 +225,67 @@ function convertItem(item, userId = 'system') {
 }
 
 /**
- * Generate default icon placeholder
+ * Generate icon using game-icons.net
+ * Icons are free SVG from https://game-icons.net
  */
-function generateDefaultIcon(category) {
-  // Return icon layer array
-  // In production, you'd want actual icon IDs from your system
-  return [Math.random().toString(36).substring(7)]
+function generateIconForSpell(school) {
+  const iconMap = {
+    'abjuration': 'shield-reflect',
+    'conjuration': 'swirl-ring',
+    'divination': 'crystal-ball',
+    'enchantment': 'sparkles',
+    'evocation': 'fire-bolt',
+    'illusion': 'eye-target',
+    'necromancy': 'death-skull',
+    'transmutation': 'potion-ball'
+  }
+
+  const colorMap = {
+    'abjuration': '4CAF50',
+    'conjuration': '9C27B0',
+    'divination': '2196F3',
+    'enchantment': 'E91E63',
+    'evocation': 'FF5722',
+    'illusion': '00BCD4',
+    'necromancy': '424242',
+    'transmutation': 'FF9800'
+  }
+
+  const iconName = iconMap[school?.toLowerCase()] || 'sparkles'
+  const color = colorMap[school?.toLowerCase()] || 'ffffff'
+
+  // Generate game-icons.net URL
+  const gameIconUrl = `https://game-icons.net/icons/${color}/000000/1x1/lorc/${iconName}.svg`
+
+  return [[gameIconUrl]]
+}
+
+function generateIconForItem(type) {
+  const iconMap = {
+    'A': 'chest-armor',
+    'W': 'crossed-swords',
+    'P': 'potion',
+    'SC': 'scroll-unfurled',
+    'RG': 'ring',
+    'RD': 'rod-of-asclepius',
+    'WD': 'wand',
+    'S': 'wooden-staff',
+    'G': 'knapsack',
+    'M': 'sword',
+    'R': 'arrow',
+    'LA': 'leather-armor',
+    'MA': 'chain-mail',
+    'HA': 'plate-armor',
+    'SH': 'bordered-shield',
+    '$': 'gems'
+  }
+
+  const iconName = iconMap[type] || 'knapsack'
+  const color = 'D4AF37' // Gold
+
+  const gameIconUrl = `https://game-icons.net/icons/${color}/000000/1x1/various-artists/${iconName}.svg`
+
+  return [[gameIconUrl]]
 }
 
 /**
