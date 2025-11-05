@@ -1,30 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import './CharacterCard.css'
 
 function CharacterCard() {
+  const { characterId } = useParams()
+  const navigate = useNavigate()
   const [mode, setMode] = useState('portrait') // portrait or battle
-  const [messages, setMessages] = useState([
-    {
-      type: 'character',
-      mood: 'Contemplative',
-      text: "You find me in a moment of reflection. The weight of eight decades rests upon these shoulders, yet I appear as I did in my prime at Troy."
-    }
-  ])
+  const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
+  const [character, setCharacter] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const character = {
-    name: 'Achilles',
-    hp: { current: 104, max: 104 },
-    ac: 18,
-    portrait: '🛡️',
-    abilities: [
-      { icon: '⚔️', name: 'Sword Strike' },
-      { icon: '🔥', name: 'Divine Fury' },
-      { icon: '🗡️', name: 'Spear Thrust' },
-      { icon: '🛡️', name: 'Shield Wall' },
-      { icon: '📖', name: 'Tell Story' },
-      { icon: '🗺️', name: 'Current Quest' }
-    ]
+  // Load character data
+  useEffect(() => {
+    const loadCharacter = async () => {
+      // TODO: Replace with API call to your Node server
+      // const response = await fetch(`/api/characters/${characterId}`)
+      // const data = await response.json()
+
+      // Demo data for now
+      const demoCharacters = {
+        achilles: {
+          name: 'Achilles',
+          hp: { current: 104, max: 104 },
+          ac: 18,
+          portrait: '🛡️',
+          abilities: [
+            { icon: '⚔️', name: 'Sword Strike' },
+            { icon: '🔥', name: 'Divine Fury' },
+            { icon: '🗡️', name: 'Spear Thrust' },
+            { icon: '🛡️', name: 'Shield Wall' },
+            { icon: '📖', name: 'Tell Story' },
+            { icon: '🗺️', name: 'Current Quest' }
+          ],
+          initialMessage: {
+            type: 'character',
+            mood: 'Contemplative',
+            text: "You find me in a moment of reflection. The weight of eight decades rests upon these shoulders, yet I appear as I did in my prime at Troy."
+          }
+        }
+      }
+
+      const loadedCharacter = demoCharacters[characterId]
+      if (loadedCharacter) {
+        setCharacter(loadedCharacter)
+        setMessages([loadedCharacter.initialMessage])
+      }
+      setLoading(false)
+    }
+
+    loadCharacter()
+  }, [characterId])
+
+  if (loading || !character) {
+    return <div className="character-loading">Loading character...</div>
   }
 
   const handleAbilityClick = (ability) => {
@@ -35,7 +64,7 @@ function CharacterCard() {
     setMessages([...messages, newMessage])
   }
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault()
     if (inputMessage.trim()) {
       const newMessage = {
@@ -45,7 +74,19 @@ function CharacterCard() {
       setMessages([...messages, newMessage])
       setInputMessage('')
 
-      // Simulate character response
+      // TODO: Replace with API call to your Node server
+      // const response = await fetch('/api/chat', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     characterId,
+      //     message: inputMessage,
+      //     conversationHistory: messages
+      //   })
+      // })
+      // const data = await response.json()
+
+      // Simulate character response for now
       setTimeout(() => {
         setMessages(prev => [...prev, {
           type: 'character',
@@ -77,7 +118,7 @@ function CharacterCard() {
           >
             Portrait Mode
           </button>
-          <button className="close-btn">✕</button>
+          <button className="close-btn" onClick={() => navigate('/')}>✕</button>
         </div>
       </div>
 

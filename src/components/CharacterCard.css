@@ -1,3 +1,13 @@
+.character-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .character-card {
   background: linear-gradient(145deg, #2d2d44 0%, #1a1a2e 100%);
   border-radius: 16px;
@@ -6,6 +16,7 @@
   width: 100%;
   overflow: hidden;
   border: 2px solid #3a3a52;
+  margin: 20px auto;
 }
 
 .character-header {
