@@ -1,0 +1,19 @@
+{
+  "name": "dnd-data-importer",
+  "version": "1.0.0",
+  "description": "Import D&D 5e spells and items from 5etools",
+  "scripts": {
+    "import:spells": "node import-dnd-data.js --type=spells",
+    "import:items": "node import-dnd-data.js --type=items",
+    "import:all": "node import-dnd-data.js --all",
+    "seed:spells": "node seed-database.js --collection=spells",
+    "seed:items": "node seed-database.js --collection=items",
+    "seed:all": "node seed-database.js --all",
+    "full-import": "npm run import:all && npm run seed:all"
+  },
+  "dependencies": {
+    "mongodb": "^6.3.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {}
+}
