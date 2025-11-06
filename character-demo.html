@@ -90,27 +90,54 @@
             font-size: 14px;
         }
 
+        /* Message bubbles */
         .message {
-            margin-bottom: 10px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: rgba(212, 175, 55, 0.1);
-            border-left: 3px solid #d4af37;
+            margin-bottom: 12px;
+            padding: 12px 14px;
+            border-radius: 16px;
             line-height: 1.5;
+            max-width: 85%;
+        }
+
+        .message.character {
+            background: rgba(212, 175, 55, 0.15);
+            border-left: 3px solid #d4af37;
+            margin-right: auto;
+        }
+
+        .message.user {
+            background: rgba(52, 152, 219, 0.2);
+            border-right: 3px solid #3498db;
+            margin-left: auto;
+            text-align: right;
         }
 
         .author {
-            color: #d4af37;
             font-weight: bold;
             font-size: 11px;
             margin-bottom: 4px;
+            opacity: 0.9;
+        }
+
+        .message.character .author {
+            color: #d4af37;
+        }
+
+        .message.user .author {
+            color: #3498db;
+        }
+
+        .message-text {
+            color: #fff;
         }
 
         .roll-details {
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 12px;
             color: #90ee90;
-            margin: 4px 0;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         /* Condensed Action Buttons - ChatGPT Style */
@@ -121,7 +148,7 @@
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
-            max-height: 80px;
+            max-height: 70px;
             overflow-y: auto;
         }
 
@@ -135,9 +162,6 @@
             cursor: pointer;
             transition: all 0.2s ease;
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .action-bubble:hover {
@@ -146,8 +170,52 @@
             transform: translateY(-1px);
         }
 
-        .action-bubble:active {
-            transform: translateY(0);
+        /* Chat Input */
+        .chat-input-section {
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .chat-input:focus {
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .send-btn {
+            background: #d4af37;
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #ffd700;
         }
 
         /* Mode Tabs */
@@ -180,13 +248,14 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             border: 2px solid #d4af37;
             border-radius: 12px;
             padding: 15px;
             display: none;
             z-index: 1000;
-            min-width: 200px;
+            min-width: 220px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         .dice-roller.active {
@@ -210,9 +279,10 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            padding: 6px;
+            padding: 8px;
             border-radius: 6px;
             font-size: 12px;
+            text-align: center;
         }
 
         .roll-btn {
@@ -220,11 +290,11 @@
             background: #d4af37;
             border: none;
             color: #000;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .close-roller {
@@ -236,6 +306,11 @@
             color: #fff;
             cursor: pointer;
             font-size: 16px;
+            opacity: 0.7;
+        }
+
+        .close-roller:hover {
+            opacity: 1;
         }
 
         .chat-messages::-webkit-scrollbar {
@@ -245,6 +320,15 @@
         .chat-messages::-webkit-scrollbar-thumb {
             background: #4a4a62;
             border-radius: 3px;
+        }
+
+        .quick-actions::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .quick-actions::-webkit-scrollbar-thumb {
+            background: #4a4a62;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -267,6 +351,19 @@
             <div class="chat-messages" id="chatMessages"></div>
 
             <div class="quick-actions" id="quickActions"></div>
+
+            <div class="chat-input-section">
+                <form class="chat-input-form" onsubmit="sendMessage(event)">
+                    <input
+                        type="text"
+                        class="chat-input"
+                        id="userInput"
+                        placeholder="Speak with Achilles..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="send-btn">Send</button>
+                </form>
+            </div>
 
             <div class="mode-tabs">
                 <button class="mode-tab active" data-mode="explore" onclick="setMode('explore')">🗺️ Explore</button>
@@ -305,7 +402,8 @@
                 athletics: { mod: 7, proficient: true },
                 perception: { mod: 6, proficient: true },
                 intimidation: { mod: 7, proficient: true },
-                survival: { mod: 6, proficient: true }
+                survival: { mod: 6, proficient: true },
+                stealth: { mod: 3, proficient: false }
             },
             weapons: [
                 { name: "Longsword", emoji: "⚔️", toHit: 9, damage: "1d8+6" },
@@ -336,12 +434,14 @@
             return { rolls, total, modifier, formula: `${count}d${sides}${modifier !== 0 ? (modifier > 0 ? '+' : '') + modifier : ''}` };
         }
 
-        function addMessage(text, details = null) {
+        // MESSAGE SYSTEM
+        function addMessage(text, type = 'character', details = null) {
             const messagesDiv = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'message';
+            messageDiv.className = `message ${type}`;
 
-            let html = `<div class="author">${CHARACTER.name} 🛡️</div><div>${text}</div>`;
+            let html = `<div class="author">${type === 'character' ? CHARACTER.name + ' 🛡️' : 'You'}</div>`;
+            html += `<div class="message-text">${text}</div>`;
             if (details) {
                 html += `<div class="roll-details">${details}</div>`;
             }
@@ -351,9 +451,94 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
+        // USER INPUT HANDLER
+        function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Character responds (with AI simulation)
+            setTimeout(() => {
+                respondToUser(message);
+            }, 500);
+        }
+
+        // AI-STYLE CHARACTER RESPONSES
+        function respondToUser(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            // Combat actions
+            if (msg.includes('attack') || msg.includes('strike') || msg.includes('fight')) {
+                // Determine weapon
+                if (msg.includes('spear')) {
+                    addMessage("I thrust my spear forward!");
+                    setTimeout(() => weaponAttack(CHARACTER.weapons[1]), 300);
+                } else {
+                    addMessage("My blade shall answer!");
+                    setTimeout(() => weaponAttack(CHARACTER.weapons[0]), 300);
+                }
+            }
+            // Exploration actions
+            else if (msg.includes('scout') || msg.includes('look') || msg.includes('search') || msg.includes('perceive')) {
+                addMessage("Let me scan our surroundings...");
+                setTimeout(() => skillCheck('Perception', CHARACTER.skills.perception, 'I see dust clouds on the horizon. Could be trouble.'), 300);
+            }
+            else if (msg.includes('sneak') || msg.includes('stealth') || msg.includes('hide')) {
+                addMessage("I move silently through the shadows...");
+                setTimeout(() => skillCheck('Stealth', CHARACTER.skills.stealth, 'Heavy armor makes this difficult, but I manage.'), 300);
+            }
+            else if (msg.includes('navigate') || msg.includes('track') || msg.includes('survive')) {
+                addMessage("I read the signs of the wilderness...");
+                setTimeout(() => skillCheck('Survival', CHARACTER.skills.survival, 'The path ahead is clear.'), 300);
+            }
+            // Abilities
+            else if (msg.includes('fury') || msg.includes('divine')) {
+                addMessage("Divine power courses through my veins!");
+                setTimeout(() => useAbility(CHARACTER.abilities[0]), 300);
+            }
+            else if (msg.includes('heal') || msg.includes('rest') || msg.includes('recover')) {
+                addMessage("I draw upon my warrior's spirit...");
+                setTimeout(() => useAbility(CHARACTER.abilities[2]), 300);
+            }
+            else if (msg.includes('defend') || msg.includes('shield') || msg.includes('protect')) {
+                addMessage("I raise my shield in defense!");
+                setTimeout(() => useAbility(CHARACTER.abilities[1]), 300);
+            }
+            // Social interactions
+            else if (msg.includes('intimidate') || msg.includes('threaten')) {
+                addMessage("I step forward, my presence commanding...");
+                setTimeout(() => skillCheck('Intimidation', CHARACTER.skills.intimidation, 'They know who I am. They will yield.'), 300);
+            }
+            else if (msg.includes('who are you') || msg.includes('about yourself')) {
+                addMessage("I am Achilles. Once I fought at Troy for glory and fame. Now I lead these people to freedom—a cause worth more than any legend.");
+            }
+            else if (msg.includes('quest') || msg.includes('mission') || msg.includes('goal')) {
+                addMessage(`Our quest is clear: ${CHARACTER.quest}. Pharaoh's armies pursue us, but we will not falter.`);
+            }
+            else if (msg.includes('troy') || msg.includes('war') || msg.includes('story')) {
+                addMessage("At Troy, I learned that glory is hollow without purpose. Patroclus taught me that. Now I fight not for my name, but for those who cannot fight for themselves.");
+            }
+            // Default conversational response
+            else {
+                const responses = [
+                    "Speak your mind clearly. What do you need?",
+                    "The journey ahead is long. What troubles you?",
+                    "I stand ready. Give me your command.",
+                    "We've faced worse odds before. What would you have me do?",
+                    "The gods favor the bold. What is your plan?"
+                ];
+                addMessage(responses[Math.floor(Math.random() * responses.length)]);
+            }
+        }
+
         // INITIALIZE
         function init() {
-            // Dynamic intro based on character
             addMessage(`I am ${CHARACTER.name}, ${CHARACTER.quest}. We stand at ${CHARACTER.location}.`);
             addMessage("What would you have me do?");
             setMode('explore');
@@ -373,25 +558,46 @@
             actionsDiv.innerHTML = '';
 
             if (currentMode === 'explore') {
-                addAction('🔍 Scout Ahead', () => skillCheck('Perception', CHARACTER.skills.perception));
-                addAction('🏕️ Make Camp', () => addMessage('We rest and tend to our wounds. The journey continues tomorrow.'));
-                addAction('🗣️ Rally Troops', () => skillCheck('Intimidation', CHARACTER.skills.intimidation));
-                addAction('🗺️ Navigate', () => skillCheck('Survival', CHARACTER.skills.survival));
+                addAction('🔍 Scout Ahead', () => {
+                    addMessage("I scan the horizon...", 'character');
+                    setTimeout(() => skillCheck('Perception', CHARACTER.skills.perception, 'All clear for now.'), 300);
+                });
+                addAction('🗺️ Navigate', () => {
+                    addMessage("I read the land...", 'character');
+                    setTimeout(() => skillCheck('Survival', CHARACTER.skills.survival, 'This way leads to water.'), 300);
+                });
+                addAction('🗣️ Rally Troops', () => {
+                    addMessage("Listen to me! We do not falter! We do not yield!", 'character');
+                    setTimeout(() => skillCheck('Intimidation', CHARACTER.skills.intimidation, 'Their spirits lift.'), 300);
+                });
             } else if (currentMode === 'combat') {
                 addAction('🎲 Initiative', () => initiative());
                 CHARACTER.weapons.forEach(weapon => {
-                    addAction(`${weapon.emoji} ${weapon.name}`, () => weaponAttack(weapon));
+                    addAction(`${weapon.emoji} ${weapon.name}`, () => {
+                        addMessage(`I strike with my ${weapon.name.toLowerCase()}!`, 'character');
+                        setTimeout(() => weaponAttack(weapon), 200);
+                    });
                 });
                 CHARACTER.abilities.forEach(ability => {
                     if (ability.type === 'spell' || ability.type === 'defense' || ability.type === 'heal') {
-                        addAction(`${ability.emoji} ${ability.name}`, () => useAbility(ability));
+                        addAction(`${ability.emoji} ${ability.name}`, () => {
+                            useAbility(ability);
+                        });
                     }
                 });
             } else if (currentMode === 'talk') {
-                addAction('💭 About yourself', () => addMessage("I once fought at Troy for glory. Now I fight for something greater—freedom for my people."));
-                addAction('🗺️ The quest', () => addMessage(`Our quest is clear: ${CHARACTER.quest}. Every step defies empires.`));
-                addAction('📖 Tell a story', () => addMessage("At Troy, Patroclus taught me that some causes matter more than fame. I carry that lesson with me."));
-                addAction('🤝 Offer encouragement', () => addMessage("Take heart, friend. We've come this far together. The gods favor the bold!"));
+                addAction('💭 Who are you?', () => {
+                    addMessage("Who are you?", 'user');
+                    setTimeout(() => addMessage("I am Achilles. Once I fought at Troy for glory. Now I fight for freedom—a cause greater than fame."), 300);
+                });
+                addAction('🗺️ The quest', () => {
+                    addMessage("Tell me about the quest", 'user');
+                    setTimeout(() => addMessage(`We lead 600,000 souls to freedom. Pharaoh's armies pursue us, but we will prevail.`), 300);
+                });
+                addAction('📖 Tell a story', () => {
+                    addMessage("Tell me a story from Troy", 'user');
+                    setTimeout(() => addMessage("At Troy, Patroclus taught me that some causes matter more than personal glory. I carry that lesson with me now."), 300);
+                });
             }
         }
 
@@ -406,7 +612,6 @@
 
         // COMBAT MECHANICS
         function weaponAttack(weapon) {
-            // Roll to hit (d20 + modifier)
             const d20 = rollDie(20);
             const toHit = d20 + weapon.toHit;
             const isCrit = d20 === 20;
@@ -417,7 +622,6 @@
 
             if (isCrit) {
                 message += ' - **CRITICAL HIT!**';
-                // Double damage dice on crit
                 const [diceCount, rest] = weapon.damage.split('d');
                 const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
                 const dmg = rollDice(parseInt(diceCount) * 2, diceSides, modifier);
@@ -427,7 +631,6 @@
                 message += ' - **CRITICAL MISS**';
                 message += '\n\nEven legends stumble...';
             } else {
-                // Normal damage
                 const [diceCount, rest] = weapon.damage.split('d');
                 const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
                 const dmg = rollDice(parseInt(diceCount), diceSides, modifier);
@@ -438,7 +641,7 @@
                 }
             }
 
-            addMessage(message, details);
+            addMessage(message, 'character', details);
         }
 
         function useAbility(ability) {
@@ -463,15 +666,15 @@
                     message += '\n\nI channel my fury into this strike!';
                 }
 
-                addMessage(message, details);
+                addMessage(message, 'character', details);
             } else if (ability.type === 'defense') {
                 const d20 = rollDie(20);
-                addMessage(`${ability.emoji} **${ability.name}**`, `Defense Roll: ${d20 + 5} (d20: ${d20} + 5)\n\nI raise my shield in protection!`);
+                addMessage(`${ability.emoji} **${ability.name}**`, 'character', `Defense Roll: ${d20 + 5} (d20: ${d20} + 5)\n\nI raise my shield in protection!`);
             } else if (ability.type === 'heal') {
                 const [diceCount, rest] = ability.healing.split('d');
                 const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
                 const heal = rollDice(parseInt(diceCount), diceSides, modifier);
-                addMessage(`${ability.emoji} **${ability.name}**`, `Healing: ${heal.total} HP (${heal.formula}: [${heal.rolls.join(', ')}] + ${modifier})\n\nMy warrior's spirit restores me!`);
+                addMessage(`${ability.emoji} **${ability.name}**`, 'character', `Healing: ${heal.total} HP (${heal.formula}: [${heal.rolls.join(', ')}] + ${modifier})\n\nMy warrior's spirit restores me!`);
                 CHARACTER.hp.current = Math.min(CHARACTER.hp.current + heal.total, CHARACTER.hp.max);
                 updateHPDisplay();
             }
@@ -480,10 +683,13 @@
         function initiative() {
             const dexMod = Math.floor((CHARACTER.stats.dex - 10) / 2);
             const roll = rollDie(20) + dexMod;
-            addMessage('🎲 **Initiative Roll**', `Initiative: ${roll} (d20: ${roll - dexMod} + ${dexMod})\n\nI ready myself for battle!`);
+            addMessage('I ready myself for battle!', 'character');
+            setTimeout(() => {
+                addMessage('🎲 **Initiative Roll**', 'character', `Initiative: ${roll} (d20: ${roll - dexMod} + ${dexMod})`);
+            }, 200);
         }
 
-        function skillCheck(skillName, skill) {
+        function skillCheck(skillName, skill, flavorText = '') {
             const d20 = rollDie(20);
             const total = d20 + skill.mod;
             const profMarker = skill.proficient ? ' ⭐' : '';
@@ -492,14 +698,18 @@
             let details = `Result: ${total} (d20: ${d20} + ${skill.mod})`;
 
             if (d20 === 20) {
-                message += ' - **NATURAL 20!**\n\nPerfectly executed!';
+                message += ' - **NATURAL 20!**';
+                details += '\n\n' + (flavorText || 'Flawlessly executed!');
             } else if (d20 === 1) {
-                message += ' - **NATURAL 1**\n\nNot my finest moment...';
+                message += ' - **NATURAL 1**';
+                details += '\n\nNot my finest moment...';
             } else if (total >= 20) {
-                message += '\n\nWell done!';
+                details += '\n\n' + (flavorText || 'Well done.');
+            } else {
+                details += '\n\n' + (flavorText || 'Adequate.');
             }
 
-            addMessage(message, details);
+            addMessage(message, 'character', details);
         }
 
         // DICE ROLLER
@@ -514,7 +724,7 @@
             const modifier = parseInt(document.getElementById('diceModifier').value);
 
             const result = rollDice(count, sides, modifier);
-            addMessage('🎲 **Custom Roll**', `Result: ${result.total} (${result.formula}: [${result.rolls.join(', ')}]${modifier !== 0 ? ' + ' + modifier : ''})`);
+            addMessage('🎲 **Custom Roll**', 'character', `Result: ${result.total} (${result.formula}: [${result.rolls.join(', ')}]${modifier !== 0 ? ' + ' + modifier : ''})`);
         }
 
         // CHARACTER SHEET
