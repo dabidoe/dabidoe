@@ -1,12 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import CharacterModes from './CharacterModes'
+import LoginModal from './LoginModal'
+import ShareCharacter from './ShareCharacter'
+import CharacterStats from './CharacterStats'
 import './CharacterCard.css'
 
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
+  const { isAuthenticated } = useUser()
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [showStatsModal, setShowStatsModal] = useState(false)
   const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
   const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
   const [mood, setMood] = useState('Contemplative')
@@ -246,6 +254,13 @@ function CharacterCard() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
+
+    // Require login to chat with characters
+    if (!isAuthenticated) {
+      setShowLoginModal(true)
+      return
+    }
+
     if (inputMessage.trim()) {
       addMessage(inputMessage, 'player')
       setInputMessage('')
@@ -277,7 +292,15 @@ function CharacterCard() {
             </div>
           </div>
         </div>
-        <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+        <div className="header-actions">
+          <button className="action-btn" onClick={() => setShowStatsModal(true)} title="View Stats">
+            📊
+          </button>
+          <button className="action-btn" onClick={() => setShowShareModal(true)} title="Share Character">
+            🔗
+          </button>
+          <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+        </div>
       </div>
 
       <div className="character-body">
@@ -369,6 +392,19 @@ function CharacterCard() {
           </form>
         </div>
       </div>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <ShareCharacter
+        character={character}
+        characterId={characterId}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
+      <CharacterStats
+        character={character}
+        isOpen={showStatsModal}
+        onClose={() => setShowStatsModal(false)}
+      />
     </div>
   )
 }

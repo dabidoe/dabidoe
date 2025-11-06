@@ -1,14 +1,26 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
+import LoginModal from './LoginModal'
+import UserMenu from './UserMenu'
 import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate()
+  const { isAuthenticated } = useUser()
   const [prompt, setPrompt] = useState('')
   const [showInfo, setShowInfo] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   const handleCreateCharacter = async (e) => {
     e.preventDefault()
+
+    // Require login to create characters
+    if (!isAuthenticated) {
+      setShowLoginModal(true)
+      return
+    }
+
     if (prompt.trim()) {
       // TODO: Call API to create character from prompt
       // For now, navigate to demo character
@@ -24,9 +36,23 @@ function LandingPage() {
   return (
     <div className="landing-page">
       <header className="landing-header">
-        <div className="logo">
-          <span className="logo-icon">⚔️</span>
-          <h1>Character Foundry</h1>
+        <div className="header-top">
+          <div className="logo">
+            <span className="logo-icon">⚔️</span>
+            <h1>Character Foundry</h1>
+          </div>
+          <div className="header-actions">
+            {isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <button
+                className="login-trigger-btn"
+                onClick={() => setShowLoginModal(true)}
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
         <p className="tagline">Forge Your Adventure</p>
       </header>
@@ -121,6 +147,8 @@ function LandingPage() {
       <footer className="landing-footer">
         <p>&copy; 2024 Character Foundry. All rights reserved.</p>
       </footer>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }

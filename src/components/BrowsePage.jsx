@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
 import './BrowsePage.css'
 
 function BrowsePage() {
   const navigate = useNavigate()
+  const { isAuthenticated, user } = useUser()
+  const [activeCategory, setActiveCategory] = useState('all')
 
   // Demo characters - will be fetched from API
+  // TODO: Replace with API call: const characters = await getAllCharacters(userId)
   const characters = [
     {
       id: 'achilles',
@@ -13,10 +18,25 @@ function BrowsePage() {
       type: 'Legendary Warrior',
       description: 'The greatest warrior of ancient Greece',
       hp: 104,
-      ac: 18
+      ac: 18,
+      category: 'party', // party, enemies, npcs
+      userId: user?.id // Only for user's characters
     },
     // Add more characters as they become available
   ]
+
+  // Filter characters by category
+  const filteredCharacters = activeCategory === 'all'
+    ? characters
+    : characters.filter(c => c.category === activeCategory)
+
+  // Count characters per category
+  const categoryCounts = {
+    all: characters.length,
+    party: characters.filter(c => c.category === 'party').length,
+    enemies: characters.filter(c => c.category === 'enemies').length,
+    npcs: characters.filter(c => c.category === 'npcs').length
+  }
 
   return (
     <div className="browse-page">
@@ -27,9 +47,39 @@ function BrowsePage() {
         <h1>Character Gallery</h1>
       </header>
 
+      {/* Category Tabs (only for logged-in users) */}
+      {isAuthenticated && (
+        <div className="category-tabs">
+          <button
+            className={`category-tab ${activeCategory === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('all')}
+          >
+            All ({categoryCounts.all})
+          </button>
+          <button
+            className={`category-tab ${activeCategory === 'party' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('party')}
+          >
+            ⚔️ Party ({categoryCounts.party})
+          </button>
+          <button
+            className={`category-tab ${activeCategory === 'enemies' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('enemies')}
+          >
+            💀 Enemies ({categoryCounts.enemies})
+          </button>
+          <button
+            className={`category-tab ${activeCategory === 'npcs' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('npcs')}
+          >
+            👥 NPCs ({categoryCounts.npcs})
+          </button>
+        </div>
+      )}
+
       <div className="browse-content">
         <div className="characters-grid">
-          {characters.map((character) => (
+          {filteredCharacters.map((character) => (
             <div
               key={character.id}
               className="character-card-browse"
