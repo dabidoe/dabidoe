@@ -3,6 +3,8 @@ import { QRCodeCanvas } from 'qrcode.react'
 import html2canvas from 'html2canvas'
 import './ShareCharacter.css'
 
+const BUNNY_CDN_URL = import.meta.env.VITE_BUNNY_CDN_URL || 'https://statsheet-cdn.b-cdn.net'
+
 function ShareCharacter({ character, characterId, isOpen, onClose }) {
   const [generating, setGenerating] = useState(false)
   const shareCardRef = useRef(null)
@@ -10,6 +12,19 @@ function ShareCharacter({ character, characterId, isOpen, onClose }) {
   if (!isOpen) return null
 
   const characterUrl = `https://m.characterfoundry.io/character/${characterId}`
+
+  // Get image layers from character data
+  const getImageLayers = () => {
+    // character.imageLayers is an array of image IDs from BunnyCDN
+    // e.g., ['characters/base_001.png', 'characters/armor_001.png']
+    if (character.imageLayers && Array.isArray(character.imageLayers)) {
+      return character.imageLayers.map(layerId => `${BUNNY_CDN_URL}/${layerId}`)
+    }
+    // Fallback: if no image layers, return empty array
+    return []
+  }
+
+  const imageLayers = getImageLayers()
 
   const handleDownload = async () => {
     setGenerating(true)
@@ -65,39 +80,54 @@ function ShareCharacter({ character, characterId, isOpen, onClose }) {
 
         {/* Preview Card */}
         <div className="share-preview">
-          <div ref={shareCardRef} className="share-card">
-            {/* Character Info */}
-            <div className="share-card-header">
-              <div className="share-character-icon">{character.portrait}</div>
-              <div className="share-character-info">
+          <div ref={shareCardRef} className="share-card-image">
+            {/* Character Image Layers */}
+            <div className="share-image-container">
+              {imageLayers.length > 0 ? (
+                imageLayers.map((layerUrl, index) => (
+                  <img
+                    key={index}
+                    src={layerUrl}
+                    alt={`${character.name} layer ${index + 1}`}
+                    className="share-image-layer"
+                    crossOrigin="anonymous"
+                  />
+                ))
+              ) : (
+                // Fallback: show emoji if no image layers
+                <div className="share-image-fallback">
+                  <span className="fallback-icon">{character.portrait || '⚔️'}</span>
+                </div>
+              )}
+
+              {/* QR Code in Lower Right */}
+              <div className="share-qr-overlay">
+                <div className="qr-container">
+                  <QRCodeCanvas
+                    value={characterUrl}
+                    size={100}
+                    level="H"
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                  />
+                  {/* Logo in center of QR code */}
+                  <div className="qr-logo">⚔️</div>
+                </div>
+              </div>
+
+              {/* Top Info Bar */}
+              <div className="share-info-bar">
                 <h3>{character.name}</h3>
-                <div className="share-stats">
+                <div className="share-stats-inline">
                   <span>HP {character.hp.max}</span>
                   <span>AC {character.ac}</span>
                 </div>
               </div>
-            </div>
 
-            {/* QR Code Section */}
-            <div className="share-qr-section">
-              <div className="qr-container">
-                <QRCodeCanvas
-                  value={characterUrl}
-                  size={120}
-                  level="H"
-                  bgColor="#ffffff"
-                  fgColor="#000000"
-                />
-                {/* Logo in center of QR code */}
-                <div className="qr-logo">⚔️</div>
+              {/* Watermark */}
+              <div className="share-watermark-overlay">
+                <span className="watermark-text">characterfoundry.io</span>
               </div>
-              <div className="share-url">characterfoundry.io</div>
-            </div>
-
-            {/* Watermark */}
-            <div className="share-watermark">
-              <span className="watermark-icon">⚔️</span>
-              <span>Character Foundry</span>
             </div>
           </div>
         </div>

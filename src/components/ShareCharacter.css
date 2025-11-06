@@ -61,66 +61,67 @@
   margin-bottom: 20px;
 }
 
-.share-card {
-  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
-  border: 2px solid #ffd700;
-  border-radius: 16px;
-  padding: 24px;
+.share-card-image {
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-width: 500px;
+  border: 3px solid #ffd700;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.share-card-header {
+.share-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4; /* Portrait aspect ratio for character cards */
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+  overflow: hidden;
+}
+
+/* Image Layers - Stack on top of each other */
+.share-image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Fallback for characters without images */
+.share-image-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+  justify-content: center;
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
 }
 
-.share-character-icon {
-  font-size: 64px;
-  line-height: 1;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+.fallback-icon {
+  font-size: 180px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
 }
 
-.share-character-info h3 {
-  color: #ffd700;
-  font-size: 24px;
-  margin: 0 0 8px 0;
-  font-weight: 700;
-}
-
-.share-stats {
-  display: flex;
-  gap: 16px;
-  font-size: 14px;
-  color: #8b9dc3;
-  font-weight: 600;
-}
-
-.share-stats span {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 12px;
-  border-radius: 12px;
-}
-
-.share-qr-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+/* QR Code Overlay - Lower Right Corner */
+.share-qr-overlay {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
 }
 
 .qr-container {
   position: relative;
   background: white;
-  padding: 16px;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 215, 0, 0.8);
 }
 
 .qr-logo {
@@ -129,34 +130,66 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  padding: 4px;
-  border-radius: 4px;
-  font-size: 20px;
-  line-height: 1;
-}
-
-.share-url {
-  color: #ffd700;
+  padding: 3px;
+  border-radius: 3px;
   font-size: 18px;
+  line-height: 1;
+  z-index: 1;
+}
+
+/* Info Bar - Top Overlay */
+.share-info-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 70%, transparent 100%);
+  padding: 20px;
+  z-index: 5;
+}
+
+.share-info-bar h3 {
+  color: #ffd700;
+  font-size: 28px;
+  margin: 0 0 8px 0;
   font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-.share-watermark {
+.share-stats-inline {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: rgba(255, 215, 0, 0.6);
+  gap: 12px;
   font-size: 14px;
+  color: #fff;
   font-weight: 600;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.watermark-icon {
+.share-stats-inline span {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+/* Watermark Overlay - Bottom */
+.share-watermark-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+  padding: 16px 20px;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+}
+
+.watermark-text {
+  color: #ffd700;
   font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .share-actions {
@@ -233,16 +266,41 @@
     padding: 20px;
   }
 
-  .share-card {
-    padding: 20px;
+  .share-card-image {
+    max-width: 100%;
   }
 
-  .share-character-icon {
-    font-size: 48px;
+  .share-info-bar {
+    padding: 16px;
   }
 
-  .share-character-info h3 {
-    font-size: 20px;
+  .share-info-bar h3 {
+    font-size: 22px;
+  }
+
+  .share-stats-inline {
+    font-size: 12px;
+  }
+
+  .share-qr-overlay {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .qr-container {
+    padding: 8px;
+  }
+
+  .qr-logo {
+    font-size: 16px;
+  }
+
+  .watermark-text {
+    font-size: 14px;
+  }
+
+  .fallback-icon {
+    font-size: 120px;
   }
 
   .share-actions {
