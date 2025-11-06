@@ -407,5 +407,223 @@ export const mockCharacters = {
     ],
     weapons: [],
     imageLayers: []
+  },
+
+  // Fully built character with linked BunnyCDN assets
+  'gandalf-01': {
+    id: 'gandalf-01',
+    name: 'Gandalf the Grey',
+    class: 'Wizard',
+    level: 20,
+    race: 'Maiar (appears as old man)',
+    portrait: '🧙‍♂️',
+    hp: { current: 130, max: 130 },
+    ac: 15,
+    speed: 30,
+    stats: {
+      str: 10,
+      dex: 14,
+      con: 16,
+      int: 22,
+      wis: 20,
+      cha: 18
+    },
+    proficiencyBonus: 6,
+    proficiencies: [
+      'Arcana',
+      'History',
+      'Insight',
+      'Perception',
+      'Persuasion',
+      'All Simple Weapons',
+      'Light Armor'
+    ],
+    voiceId: 'pNInz6obpgDQGcFmaJgB', // ElevenLabs voice ID (Adam - wise voice)
+    abilities: [
+      {
+        abilityId: 'staff-strike',
+        name: 'Staff Strike',
+        category: 'attack',
+        icon: '🪄',
+        imageId: 'weapons/wizard_staff.png', // BunnyCDN path
+        details: {
+          name: 'Staff Strike',
+          shortDescription: 'Strike with an ancient wizard staff. +6 to hit, 1d6+2 bludgeoning damage.',
+          school: 'Martial',
+          iconLayers: [['🪄']]
+        }
+      },
+      {
+        abilityId: 'fireball',
+        name: 'Fireball',
+        category: 'spell',
+        icon: '🔥',
+        imageId: 'spells/fireball_epic.png', // BunnyCDN path
+        details: {
+          name: 'Fireball',
+          shortDescription: 'A roaring sphere of flame streaks to a point within 150 feet, exploding in a 20-foot radius sphere. 8d6 fire damage.',
+          school: 'Evocation',
+          level: 3,
+          iconLayers: [['🔥']]
+        }
+      },
+      {
+        abilityId: 'lightning-bolt',
+        name: 'Lightning Bolt',
+        category: 'spell',
+        icon: '⚡',
+        imageId: 'spells/lightning_bolt.png', // BunnyCDN path
+        details: {
+          name: 'Lightning Bolt',
+          shortDescription: 'A stroke of lightning forming a line 100 feet long and 5 feet wide. 8d6 lightning damage.',
+          school: 'Evocation',
+          level: 3,
+          iconLayers: [['⚡']]
+        }
+      },
+      {
+        abilityId: 'shield-spell',
+        name: 'Shield',
+        category: 'spell',
+        icon: '🛡️',
+        imageId: 'spells/shield_arcane.png', // BunnyCDN path
+        details: {
+          name: 'Shield',
+          shortDescription: 'An invisible barrier of magical force appears and protects you. +5 AC until start of your next turn.',
+          school: 'Abjuration',
+          level: 1,
+          iconLayers: [['🛡️']]
+        }
+      },
+      {
+        abilityId: 'counterspell',
+        name: 'Counterspell',
+        category: 'spell',
+        icon: '🚫',
+        imageId: 'spells/counterspell.png', // BunnyCDN path
+        details: {
+          name: 'Counterspell',
+          shortDescription: 'You attempt to interrupt a creature casting a spell. Automatically counters spells of 3rd level or lower.',
+          school: 'Abjuration',
+          level: 3,
+          iconLayers: [['🚫']]
+        }
+      },
+      {
+        abilityId: 'meteor-swarm',
+        name: 'Meteor Swarm',
+        category: 'spell',
+        icon: '☄️',
+        imageId: 'spells/meteor_swarm.png', // BunnyCDN path
+        details: {
+          name: 'Meteor Swarm',
+          shortDescription: 'Blazing orbs of fire plummet to the ground at four points within range. Each creature takes 20d6 fire damage and 20d6 bludgeoning damage.',
+          school: 'Evocation',
+          level: 9,
+          iconLayers: [['☄️']]
+        }
+      },
+      {
+        abilityId: 'word-of-recall',
+        name: 'Word of Recall',
+        category: 'spell',
+        icon: '🌟',
+        imageId: 'spells/teleport.png', // BunnyCDN path
+        details: {
+          name: 'Word of Recall',
+          shortDescription: 'You and up to five willing creatures instantly teleport to a previously designated sanctuary.',
+          school: 'Conjuration',
+          level: 6,
+          iconLayers: [['🌟']]
+        }
+      }
+    ],
+    items: [
+      {
+        id: 'item-1',
+        name: 'Wizard Staff',
+        icon: '🪄',
+        imageId: 'items/wizard_staff.png', // BunnyCDN path
+        description: 'An ancient staff of power',
+        rarity: 'Legendary',
+        type: 'Weapon'
+      },
+      {
+        id: 'item-2',
+        name: 'Spellbook of Secrets',
+        icon: '📖',
+        imageId: 'items/spellbook_ancient.png', // BunnyCDN path
+        description: 'Contains countless powerful spells',
+        rarity: 'Legendary',
+        type: 'Tool'
+      },
+      {
+        id: 'item-3',
+        name: 'Robes of the Archmagi',
+        icon: '👘',
+        imageId: 'items/robes_archmage.png', // BunnyCDN path
+        description: 'Grey robes that grant +2 AC and advantage on saving throws against spells',
+        rarity: 'Legendary',
+        type: 'Armor'
+      },
+      {
+        id: 'item-4',
+        name: 'Ring of Wizardry',
+        icon: '💍',
+        imageId: 'items/ring_magic.png', // BunnyCDN path
+        description: 'Doubles the number of 1st and 2nd level spell slots',
+        rarity: 'Legendary',
+        type: 'Ring'
+      },
+      {
+        id: 'item-5',
+        name: 'Pipe-weed',
+        icon: '🚬',
+        imageId: 'items/pipe.png', // BunnyCDN path
+        description: 'For relaxation and contemplation',
+        rarity: 'Common',
+        type: 'Consumable'
+      },
+      {
+        id: 'item-6',
+        name: 'Glamdring (Foe-hammer)',
+        icon: '⚔️',
+        imageId: 'items/sword_elven.png', // BunnyCDN path
+        description: 'An Elven blade that glows blue when orcs are near',
+        rarity: 'Legendary',
+        type: 'Weapon'
+      }
+    ],
+    weapons: [
+      {
+        id: 'weapon-1',
+        name: 'Wizard Staff',
+        icon: '🪄',
+        imageId: 'weapons/wizard_staff.png', // BunnyCDN path
+        description: '1d6+2 bludgeoning, can cast Light at will',
+        rarity: 'Legendary',
+        type: 'Weapon'
+      },
+      {
+        id: 'weapon-2',
+        name: 'Glamdring',
+        icon: '⚔️',
+        imageId: 'weapons/sword_elven.png', // BunnyCDN path
+        description: '1d8+3 slashing, +2 vs orcs and goblins',
+        rarity: 'Legendary',
+        type: 'Weapon'
+      }
+    ],
+    imageLayers: [
+      'characters/gandalf_base.png',      // Base character image
+      'characters/gandalf_robes.png',     // Grey robes layer
+      'characters/gandalf_staff.png',     // Staff layer
+      'characters/gandalf_effects.png'    // Magical effects layer
+    ],
+    initialMessage: {
+      type: 'character',
+      mood: 'Wise',
+      text: "A wizard is never late, nor is he early. He arrives precisely when he means to. What brings you to seek my counsel?"
+    }
   }
 }

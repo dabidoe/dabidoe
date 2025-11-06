@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useUser } from '../contexts/UserContext'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import { mockCharacters } from '../data/mockCharacters'
+import { speak, stopSpeech, isTTSAvailable } from '../services/tts'
 import CharacterModes from './CharacterModes'
 import LoginModal from './LoginModal'
 import ShareCharacter from './ShareCharacter'
@@ -24,7 +25,11 @@ function CharacterCard() {
   const [character, setCharacter] = useState(null)
   const [currentHP, setCurrentHP] = useState(104)
   const [loading, setLoading] = useState(true)
+  const [autoplay, setAutoplay] = useState(false)
+  const [playingAudio, setPlayingAudio] = useState(null)
+  const [speakingMessageIndex, setSpeakingMessageIndex] = useState(null)
   const messagesEndRef = useRef(null)
+  const ttsAvailable = isTTSAvailable()
 
   // Load character data
   useEffect(() => {
@@ -147,6 +152,38 @@ function CharacterCard() {
     // await useAbility(characterId, ability.name, { mode, currentHP })
   }
 
+  // Handle TTS for a message
+  const handleSpeak = async (text, messageIndex) => {
+    try {
+      // Stop any currently playing audio
+      if (playingAudio) {
+        stopSpeech(playingAudio)
+        setPlayingAudio(null)
+        setSpeakingMessageIndex(null)
+      }
+
+      // If clicking the same message that's playing, just stop
+      if (speakingMessageIndex === messageIndex) {
+        return
+      }
+
+      // Start speaking the new message
+      setSpeakingMessageIndex(messageIndex)
+      const audio = await speak(text, {
+        voiceId: character?.voiceId,
+        onEnd: () => {
+          setSpeakingMessageIndex(null)
+          setPlayingAudio(null)
+        }
+      })
+      setPlayingAudio(audio)
+    } catch (error) {
+      console.error('TTS error:', error)
+      setSpeakingMessageIndex(null)
+      setPlayingAudio(null)
+    }
+  }
+
   // Add message to chat
   const addMessage = (text, type = 'character', messageMood = mood) => {
     const newMessage = {
@@ -155,7 +192,18 @@ function CharacterCard() {
       text,
       timestamp: new Date()
     }
-    setMessages(prev => [...prev, newMessage])
+    setMessages(prev => {
+      const updatedMessages = [...prev, newMessage]
+
+      // Autoplay TTS for character messages if enabled
+      if (type === 'character' && autoplay && ttsAvailable && character?.voiceId) {
+        setTimeout(() => {
+          handleSpeak(text, updatedMessages.length - 1)
+        }, 100)
+      }
+
+      return updatedMessages
+    })
   }
 
   const handleSendMessage = async (e) => {
@@ -199,6 +247,15 @@ function CharacterCard() {
           </div>
         </div>
         <div className="header-actions">
+          {ttsAvailable && character?.voiceId && (
+            <button
+              className={`action-btn ${autoplay ? 'active' : ''}`}
+              onClick={() => setAutoplay(!autoplay)}
+              title={autoplay ? 'Disable Autoplay' : 'Enable Autoplay'}
+            >
+              {autoplay ? '🔊' : '🔇'}
+            </button>
+          )}
           <button className="action-btn" onClick={() => setShowStatsModal(true)} title="View Stats">
             📊
           </button>
@@ -243,6 +300,15 @@ function CharacterCard() {
                   <div className="author">
                     <span>{character.name}</span>
                     <span>{mode === 'battle' ? '⚔️' : character.portrait}</span>
+                    {ttsAvailable && character?.voiceId && (
+                      <button
+                        className={`speaker-btn ${speakingMessageIndex === index ? 'speaking' : ''}`}
+                        onClick={() => handleSpeak(message.text, index)}
+                        title={speakingMessageIndex === index ? 'Stop' : 'Speak'}
+                      >
+                        {speakingMessageIndex === index ? '⏸️' : '🔊'}
+                      </button>
+                    )}
                   </div>
                 )}
                 {message.type === 'player' && (

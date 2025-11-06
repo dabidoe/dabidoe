@@ -54,6 +54,17 @@ function BrowsePage() {
       ac: 16,
       category: 'party',
       userId: user?.id
+    },
+    {
+      id: 'gandalf-01',
+      name: 'Gandalf the Grey',
+      icon: '🧙',
+      type: 'Wizard',
+      description: 'Ancient wizard with legendary power and wisdom',
+      hp: 120,
+      ac: 15,
+      category: 'npcs',
+      userId: user?.id
     }
   ]
 
