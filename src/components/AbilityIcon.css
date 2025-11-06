@@ -1,0 +1,131 @@
+.ability-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Size variants */
+.ability-icon-small {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+}
+
+.ability-icon-medium {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+}
+
+.ability-icon-large {
+  width: 64px;
+  height: 64px;
+  font-size: 40px;
+}
+
+/* Emoji icons */
+.ability-icon.emoji-icon {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Image icons */
+.ability-icon.image-icon {
+  object-fit: contain;
+  padding: 4px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.ability-icon.image-icon:hover {
+  transform: scale(1.1);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+/* Category-specific backgrounds */
+.ability-icon.spell-icon {
+  background: radial-gradient(circle, rgba(100, 150, 255, 0.2) 0%, rgba(100, 150, 255, 0.05) 100%);
+  border-color: rgba(100, 150, 255, 0.3);
+}
+
+.ability-icon.item-icon {
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Error fallback */
+.image-error::after {
+  content: '📦';
+  font-size: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover effects */
+.ability-icon:not(.image-icon):hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Loading state */
+.ability-icon.loading {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Rarity-based borders (for items) */
+.ability-icon[data-rarity="Common"] {
+  border-color: #9E9E9E;
+}
+
+.ability-icon[data-rarity="Uncommon"] {
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.ability-icon[data-rarity="Rare"] {
+  border-color: #2196F3;
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.3);
+}
+
+.ability-icon[data-rarity="Very Rare"] {
+  border-color: #9C27B0;
+  box-shadow: 0 0 8px rgba(156, 39, 176, 0.3);
+}
+
+.ability-icon[data-rarity="Legendary"] {
+  border-color: #FF9800;
+  box-shadow: 0 0 12px rgba(255, 152, 0, 0.5);
+  animation: legendary-glow 2s ease-in-out infinite;
+}
+
+@keyframes legendary-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(255, 152, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 152, 0, 0.8); }
+}
+
+.ability-icon[data-rarity="Artifact"] {
+  border-color: #D4AF37;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.6);
+  animation: artifact-glow 3s ease-in-out infinite;
+}
+
+@keyframes artifact-glow {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(212, 175, 55, 0.9);
+    transform: scale(1.05);
+  }
+}
