@@ -4,6 +4,8 @@ import { useUser } from '../contexts/UserContext'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import CharacterModes from './CharacterModes'
 import LoginModal from './LoginModal'
+import ShareCharacter from './ShareCharacter'
+import CharacterStats from './CharacterStats'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -11,6 +13,8 @@ function CharacterCard() {
   const navigate = useNavigate()
   const { isAuthenticated } = useUser()
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [showStatsModal, setShowStatsModal] = useState(false)
   const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
   const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
   const [mood, setMood] = useState('Contemplative')
@@ -288,7 +292,15 @@ function CharacterCard() {
             </div>
           </div>
         </div>
-        <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+        <div className="header-actions">
+          <button className="action-btn" onClick={() => setShowStatsModal(true)} title="View Stats">
+            📊
+          </button>
+          <button className="action-btn" onClick={() => setShowShareModal(true)} title="Share Character">
+            🔗
+          </button>
+          <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+        </div>
       </div>
 
       <div className="character-body">
@@ -382,6 +394,17 @@ function CharacterCard() {
       </div>
 
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <ShareCharacter
+        character={character}
+        characterId={characterId}
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
+      <CharacterStats
+        character={character}
+        isOpen={showStatsModal}
+        onClose={() => setShowStatsModal(false)}
+      />
     </div>
   )
 }
