@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import CharacterModes from './CharacterModes'
+import LoginModal from './LoginModal'
 import './CharacterCard.css'
 
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
+  const { isAuthenticated } = useUser()
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
   const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
   const [mood, setMood] = useState('Contemplative')
@@ -246,6 +250,13 @@ function CharacterCard() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
+
+    // Require login to chat with characters
+    if (!isAuthenticated) {
+      setShowLoginModal(true)
+      return
+    }
+
     if (inputMessage.trim()) {
       addMessage(inputMessage, 'player')
       setInputMessage('')
@@ -369,6 +380,8 @@ function CharacterCard() {
           </form>
         </div>
       </div>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }

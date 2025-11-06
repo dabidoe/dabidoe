@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../contexts/UserContext'
 import LoginModal from './LoginModal'
@@ -7,28 +7,20 @@ import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate()
-  const { isAuthenticated, loginAsGuest } = useUser()
+  const { isAuthenticated } = useUser()
   const [prompt, setPrompt] = useState('')
   const [showInfo, setShowInfo] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
 
-  // Auto-login as guest if not authenticated
-  useEffect(() => {
-    const autoLoginGuest = async () => {
-      if (!isAuthenticated) {
-        try {
-          await loginAsGuest()
-        } catch (error) {
-          console.error('Failed to auto-login as guest:', error)
-        }
-      }
-    }
-
-    autoLoginGuest()
-  }, [isAuthenticated, loginAsGuest])
-
   const handleCreateCharacter = async (e) => {
     e.preventDefault()
+
+    // Require login to create characters
+    if (!isAuthenticated) {
+      setShowLoginModal(true)
+      return
+    }
+
     if (prompt.trim()) {
       // TODO: Call API to create character from prompt
       // For now, navigate to demo character
@@ -50,13 +42,16 @@ function LandingPage() {
             <h1>Character Foundry</h1>
           </div>
           <div className="header-actions">
-            <button
-              className="login-trigger-btn"
-              onClick={() => setShowLoginModal(true)}
-            >
-              Sign In
-            </button>
-            <UserMenu />
+            {isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <button
+                className="login-trigger-btn"
+                onClick={() => setShowLoginModal(true)}
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
         <p className="tagline">Forge Your Adventure</p>
