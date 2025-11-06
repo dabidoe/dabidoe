@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import StatSheet from './StatSheet'
 import './CharacterStats.css'
 
 const BUNNY_CDN_URL = import.meta.env.VITE_BUNNY_CDN_URL || 'https://statsheet-cdn.b-cdn.net'
 
-function CharacterStats({ character, isOpen, onClose }) {
+function CharacterStats({ character, characterId, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('abilities')
+  const [showStatSheet, setShowStatSheet] = useState(false)
 
   if (!isOpen) return null
 
@@ -87,6 +89,27 @@ function CharacterStats({ character, isOpen, onClose }) {
         <button className="stats-modal-close" onClick={onClose}>×</button>
 
         <h2>{character.name} - Stats & Abilities</h2>
+
+        {/* Toggle between stats view and sheet view */}
+        <div className="stats-view-toggle">
+          <button
+            className={`view-toggle-btn ${!showStatSheet ? 'active' : ''}`}
+            onClick={() => setShowStatSheet(false)}
+          >
+            📊 Stats View
+          </button>
+          <button
+            className={`view-toggle-btn ${showStatSheet ? 'active' : ''}`}
+            onClick={() => setShowStatSheet(true)}
+          >
+            📄 Stat Sheet
+          </button>
+        </div>
+
+        {showStatSheet ? (
+          <StatSheet character={character} characterId={characterId} />
+        ) : (
+          <>
 
         {/* Character Basic Stats */}
         <div className="basic-stats">
@@ -207,6 +230,8 @@ function CharacterStats({ character, isOpen, onClose }) {
             </>
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
   )

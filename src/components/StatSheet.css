@@ -1,0 +1,372 @@
+.stat-sheet-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.download-sheet-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-sheet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Stat Sheet - Designed for mobile/print */
+.stat-sheet {
+  width: 100%;
+  max-width: 450px;
+  background: #ffffff;
+  color: #1a1a2e;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Header with Portrait */
+.sheet-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid #2d2d44;
+}
+
+.sheet-portrait {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 3px solid #2d2d44;
+}
+
+.sheet-portrait-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sheet-portrait-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+
+.sheet-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sheet-title h1 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a2e;
+  line-height: 1.2;
+}
+
+.sheet-class {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sheet-race {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Primary Stats */
+.sheet-primary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-box-large {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  border: 2px solid #2d2d44;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.hp-box {
+  border-color: #dc3545;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+}
+
+.ac-box {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f0f3ff 0%, #e0e7ff 100%);
+}
+
+.speed-box {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #f0fff4 0%, #dcfce7 100%);
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.stat-value-large {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a2e;
+  line-height: 1;
+}
+
+/* Sections */
+.sheet-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Ability Scores */
+.ability-scores {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.ability-score-box {
+  background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+  border: 2px solid #667eea;
+}
+
+.ability-name {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ability-score {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 4px 0 2px 0;
+}
+
+.ability-modifier {
+  font-size: 12px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+/* Proficiencies */
+.proficiency-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.proficiency-tag {
+  background: #f0f3ff;
+  color: #667eea;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid #667eea;
+}
+
+/* Abilities/Spells */
+.ability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ability-item {
+  display: flex;
+  gap: 10px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.ability-icon-small {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.ability-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.ability-details strong {
+  color: #1a1a2e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ability-details p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.spell-level {
+  color: #667eea;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.spell-school {
+  display: inline-block;
+  background: #e0e7ff;
+  color: #667eea;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Equipment */
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.equipment-item {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.equipment-icon {
+  font-size: 18px;
+}
+
+.equipment-name {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* Footer with QR */
+.sheet-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sheet-qr {
+  flex-shrink: 0;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 8px;
+  border: 2px solid #2d2d44;
+}
+
+.sheet-footer-text {
+  flex: 1;
+}
+
+.sheet-footer-text p {
+  margin: 0;
+  font-size: 12px;
+  color: #1a1a2e;
+}
+
+.sheet-footer-text strong {
+  font-weight: 700;
+  color: #667eea;
+}
+
+.sheet-footer-small {
+  font-size: 10px;
+  color: #999;
+}
+
+/* Mobile adjustments */
+@media (max-width: 500px) {
+  .stat-sheet {
+    padding: 20px;
+  }
+
+  .sheet-title h1 {
+    font-size: 24px;
+  }
+
+  .ability-scores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stat-value-large {
+    font-size: 24px;
+  }
+}

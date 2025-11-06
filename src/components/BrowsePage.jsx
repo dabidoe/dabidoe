@@ -19,10 +19,42 @@ function BrowsePage() {
       description: 'The greatest warrior of ancient Greece',
       hp: 104,
       ac: 18,
-      category: 'party', // party, enemies, npcs
-      userId: user?.id // Only for user's characters
+      category: 'party',
+      userId: user?.id
     },
-    // Add more characters as they become available
+    {
+      id: 'fighter-01',
+      name: 'Valeria Ironheart',
+      icon: '⚔️',
+      type: 'Fighter',
+      description: 'A stalwart human warrior, master of combat',
+      hp: 47,
+      ac: 18,
+      category: 'party',
+      userId: user?.id
+    },
+    {
+      id: 'mage-01',
+      name: 'Elara Moonwhisper',
+      icon: '🔮',
+      type: 'Wizard',
+      description: 'A brilliant elven mage wielding arcane power',
+      hp: 28,
+      ac: 12,
+      category: 'party',
+      userId: user?.id
+    },
+    {
+      id: 'cleric-01',
+      name: 'Brother Aldric',
+      icon: '⛪',
+      type: 'Cleric',
+      description: 'A devout dwarven priest serving the divine',
+      hp: 40,
+      ac: 16,
+      category: 'party',
+      userId: user?.id
+    }
   ]
 
   // Filter characters by category

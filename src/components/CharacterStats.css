@@ -52,9 +52,40 @@
 
 .stats-modal-content h2 {
   color: #ffd700;
-  margin: 0 0 24px 0;
+  margin: 0 0 16px 0;
   text-align: center;
   padding-right: 40px;
+}
+
+/* View Toggle */
+.stats-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.view-toggle-btn {
+  padding: 10px 20px;
+  background: rgba(102, 126, 234, 0.2);
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+  color: #8b9dc3;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(102, 126, 234, 0.3);
+  color: #ffd700;
+}
+
+.view-toggle-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #ffd700;
+  color: #fff;
 }
 
 /* Basic Stats Grid */
