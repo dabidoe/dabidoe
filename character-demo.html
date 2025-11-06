@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achilles - Character Foundry Demo</title>
+    <title>Achilles - Character Foundry</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #fff;
             height: 100vh;
@@ -28,7 +28,7 @@
         /* Header */
         .character-header {
             background: rgba(0, 0, 0, 0.7);
-            padding: 15px 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -36,74 +36,51 @@
         }
 
         .character-name {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #d4af37;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .stats-line {
             display: flex;
-            gap: 15px;
-            font-size: 14px;
-            margin-top: 5px;
+            gap: 12px;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
-        .hp-display {
-            color: #90ee90;
-            font-weight: bold;
-        }
-
+        .hp-display { color: #90ee90; font-weight: bold; }
         .hp-display.damaged { color: #ffa500; }
         .hp-display.critical { color: #ff4444; }
+        .ac-display { color: #87ceeb; font-weight: bold; }
 
-        .ac-display {
-            color: #87ceeb;
-            font-weight: bold;
+        .sheet-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        /* Body */
-        .character-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
+        /* Image Section */
         .image-section {
             flex: 1;
-            position: relative;
             background: linear-gradient(135deg, #8b4513, #d2691e);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 120px;
+            font-size: 100px;
         }
 
         /* Chat Section */
         .chat-section {
-            height: 50%;
-            background: rgba(0, 0, 0, 0.9);
+            height: 55%;
+            background: rgba(0, 0, 0, 0.95);
             border-top: 2px solid #8b4513;
             display: flex;
             flex-direction: column;
-        }
-
-        .chat-header {
-            padding: 12px 20px;
-            background: rgba(139, 69, 19, 0.4);
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .mood-indicator {
-            font-size: 12px;
-            color: #d4af37;
-            background: rgba(212, 175, 55, 0.2);
-            padding: 2px 8px;
-            border-radius: 10px;
         }
 
         .chat-messages {
@@ -114,187 +91,160 @@
         }
 
         .message {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding: 10px 12px;
             border-radius: 12px;
             background: rgba(212, 175, 55, 0.1);
             border-left: 3px solid #d4af37;
+            line-height: 1.5;
         }
 
         .author {
             color: #d4af37;
             font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 6px;
+            font-size: 11px;
+            margin-bottom: 4px;
         }
 
-        .message-text {
+        .roll-details {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #90ee90;
+            margin: 4px 0;
+        }
+
+        /* Condensed Action Buttons - ChatGPT Style */
+        .quick-actions {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .action-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 6px 12px;
+            font-size: 12px;
             color: #fff;
-            line-height: 1.6;
-            white-space: pre-line;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-bubble:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(212, 175, 55, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .action-bubble:active {
+            transform: translateY(0);
         }
 
         /* Mode Tabs */
         .mode-tabs {
             display: flex;
             background: rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .mode-tab {
             flex: 1;
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.6);
-            padding: 12px 8px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 10px 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             border-bottom: 2px solid transparent;
-        }
-
-        .mode-tab:hover {
-            color: rgba(255, 255, 255, 0.9);
-            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
         }
 
         .mode-tab.active {
             color: #d4af37;
             border-bottom-color: #d4af37;
-            background: rgba(212, 175, 55, 0.1);
         }
 
-        /* Mode Content */
-        .mode-content {
-            padding: 20px;
+        /* Dice Roller */
+        .dice-roller {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
             display: none;
+            z-index: 1000;
+            min-width: 200px;
         }
 
-        .mode-content.active {
+        .dice-roller.active {
             display: block;
         }
 
-        /* Conversation Mode */
-        .dialogue-option {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .dialogue-option:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(212, 175, 55, 0.5);
-            transform: translateX(4px);
-        }
-
-        .dialogue-icon {
-            font-size: 24px;
-        }
-
-        /* Battle Mode */
-        .macros-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .macro-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .macro-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(212, 175, 55, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .macro-emoji {
-            font-size: 32px;
-        }
-
-        .macro-name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* Skills Mode */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .skill-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .skill-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(212, 175, 55, 0.4);
-        }
-
-        .skill-btn.proficient {
-            border-color: rgba(212, 175, 55, 0.5);
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .skill-emoji {
-            font-size: 24px;
-        }
-
-        .skill-info {
-            flex: 1;
-        }
-
-        .skill-name {
+        .dice-roller h4 {
+            color: #d4af37;
+            margin-bottom: 10px;
             font-size: 14px;
-            font-weight: 600;
         }
 
-        .skill-modifier {
+        .dice-inputs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .dice-inputs input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px;
+            border-radius: 6px;
             font-size: 12px;
-            opacity: 0.8;
+        }
+
+        .roll-btn {
+            width: 100%;
+            background: #d4af37;
+            border: none;
+            color: #000;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .close-roller {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+            width: 6px;
         }
 
         .chat-messages::-webkit-scrollbar-thumb {
             background: #4a4a62;
-            border-radius: 4px;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -302,271 +252,285 @@
     <div class="character-card">
         <div class="character-header">
             <div>
-                <div class="character-name">ACHILLES</div>
+                <div class="character-name" id="charName">ACHILLES</div>
                 <div class="stats-line">
                     <div class="hp-display" id="hpDisplay">104/104 HP</div>
-                    <div class="ac-display">AC 18</div>
+                    <div class="ac-display" id="acDisplay">AC 18</div>
                 </div>
             </div>
+            <button class="sheet-btn" onclick="toggleSheet()">📋 Sheet</button>
         </div>
 
-        <div class="character-body">
-            <div class="image-section">
-                🛡️
-            </div>
+        <div class="image-section">🛡️</div>
 
-            <div class="chat-section">
-                <div class="chat-header">
-                    <span>⚔️ Speaking with Achilles</span>
-                    <span class="mood-indicator" id="moodIndicator">Contemplative</span>
-                </div>
+        <div class="chat-section">
+            <div class="chat-messages" id="chatMessages"></div>
 
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message">
-                        <div class="author">Achilles 🛡️</div>
-                        <div class="message-text">You find me in a moment of reflection. The weight of eight decades rests upon these shoulders, yet I appear as I did in my prime at Troy.</div>
-                    </div>
-                </div>
+            <div class="quick-actions" id="quickActions"></div>
 
-                <div class="mode-tabs">
-                    <button class="mode-tab active" onclick="switchMode('conversation')">💬 Conversation</button>
-                    <button class="mode-tab" onclick="switchMode('battle')">⚔️ Battle</button>
-                    <button class="mode-tab" onclick="switchMode('skills')">🎲 Skills</button>
-                </div>
-
-                <div class="mode-content active" id="conversationMode">
-                    <div class="dialogue-option" onclick="dialogue('about')">
-                        <span class="dialogue-icon">💭</span>
-                        <span>Tell me about yourself</span>
-                    </div>
-                    <div class="dialogue-option" onclick="dialogue('quest')">
-                        <span class="dialogue-icon">🗺️</span>
-                        <span>What is your quest?</span>
-                    </div>
-                    <div class="dialogue-option" onclick="dialogue('story')">
-                        <span class="dialogue-icon">📖</span>
-                        <span>Tell me a story from Troy</span>
-                    </div>
-                    <div class="dialogue-option" onclick="dialogue('challenge')">
-                        <span class="dialogue-icon">⚔️</span>
-                        <span>I challenge you to battle!</span>
-                    </div>
-                </div>
-
-                <div class="mode-content" id="battleMode">
-                    <div class="macros-grid">
-                        <div class="macro-btn" onclick="attackRoll()">
-                            <span class="macro-emoji">⚔️</span>
-                            <span class="macro-name">Attack Roll</span>
-                        </div>
-                        <div class="macro-btn" onclick="initiativeRoll()">
-                            <span class="macro-emoji">🎲</span>
-                            <span class="macro-name">Initiative</span>
-                        </div>
-                        <div class="macro-btn" onclick="savingThrow()">
-                            <span class="macro-emoji">🛡️</span>
-                            <span class="macro-name">Saving Throw</span>
-                        </div>
-                        <div class="macro-btn" onclick="secondWind()">
-                            <span class="macro-emoji">💚</span>
-                            <span class="macro-name">Second Wind</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mode-content" id="skillsMode">
-                    <div class="skills-grid">
-                        <div class="skill-btn proficient" onclick="skillCheck('Athletics', 7, true)">
-                            <span class="skill-emoji">💪</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Athletics</div>
-                                <div class="skill-modifier">+7 (STR)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn" onclick="skillCheck('Acrobatics', 3, false)">
-                            <span class="skill-emoji">🤸</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Acrobatics</div>
-                                <div class="skill-modifier">+3 (DEX)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn proficient" onclick="skillCheck('Intimidation', 7, true)">
-                            <span class="skill-emoji">😤</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Intimidation</div>
-                                <div class="skill-modifier">+7 (CHA)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn proficient" onclick="skillCheck('Perception', 6, true)">
-                            <span class="skill-emoji">👁️</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Perception</div>
-                                <div class="skill-modifier">+6 (WIS)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn proficient" onclick="skillCheck('Survival', 6, true)">
-                            <span class="skill-emoji">🏕️</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Survival</div>
-                                <div class="skill-modifier">+6 (WIS)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn" onclick="skillCheck('Stealth', 3, false)">
-                            <span class="skill-emoji">🥷</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Stealth</div>
-                                <div class="skill-modifier">+3 (DEX)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn" onclick="skillCheck('Persuasion', 3, false)">
-                            <span class="skill-emoji">🗣️</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Persuasion</div>
-                                <div class="skill-modifier">+3 (CHA)</div>
-                            </div>
-                        </div>
-                        <div class="skill-btn" onclick="skillCheck('Investigation', 1, false)">
-                            <span class="skill-emoji">🔍</span>
-                            <div class="skill-info">
-                                <div class="skill-name">Investigation</div>
-                                <div class="skill-modifier">+1 (INT)</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="explore" onclick="setMode('explore')">🗺️ Explore</button>
+                <button class="mode-tab" data-mode="combat" onclick="setMode('combat')">⚔️ Combat</button>
+                <button class="mode-tab" data-mode="talk" onclick="setMode('talk')">💬 Talk</button>
+                <button class="mode-tab" data-mode="dice" onclick="toggleDiceRoller()">🎲 Dice</button>
             </div>
         </div>
     </div>
 
+    <!-- Dice Roller -->
+    <div class="dice-roller" id="diceRoller">
+        <button class="close-roller" onclick="toggleDiceRoller()">✕</button>
+        <h4>🎲 Dice Roller</h4>
+        <div class="dice-inputs">
+            <input type="number" id="diceCount" placeholder="Count" value="1" min="1" max="20">
+            <input type="number" id="diceSides" placeholder="Sides" value="20" min="2" max="100">
+            <input type="number" id="diceModifier" placeholder="+Mod" value="0">
+        </div>
+        <button class="roll-btn" onclick="customDiceRoll()">Roll</button>
+    </div>
+
     <script>
-        // Dice rolling functions
+        // CHARACTER SHEET - Everything references this
+        const CHARACTER = {
+            name: "Achilles",
+            quest: "leading 600,000 souls to freedom from Egyptian bondage",
+            location: "the Red Sea crossing",
+            hp: { current: 104, max: 104 },
+            ac: 18,
+            stats: {
+                str: 20, dex: 16, con: 18, int: 12, wis: 14, cha: 16
+            },
+            proficiencyBonus: 4,
+            skills: {
+                athletics: { mod: 7, proficient: true },
+                perception: { mod: 6, proficient: true },
+                intimidation: { mod: 7, proficient: true },
+                survival: { mod: 6, proficient: true }
+            },
+            weapons: [
+                { name: "Longsword", emoji: "⚔️", toHit: 9, damage: "1d8+6" },
+                { name: "Spear", emoji: "🗡️", toHit: 10, damage: "1d10+7" }
+            ],
+            abilities: [
+                { name: "Divine Fury", emoji: "🔥", toHit: 8, damage: "2d6+8", type: "spell" },
+                { name: "Shield Wall", emoji: "🛡️", type: "defense" },
+                { name: "Second Wind", emoji: "💚", healing: "1d10+10", type: "heal" }
+            ]
+        };
+
+        let currentMode = 'explore';
+
+        // DICE ROLLING CORE
         function rollDie(sides) {
             return Math.floor(Math.random() * sides) + 1;
         }
 
-        function rollD20(modifier) {
-            const d20 = rollDie(20);
-            const total = d20 + modifier;
-            return { d20, modifier, total, isCrit: d20 === 20, isFail: d20 === 1 };
+        function rollDice(count, sides, modifier = 0) {
+            const rolls = [];
+            let total = modifier;
+            for (let i = 0; i < count; i++) {
+                const roll = rollDie(sides);
+                rolls.push(roll);
+                total += roll;
+            }
+            return { rolls, total, modifier, formula: `${count}d${sides}${modifier !== 0 ? (modifier > 0 ? '+' : '') + modifier : ''}` };
         }
 
-        function addMessage(text, author = 'Achilles 🛡️') {
+        function addMessage(text, details = null) {
             const messagesDiv = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
-            messageDiv.innerHTML = `
-                <div class="author">${author}</div>
-                <div class="message-text">${text}</div>
-            `;
+
+            let html = `<div class="author">${CHARACTER.name} 🛡️</div><div>${text}</div>`;
+            if (details) {
+                html += `<div class="roll-details">${details}</div>`;
+            }
+
+            messageDiv.innerHTML = html;
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        // Mode switching
-        function switchMode(mode) {
-            // Update tabs
-            document.querySelectorAll('.mode-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // Update content
-            document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(mode + 'Mode').classList.add('active');
+        // INITIALIZE
+        function init() {
+            // Dynamic intro based on character
+            addMessage(`I am ${CHARACTER.name}, ${CHARACTER.quest}. We stand at ${CHARACTER.location}.`);
+            addMessage("What would you have me do?");
+            setMode('explore');
         }
 
-        // Conversation mode
-        function dialogue(type) {
-            const responses = {
-                about: "I am Achilles, once the greatest warrior of Greece. I fought at Troy, where glory and grief walked hand in hand. Now, I serve a different cause—leading these people to freedom.",
-                quest: "The real quest is simple: help these people find hope. After a lifetime of seeking glory, I finally understand purpose. Every step defies empires and gods.",
-                story: "At Troy, I thought glory was everything. I fought for fame, for my name to echo through eternity. Patroclus showed me there are causes worth more than fame. This journey taught me that lesson again.",
-                challenge: "⚔️ So you wish to test yourself against me? Very well! Let battle determine your worth!\n\n*Achilles shifts into a fighting stance*"
-            };
+        // MODE SYSTEM
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.mode === mode);
+            });
+            updateQuickActions();
+        }
 
-            addMessage(responses[type]);
+        function updateQuickActions() {
+            const actionsDiv = document.getElementById('quickActions');
+            actionsDiv.innerHTML = '';
 
-            if (type === 'challenge') {
-                setTimeout(() => {
-                    document.querySelector('.mode-tab:nth-child(2)').click();
-                    document.getElementById('moodIndicator').textContent = 'Battle Ready';
-                }, 1000);
+            if (currentMode === 'explore') {
+                addAction('🔍 Scout Ahead', () => skillCheck('Perception', CHARACTER.skills.perception));
+                addAction('🏕️ Make Camp', () => addMessage('We rest and tend to our wounds. The journey continues tomorrow.'));
+                addAction('🗣️ Rally Troops', () => skillCheck('Intimidation', CHARACTER.skills.intimidation));
+                addAction('🗺️ Navigate', () => skillCheck('Survival', CHARACTER.skills.survival));
+            } else if (currentMode === 'combat') {
+                addAction('🎲 Initiative', () => initiative());
+                CHARACTER.weapons.forEach(weapon => {
+                    addAction(`${weapon.emoji} ${weapon.name}`, () => weaponAttack(weapon));
+                });
+                CHARACTER.abilities.forEach(ability => {
+                    if (ability.type === 'spell' || ability.type === 'defense' || ability.type === 'heal') {
+                        addAction(`${ability.emoji} ${ability.name}`, () => useAbility(ability));
+                    }
+                });
+            } else if (currentMode === 'talk') {
+                addAction('💭 About yourself', () => addMessage("I once fought at Troy for glory. Now I fight for something greater—freedom for my people."));
+                addAction('🗺️ The quest', () => addMessage(`Our quest is clear: ${CHARACTER.quest}. Every step defies empires.`));
+                addAction('📖 Tell a story', () => addMessage("At Troy, Patroclus taught me that some causes matter more than fame. I carry that lesson with me."));
+                addAction('🤝 Offer encouragement', () => addMessage("Take heart, friend. We've come this far together. The gods favor the bold!"));
             }
         }
 
-        // Battle mode
-        function attackRoll() {
-            const roll = rollD20(9);
-            let text = `⚔️ **Attack Roll**: ${roll.total} (d20: ${roll.d20}+${roll.modifier})`;
+        function addAction(label, onClick) {
+            const actionsDiv = document.getElementById('quickActions');
+            const bubble = document.createElement('div');
+            bubble.className = 'action-bubble';
+            bubble.textContent = label;
+            bubble.onclick = onClick;
+            actionsDiv.appendChild(bubble);
+        }
 
-            if (roll.isCrit) {
-                text += '\n\n**CRITICAL HIT!** ⚡\nMy blade strikes true! The blow lands with devastating precision!';
-            } else if (roll.isFail) {
-                text += '\n\n*Critical miss...* 😓\nEven legends stumble. A rare moment of imperfection.';
-            } else if (roll.total >= 20) {
-                text += '\n\nA solid strike! My centuries of experience guide my hand!';
+        // COMBAT MECHANICS
+        function weaponAttack(weapon) {
+            // Roll to hit (d20 + modifier)
+            const d20 = rollDie(20);
+            const toHit = d20 + weapon.toHit;
+            const isCrit = d20 === 20;
+            const isFail = d20 === 1;
+
+            let message = `${weapon.emoji} **${weapon.name} Attack**`;
+            let details = `To Hit: ${toHit} (d20: ${d20} + ${weapon.toHit})`;
+
+            if (isCrit) {
+                message += ' - **CRITICAL HIT!**';
+                // Double damage dice on crit
+                const [diceCount, rest] = weapon.damage.split('d');
+                const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
+                const dmg = rollDice(parseInt(diceCount) * 2, diceSides, modifier);
+                details += `\nDamage: ${dmg.total} (${dmg.formula}: [${dmg.rolls.join(', ')}] + ${modifier})`;
+                message += '\n\nMy blade strikes true with devastating force!';
+            } else if (isFail) {
+                message += ' - **CRITICAL MISS**';
+                message += '\n\nEven legends stumble...';
             } else {
-                text += '\n\nA decent attempt, though not my finest work.';
+                // Normal damage
+                const [diceCount, rest] = weapon.damage.split('d');
+                const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
+                const dmg = rollDice(parseInt(diceCount), diceSides, modifier);
+                details += `\nDamage: ${dmg.total} (${dmg.formula}: [${dmg.rolls.join(', ')}] + ${modifier})`;
+
+                if (toHit >= 20) {
+                    message += '\n\nA solid strike!';
+                }
             }
 
-            addMessage(text);
+            addMessage(message, details);
         }
 
-        function initiativeRoll() {
-            const roll = rollD20(3);
-            let text = `🎲 **Initiative**: ${roll.total} (d20: ${roll.d20}+3)`;
+        function useAbility(ability) {
+            if (ability.type === 'spell') {
+                const d20 = rollDie(20);
+                const toHit = d20 + ability.toHit;
+                const isCrit = d20 === 20;
 
-            if (roll.isCrit) {
-                text += '\n\nLightning reflexes! I move faster than mortal eyes can follow!';
-            } else if (roll.total >= 18) {
-                text += '\n\nQuick as ever! My battle instincts remain sharp!';
-            } else {
-                text += '\n\nReady for battle.';
+                let message = `${ability.emoji} **${ability.name}**`;
+                let details = `Attack: ${toHit} (d20: ${d20} + ${ability.toHit})`;
+
+                const [diceCount, rest] = ability.damage.split('d');
+                const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
+                const multiplier = isCrit ? 2 : 1;
+                const dmg = rollDice(parseInt(diceCount) * multiplier, diceSides, modifier);
+
+                details += `\nDamage: ${dmg.total} (${isCrit ? diceCount * 2 : diceCount}d${diceSides}+${modifier}: [${dmg.rolls.join(', ')}] + ${modifier})`;
+
+                if (isCrit) {
+                    message += ' - **CRITICAL HIT!**\n\nDivine power surges through me!';
+                } else {
+                    message += '\n\nI channel my fury into this strike!';
+                }
+
+                addMessage(message, details);
+            } else if (ability.type === 'defense') {
+                const d20 = rollDie(20);
+                addMessage(`${ability.emoji} **${ability.name}**`, `Defense Roll: ${d20 + 5} (d20: ${d20} + 5)\n\nI raise my shield in protection!`);
+            } else if (ability.type === 'heal') {
+                const [diceCount, rest] = ability.healing.split('d');
+                const [diceSides, modifier] = rest.split('+').map(n => parseInt(n));
+                const heal = rollDice(parseInt(diceCount), diceSides, modifier);
+                addMessage(`${ability.emoji} **${ability.name}**`, `Healing: ${heal.total} HP (${heal.formula}: [${heal.rolls.join(', ')}] + ${modifier})\n\nMy warrior's spirit restores me!`);
+                CHARACTER.hp.current = Math.min(CHARACTER.hp.current + heal.total, CHARACTER.hp.max);
+                updateHPDisplay();
+            }
+        }
+
+        function initiative() {
+            const dexMod = Math.floor((CHARACTER.stats.dex - 10) / 2);
+            const roll = rollDie(20) + dexMod;
+            addMessage('🎲 **Initiative Roll**', `Initiative: ${roll} (d20: ${roll - dexMod} + ${dexMod})\n\nI ready myself for battle!`);
+        }
+
+        function skillCheck(skillName, skill) {
+            const d20 = rollDie(20);
+            const total = d20 + skill.mod;
+            const profMarker = skill.proficient ? ' ⭐' : '';
+
+            let message = `🎲 **${skillName} Check${profMarker}**`;
+            let details = `Result: ${total} (d20: ${d20} + ${skill.mod})`;
+
+            if (d20 === 20) {
+                message += ' - **NATURAL 20!**\n\nPerfectly executed!';
+            } else if (d20 === 1) {
+                message += ' - **NATURAL 1**\n\nNot my finest moment...';
+            } else if (total >= 20) {
+                message += '\n\nWell done!';
             }
 
-            addMessage(text);
+            addMessage(message, details);
         }
 
-        function savingThrow() {
-            const roll = rollD20(5);
-            let text = `🛡️ **Saving Throw**: ${roll.total} (d20: ${roll.d20}+5)`;
-
-            if (roll.isCrit) {
-                text += '\n\n**SUCCESS!** My divine heritage protects me!';
-            } else if (roll.isFail) {
-                text += '\n\nEven my divine blood has limits...';
-            } else if (roll.total >= 15) {
-                text += '\n\nResisted! My will remains unbroken!';
-            } else {
-                text += '\n\nA close call...';
-            }
-
-            addMessage(text);
+        // DICE ROLLER
+        function toggleDiceRoller() {
+            const roller = document.getElementById('diceRoller');
+            roller.classList.toggle('active');
         }
 
-        function secondWind() {
-            const healing = rollDie(10) + 10;
-            addMessage(`💚 **Second Wind**: Recovered ${healing} HP\n\nI draw upon my warrior's resilience. The wounds begin to close!`);
+        function customDiceRoll() {
+            const count = parseInt(document.getElementById('diceCount').value);
+            const sides = parseInt(document.getElementById('diceSides').value);
+            const modifier = parseInt(document.getElementById('diceModifier').value);
+
+            const result = rollDice(count, sides, modifier);
+            addMessage('🎲 **Custom Roll**', `Result: ${result.total} (${result.formula}: [${result.rolls.join(', ')}]${modifier !== 0 ? ' + ' + modifier : ''})`);
         }
 
-        // Skills mode
-        function skillCheck(skillName, modifier, proficient) {
-            const roll = rollD20(modifier);
-            const profText = proficient ? ' ⭐' : '';
-            let text = `🎲 **${skillName} Check${profText}**: ${roll.total} (d20: ${roll.d20}+${modifier})`;
-
-            if (roll.isCrit) {
-                text += '\n\n**NATURAL 20!** A flawless performance!';
-            } else if (roll.isFail) {
-                text += '\n\n*Natural 1...* Even heroes fail sometimes.';
-            } else if (roll.total >= 20) {
-                text += '\n\nExcellent! My skills remain sharp!';
-            } else if (roll.total >= 15) {
-                text += '\n\nA solid effort.';
-            } else {
-                text += '\n\nNot my best work.';
-            }
-
-            addMessage(text);
+        // CHARACTER SHEET
+        function toggleSheet() {
+            alert(`CHARACTER SHEET\n\nName: ${CHARACTER.name}\nHP: ${CHARACTER.hp.current}/${CHARACTER.hp.max}\nAC: ${CHARACTER.ac}\n\nSTR: ${CHARACTER.stats.str}\nDEX: ${CHARACTER.stats.dex}\nCON: ${CHARACTER.stats.con}\nINT: ${CHARACTER.stats.int}\nWIS: ${CHARACTER.stats.wis}\nCHA: ${CHARACTER.stats.cha}\n\nProficiency: +${CHARACTER.proficiencyBonus}`);
         }
+
+        function updateHPDisplay() {
+            const hpDisplay = document.getElementById('hpDisplay');
+            hpDisplay.textContent = `${CHARACTER.hp.current}/${CHARACTER.hp.max} HP`;
+            const percent = CHARACTER.hp.current / CHARACTER.hp.max;
+            hpDisplay.className = 'hp-display' + (percent <= 0.25 ? ' critical' : percent <= 0.6 ? ' damaged' : '');
+        }
+
+        // Start!
+        init();
     </script>
 </body>
 </html>
