@@ -48,84 +48,53 @@
   margin: 0 auto;
 }
 
-/* Prompt Section */
-.prompt-section {
+/* Create Character Section */
+.create-section {
   background: linear-gradient(145deg, #2d2d44 0%, #1a1a2e 100%);
   border-radius: 16px;
-  padding: 24px;
+  padding: 32px 24px;
   margin-bottom: 24px;
   border: 2px solid #3a3a52;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  text-align: center;
 }
 
 .section-title {
   font-size: 24px;
   color: #ffd700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   text-align: center;
 }
 
-.prompt-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.prompt-input {
-  width: 100%;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid #4a4a62;
-  border-radius: 12px;
-  color: #fff;
-  font-size: 16px;
-  font-family: inherit;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.prompt-input:focus {
-  border-color: #ffd700;
-}
-
-.prompt-input::placeholder {
-  color: #888;
-}
-
-.create-btn {
-  display: flex;
+.new-character-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 16px 24px;
+  gap: 12px;
+  padding: 18px 40px;
   background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
   border: none;
   border-radius: 12px;
   color: #1a1a2e;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5);
+  margin-top: 8px;
 }
 
-.create-btn:hover:not(:disabled) {
+.new-character-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  box-shadow: 0 6px 24px rgba(255, 215, 0, 0.7);
 }
 
-.create-btn:active:not(:disabled) {
+.new-character-btn:active {
   transform: translateY(0);
 }
 
-.create-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .btn-icon {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 /* Browse Section */
@@ -340,12 +309,9 @@
     font-size: 20px;
   }
 
-  .prompt-input {
-    font-size: 14px;
-  }
-
-  .create-btn {
-    font-size: 16px;
+  .new-character-btn {
+    font-size: 18px;
+    padding: 16px 32px;
   }
 
   .featured-preview {

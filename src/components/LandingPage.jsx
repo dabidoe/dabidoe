@@ -4,20 +4,13 @@ import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate()
-  const [prompt, setPrompt] = useState('')
   const [showInfo, setShowInfo] = useState(false)
 
-  const handleCreateCharacter = async (e) => {
-    e.preventDefault()
-    if (prompt.trim()) {
-      // TODO: Call API to create character from prompt
-      // For now, navigate to demo character
-      navigate('/character/achilles')
-    }
+  const handleCreateCharacter = () => {
+    navigate('/create')
   }
 
   const handleBrowse = () => {
-    // TODO: Navigate to browse page
     navigate('/browse')
   }
 
@@ -32,22 +25,14 @@ function LandingPage() {
       </header>
 
       <main className="landing-main">
-        {/* Create with Prompt Section */}
-        <section className="prompt-section">
+        {/* Create Character Section */}
+        <section className="create-section">
           <h2 className="section-title">Create Your Character</h2>
-          <form onSubmit={handleCreateCharacter} className="prompt-form">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe your character... (e.g., 'A brave warrior from ancient Greece with legendary combat skills')"
-              className="prompt-input"
-              rows="4"
-            />
-            <button type="submit" className="create-btn" disabled={!prompt.trim()}>
-              <span className="btn-icon">✨</span>
-              Create Character
-            </button>
-          </form>
+          <p className="section-desc">Bring your character to life with AI-powered creation</p>
+          <button onClick={handleCreateCharacter} className="new-character-btn">
+            <span className="btn-icon">✨</span>
+            New Character
+          </button>
         </section>
 
         {/* Browse Section */}
