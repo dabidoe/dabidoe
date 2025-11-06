@@ -3,6 +3,8 @@
  * Supports ElevenLabs and OpenAI TTS
  */
 
+import { selectVoice } from './voiceSelection'
+
 const ELEVENLABS_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
 const TTS_PROVIDER = import.meta.env.VITE_TTS_PROVIDER || 'elevenlabs'
@@ -87,7 +89,8 @@ async function generateOpenAISpeech(text, voice = 'alloy') {
  * @param {string} text - Text to speak
  * @param {Object} options - Options for TTS
  * @param {string} options.provider - 'elevenlabs' or 'openai'
- * @param {string} options.voiceId - ElevenLabs voice ID or OpenAI voice name
+ * @param {string} options.voiceId - Specific voice ID (overrides auto-selection)
+ * @param {Object} options.character - Character object for auto voice selection
  * @param {Function} options.onStart - Callback when audio starts playing
  * @param {Function} options.onEnd - Callback when audio ends
  * @returns {Promise<HTMLAudioElement>} Audio element
@@ -96,17 +99,25 @@ export async function speak(text, options = {}) {
   const {
     provider = TTS_PROVIDER,
     voiceId,
+    character,
     onStart,
     onEnd
   } = options
 
   try {
+    // Auto-select voice based on character attributes if no voiceId provided
+    let selectedVoiceId = voiceId
+    if (!selectedVoiceId && character) {
+      selectedVoiceId = selectVoice(character, provider)
+      console.log(`Auto-selected voice: ${selectedVoiceId} for ${character.name}`)
+    }
+
     let blob
 
     if (provider === 'elevenlabs') {
-      blob = await generateElevenLabsSpeech(text, voiceId)
+      blob = await generateElevenLabsSpeech(text, selectedVoiceId)
     } else if (provider === 'openai') {
-      blob = await generateOpenAISpeech(text, voiceId)
+      blob = await generateOpenAISpeech(text, selectedVoiceId)
     } else {
       throw new Error(`Unknown TTS provider: ${provider}`)
     }

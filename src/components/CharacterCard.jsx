@@ -170,7 +170,8 @@ function CharacterCard() {
       // Start speaking the new message
       setSpeakingMessageIndex(messageIndex)
       const audio = await speak(text, {
-        voiceId: character?.voiceId,
+        character: character, // Pass entire character object for auto voice selection
+        voiceId: character?.voiceId, // Explicit voiceId overrides auto-selection
         onEnd: () => {
           setSpeakingMessageIndex(null)
           setPlayingAudio(null)
@@ -196,7 +197,7 @@ function CharacterCard() {
       const updatedMessages = [...prev, newMessage]
 
       // Autoplay TTS for character messages if enabled
-      if (type === 'character' && autoplay && ttsAvailable && character?.voiceId) {
+      if (type === 'character' && autoplay && ttsAvailable) {
         setTimeout(() => {
           handleSpeak(text, updatedMessages.length - 1)
         }, 100)
@@ -247,7 +248,7 @@ function CharacterCard() {
           </div>
         </div>
         <div className="header-actions">
-          {ttsAvailable && character?.voiceId && (
+          {ttsAvailable && (
             <button
               className={`action-btn ${autoplay ? 'active' : ''}`}
               onClick={() => setAutoplay(!autoplay)}
@@ -300,7 +301,7 @@ function CharacterCard() {
                   <div className="author">
                     <span>{character.name}</span>
                     <span>{mode === 'battle' ? '⚔️' : character.portrait}</span>
-                    {ttsAvailable && character?.voiceId && (
+                    {ttsAvailable && (
                       <button
                         className={`speaker-btn ${speakingMessageIndex === index ? 'speaking' : ''}`}
                         onClick={() => handleSpeak(message.text, index)}

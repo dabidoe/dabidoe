@@ -8,6 +8,10 @@ export const mockCharacters = {
     class: 'Fighter',
     level: 5,
     race: 'Human',
+    gender: 'Female',
+    voice: 'Authoritative',
+    mood: 'Resolute',
+    personality: 'Bold',
     portrait: '🛡️',
     hp: { current: 47, max: 47 },
     ac: 18,
@@ -88,6 +92,10 @@ export const mockCharacters = {
     class: 'Wizard',
     level: 5,
     race: 'High Elf',
+    gender: 'Female',
+    voice: 'Soft',
+    mood: 'Calm',
+    personality: 'Wise',
     portrait: '🔮',
     hp: { current: 28, max: 28 },
     ac: 12,
@@ -211,6 +219,10 @@ export const mockCharacters = {
     class: 'Cleric',
     level: 5,
     race: 'Dwarf',
+    gender: 'Male',
+    voice: 'Deep',
+    mood: 'Determined',
+    personality: 'Stoic',
     portrait: '⛪',
     hp: { current: 40, max: 40 },
     ac: 16,
@@ -334,6 +346,10 @@ export const mockCharacters = {
     class: 'Legendary Warrior',
     level: 10,
     race: 'Demigod',
+    gender: 'Male',
+    voice: 'Deep',
+    mood: 'Battle Ready',
+    personality: 'Confident',
     portrait: '🛡️',
     hp: { current: 104, max: 104 },
     ac: 18,
@@ -416,7 +432,12 @@ export const mockCharacters = {
     class: 'Wizard',
     level: 20,
     race: 'Maiar (appears as old man)',
+    gender: 'Male',
+    voice: 'Wise',
+    mood: 'Contemplative',
+    personality: 'Wise',
     portrait: '🧙‍♂️',
+    voiceId: 'pNInz6obpgDQGcFmaJgB', // ElevenLabs Adam voice - explicit override
     hp: { current: 130, max: 130 },
     ac: 15,
     speed: 30,
@@ -627,3 +648,8 @@ export const mockCharacters = {
     }
   }
 }
+
+// Add aliases for BrowsePage compatibility
+mockCharacters['fighter-01'] = mockCharacters.fighter
+mockCharacters['mage-01'] = mockCharacters.mage
+mockCharacters['cleric-01'] = mockCharacters.cleric
