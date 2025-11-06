@@ -1,11 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
+import LoginModal from './LoginModal'
+import UserMenu from './UserMenu'
 import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate()
+  const { isAuthenticated, loginAsGuest } = useUser()
   const [prompt, setPrompt] = useState('')
   const [showInfo, setShowInfo] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  // Auto-login as guest if not authenticated
+  useEffect(() => {
+    const autoLoginGuest = async () => {
+      if (!isAuthenticated) {
+        try {
+          await loginAsGuest()
+        } catch (error) {
+          console.error('Failed to auto-login as guest:', error)
+        }
+      }
+    }
+
+    autoLoginGuest()
+  }, [isAuthenticated, loginAsGuest])
 
   const handleCreateCharacter = async (e) => {
     e.preventDefault()
@@ -24,9 +44,20 @@ function LandingPage() {
   return (
     <div className="landing-page">
       <header className="landing-header">
-        <div className="logo">
-          <span className="logo-icon">⚔️</span>
-          <h1>Character Foundry</h1>
+        <div className="header-top">
+          <div className="logo">
+            <span className="logo-icon">⚔️</span>
+            <h1>Character Foundry</h1>
+          </div>
+          <div className="header-actions">
+            <button
+              className="login-trigger-btn"
+              onClick={() => setShowLoginModal(true)}
+            >
+              Sign In
+            </button>
+            <UserMenu />
+          </div>
         </div>
         <p className="tagline">Forge Your Adventure</p>
       </header>
@@ -121,6 +152,8 @@ function LandingPage() {
       <footer className="landing-footer">
         <p>&copy; 2024 Character Foundry. All rights reserved.</p>
       </footer>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }
