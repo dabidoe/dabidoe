@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AbilityIcon from './AbilityIcon'
 import './AbilityCard.css'
 
 function AbilityCard({ ability, onUse, character, mode }) {
@@ -29,26 +30,11 @@ function AbilityCard({ ability, onUse, character, mode }) {
     return `(${uses.current}/${uses.max})`
   }
 
-  // Get icon from iconLayers or fallback
-  const getIcon = () => {
-    // Your iconLayers format: ["a8b5484b05547025ec022a00a80b49c4..."]
-    // For now, use category-based emoji fallback
-    if (ability.category === 'spell') {
-      const schoolIcons = {
-        'Abjuration': '🛡️',
-        'Conjuration': '🌀',
-        'Divination': '🔮',
-        'Enchantment': '✨',
-        'Evocation': '🔥',
-        'Illusion': '👁️',
-        'Necromancy': '💀',
-        'Transmutation': '⚗️'
-      }
-      return schoolIcons[details.school] || '📜'
-    }
-
+  // Get display icon text for button (emoji format)
+  const getDisplayIcon = () => {
     if (ability.category === 'attack') return '⚔️'
     if (ability.category === 'item') return '🎒'
+    if (ability.category === 'social') return '💬'
     return '⭐'
   }
 
@@ -77,13 +63,16 @@ function AbilityCard({ ability, onUse, character, mode }) {
         disabled={!canUse()}
         title={expanded ? details.longDescription : details.shortDescription}
       >
-        {getIcon()} {details.name} {getUsesText()}
+        {getDisplayIcon()} {details.name} {getUsesText()}
       </button>
 
       {expanded && (
         <div className="ability-details" onClick={(e) => e.stopPropagation()}>
           <div className="ability-header">
-            <h4>{details.name}</h4>
+            <div className="ability-title">
+              <AbilityIcon ability={ability} size="small" format="emoji" />
+              <h4>{details.name}</h4>
+            </div>
             <button className="close-details" onClick={() => setExpanded(false)}>✕</button>
           </div>
 
@@ -195,6 +184,38 @@ function AbilityCard({ ability, onUse, character, mode }) {
       )}
     </div>
   )
+}
+
+AbilityCard.propTypes = {
+  ability: PropTypes.shape({
+    abilityId: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    equipped: PropTypes.bool,
+    uses: PropTypes.shape({
+      current: PropTypes.number,
+      max: PropTypes.number,
+    }),
+    details: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      shortDescription: PropTypes.string,
+      longDescription: PropTypes.string,
+      school: PropTypes.string,
+      level: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      castingTime: PropTypes.string,
+      range: PropTypes.string,
+      components: PropTypes.string,
+      duration: PropTypes.string,
+      attackBonus: PropTypes.string,
+      damageFormula: PropTypes.string,
+      damageType: PropTypes.string,
+      rarity: PropTypes.string,
+      iconLayers: PropTypes.array,
+    }).isRequired,
+  }).isRequired,
+  onUse: PropTypes.func.isRequired,
+  character: PropTypes.object,
+  mode: PropTypes.string,
 }
 
 export default AbilityCard

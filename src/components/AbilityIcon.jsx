@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { parseIconLayers, getSpellIcon, getItemIcon } from '../utils/icons'
 import './AbilityIcon.css'
 
@@ -81,6 +82,24 @@ function AbilityIcon({ ability, size = 'medium', format = 'auto' }) {
   }
 
   return <span className={`ability-icon ${sizeClass}`}>✨</span>
+}
+
+AbilityIcon.propTypes = {
+  ability: PropTypes.shape({
+    iconLayers: PropTypes.array,
+    details: PropTypes.shape({
+      name: PropTypes.string,
+      school: PropTypes.string,
+      type: PropTypes.string,
+    }),
+  }).isRequired,
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  format: PropTypes.oneOf(['auto', 'emoji', 'image']),
+}
+
+AbilityIcon.defaultProps = {
+  size: 'medium',
+  format: 'auto',
 }
 
 export default AbilityIcon

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getDemoAbilities } from '../data/demo-abilities'
 import AbilityIcon from './AbilityIcon'
 import './AbilityLibrary.css'
 
@@ -26,68 +27,8 @@ function AbilityLibrary({ characterId, onAddAbility, onClose }) {
         // const response = await fetch('/api/abilities')
         // const data = await response.json()
 
-        // Demo data for now
-        const demoAbilities = [
-          {
-            _id: '1',
-            name: 'Fireball',
-            shortDescription: 'A bright streak flashes to a point you choose within range',
-            longDescription: 'A bright streak flashes from your pointing finger to a point you choose within range and then blossoms with a low roar into an explosion of flame...',
-            school: 'Evocation',
-            level: 3,
-            castingTime: '1 action',
-            range: '150 feet',
-            components: 'V, S, M (a tiny ball of bat guano and sulfur)',
-            duration: 'Instantaneous',
-            damageFormula: '8d6',
-            savingThrow: 'Dexterity',
-            userId: 'system',
-            iconLayers: [['https://game-icons.net/icons/ff5722/000000/1x1/lorc/fire-bolt.svg']]
-          },
-          {
-            _id: '2',
-            name: 'Shield',
-            shortDescription: 'An invisible barrier of magical force appears',
-            longDescription: 'An invisible barrier of magical force appears and protects you. Until the start of your next turn, you have a +5 bonus to AC...',
-            school: 'Abjuration',
-            level: 1,
-            castingTime: '1 reaction',
-            range: 'Self',
-            components: 'V, S',
-            duration: '1 round',
-            userId: 'system',
-            iconLayers: [['https://game-icons.net/icons/4CAF50/000000/1x1/lorc/shield-reflect.svg']]
-          },
-          {
-            _id: '3',
-            name: 'Longsword',
-            shortDescription: 'A versatile martial melee weapon',
-            longDescription: 'Proficiency with a longsword allows you to add your proficiency bonus to the attack roll...',
-            type: 'Weapon',
-            rarity: 'Common',
-            itemSlot: 'Weapon',
-            damage: '1d8',
-            value: 1500,
-            weight: 3,
-            userId: 'system',
-            iconLayers: [['https://game-icons.net/icons/9E9E9E/000000/1x1/various-artists/crossed-swords.svg']]
-          },
-          {
-            _id: '4',
-            name: 'Potion of Healing',
-            shortDescription: 'You regain 2d4 + 2 hit points',
-            longDescription: 'You regain 2d4 + 2 hit points when you drink this potion. The potion\'s red liquid glimmers when agitated.',
-            type: 'Potion',
-            rarity: 'Common',
-            itemSlot: 'Miscellaneous',
-            value: 5000,
-            weight: 0.5,
-            userId: 'system',
-            iconLayers: [['https://game-icons.net/icons/9E9E9E/000000/1x1/various-artists/potion.svg']]
-          }
-        ]
-
-        setAbilities(demoAbilities)
+        const loadedAbilities = getDemoAbilities()
+        setAbilities(loadedAbilities)
         setLoading(false)
       } catch (error) {
         console.error('Failed to load abilities:', error)

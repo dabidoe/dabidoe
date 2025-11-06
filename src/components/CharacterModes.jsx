@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import { rollD20 } from '../utils/dice'
 import AbilityCard from './AbilityCard'
 import './CharacterModes.css'
@@ -263,6 +264,26 @@ function CharacterModes({ character, mode, onMessage, abilities = [] }) {
     default:
       return renderConversationMode()
   }
+}
+
+CharacterModes.propTypes = {
+  character: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    abilities: PropTypes.array,
+    proficiencies: PropTypes.arrayOf(PropTypes.string),
+    stats: PropTypes.shape({
+      str: PropTypes.number,
+      dex: PropTypes.number,
+      con: PropTypes.number,
+      int: PropTypes.number,
+      wis: PropTypes.number,
+      cha: PropTypes.number,
+    }),
+    proficiencyBonus: PropTypes.number,
+  }).isRequired,
+  mode: PropTypes.oneOf(['conversation', 'battle', 'skills']).isRequired,
+  onMessage: PropTypes.func.isRequired,
+  abilities: PropTypes.array,
 }
 
 export default CharacterModes

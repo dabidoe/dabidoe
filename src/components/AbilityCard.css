@@ -70,6 +70,12 @@
   border-bottom: 1px solid rgba(212, 175, 55, 0.3);
 }
 
+.ability-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .ability-header h4 {
   color: #d4af37;
   font-size: 18px;

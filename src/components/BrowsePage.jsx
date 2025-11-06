@@ -1,22 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+import { getDemoCharacterList } from '../data/demo-characters'
 import './BrowsePage.css'
 
 function BrowsePage() {
   const navigate = useNavigate()
 
-  // Demo characters - will be fetched from API
-  const characters = [
-    {
-      id: 'achilles',
-      name: 'Achilles',
-      icon: '🛡️',
-      type: 'Legendary Warrior',
-      description: 'The greatest warrior of ancient Greece',
-      hp: 104,
-      ac: 18
-    },
-    // Add more characters as they become available
-  ]
+  // TODO: Replace with API call to fetch characters
+  const characters = getDemoCharacterList()
 
   return (
     <div className="browse-page">
@@ -35,14 +25,10 @@ function BrowsePage() {
               className="character-card-browse"
               onClick={() => navigate(`/character/${character.id}`)}
             >
-              <div className="card-icon">{character.icon}</div>
+              <div className="card-icon">{character.portrait}</div>
               <h2>{character.name}</h2>
-              <p className="card-type">{character.type}</p>
+              <p className="card-type">{character.title}</p>
               <p className="card-desc">{character.description}</p>
-              <div className="card-stats">
-                <span className="stat">HP: {character.hp}</span>
-                <span className="stat">AC: {character.ac}</span>
-              </div>
               <button className="select-btn">Select Character</button>
             </div>
           ))}
