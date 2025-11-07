@@ -764,6 +764,151 @@
       letter-spacing: 1px;
     }
 
+    /* Spells */
+    .spell-level-section {
+      margin-bottom: 20px;
+    }
+
+    .spell-level-header {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spell-card {
+      padding: 12px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+
+    .spell-card.prepared {
+      opacity: 1;
+      border-color: var(--accent-color);
+    }
+
+    .spell-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .spell-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .spell-icon {
+      font-size: 1.5rem;
+    }
+
+    .spell-info {
+      flex: 1;
+    }
+
+    .spell-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .spell-damage {
+      font-size: 0.75rem;
+      color: var(--battle-color);
+      font-weight: 700;
+    }
+
+    .spell-description {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    .prepared-indicator {
+      padding: 3px 8px;
+      background: var(--accent-color);
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    /* Inventory */
+    .inventory-category {
+      margin-bottom: 20px;
+    }
+
+    .inventory-category-title {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .inventory-item {
+      padding: 12px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .inventory-item.equipped {
+      border-color: var(--accent-color);
+      background: rgba(74, 144, 226, 0.1);
+    }
+
+    .inventory-item:hover {
+      border-color: var(--accent-color);
+      transform: translateY(-1px);
+    }
+
+    .inventory-item-info {
+      flex: 1;
+    }
+
+    .inventory-item-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .inventory-item-type {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: capitalize;
+    }
+
+    .inventory-item-quantity {
+      padding: 4px 10px;
+      background: var(--surface-color);
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .equipped-badge {
+      padding: 3px 8px;
+      background: var(--accent-color);
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+    }
+
     /* Dice Overlay */
     .dice-overlay {
       position: fixed;
@@ -1073,6 +1218,7 @@
             <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
             <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
             <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
+            <button class="mode-btn" onclick="switchChatMode('inventory')">🎒 Inventory</button>
           </div>
 
           <!-- Conversation Mode -->
@@ -1281,6 +1427,20 @@
               </div>
             </div>
           </div>
+
+          <!-- Inventory Mode -->
+          <div id="inventoryMode" style="display: none;">
+            <div style="padding: 15px; background: var(--background-color); border-radius: 8px; margin-bottom: 15px;">
+              <strong style="color: var(--text-primary); margin-bottom: 10px; display: block;">Character Inventory</strong>
+              <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
+                Manage your equipment, weapons, and consumables. Click items to use or equip them.
+              </p>
+            </div>
+
+            <div id="inventoryGrid">
+              <!-- Will be populated dynamically -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1341,12 +1501,21 @@
         name: 'Aelindra Moonwhisper',
         emoji: '🏹',
         class: 'Ranger',
+        classType: 'halfcaster', // melee, halfcaster, or caster
         level: 8,
         hp: { current: 58, max: 68 },
         ac: 16,
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
         portrait: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
         location: 'forest',
+        inventory: [
+          { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true },
+          { id: 'arrows', name: 'Arrows', type: 'ammunition', quantity: 40 },
+          { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: true },
+          { id: 'healing_potion', name: 'Potion of Healing', type: 'consumable', quantity: 3 },
+          { id: 'rope', name: 'Rope (50 ft)', type: 'gear', quantity: 1 },
+          { id: 'rations', name: 'Rations', type: 'consumable', quantity: 7 }
+        ],
         skills: {
           // Format: [ability, proficiency] where proficiency: 0=none, 1=proficient, 2=expertise
           acrobatics: ['dex', 1],
@@ -1369,11 +1538,20 @@
           survival: ['wis', 2]  // Expertise
         },
         abilities: [
-          { id: 'hunters_mark', name: "Hunter's Mark", icon: '🎯', damage: '1d6', description: 'Mark a target for extra damage' },
           { id: 'multiattack', name: 'Multiattack', icon: '⚔️', damage: '2d8+4', description: 'Make two attacks' },
-          { id: 'cure_wounds', name: 'Cure Wounds', icon: '❤️', damage: '1d8+3', description: 'Heal an ally' },
           { id: 'arrow_volley', name: 'Arrow Volley', icon: '🏹', damage: '3d8', description: 'Rain arrows on area' }
         ],
+        spells: {
+          1: [
+            { id: 'hunters_mark', name: "Hunter's Mark", prepared: true, icon: '🎯', damage: '1d6', description: 'Mark a target for extra damage' },
+            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Heal an ally' },
+            { id: 'goodberry', name: 'Goodberry', prepared: false, icon: '🫐', damage: null, description: 'Create 10 berries that heal 1 HP each' }
+          ],
+          2: [
+            { id: 'pass_without_trace', name: 'Pass Without Trace', prepared: true, icon: '👻', damage: null, description: '+10 to Stealth for your party' },
+            { id: 'spike_growth', name: 'Spike Growth', prepared: false, icon: '🌿', damage: '2d4', description: 'Thorny ground damages enemies' }
+          ]
+        },
         states: {
           default: { mood: 'calm', greeting: 'You find me studying tracks in the forest. The creatures here have been acting strangely...' },
           battle: { mood: 'focused', greeting: 'Enemy sighted! Ready your weapons!' },
@@ -1387,12 +1565,21 @@
         name: 'Theron Brightshield',
         emoji: '🛡️',
         class: 'Paladin',
+        classType: 'halfcaster',
         level: 10,
         hp: { current: 88, max: 104 },
         ac: 18,
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
         portrait: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
         location: 'temple',
+        inventory: [
+          { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true },
+          { id: 'plate_armor', name: 'Plate Armor', type: 'armor', equipped: true },
+          { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true },
+          { id: 'holy_symbol', name: 'Holy Symbol', type: 'gear', equipped: true },
+          { id: 'healing_potion', name: 'Potion of Greater Healing', type: 'consumable', quantity: 2 },
+          { id: 'oil_of_sharpness', name: 'Oil of Sharpness', type: 'consumable', quantity: 1 }
+        ],
         skills: {
           acrobatics: ['dex', 0],
           animalHandling: ['wis', 0],
@@ -1419,6 +1606,21 @@
           { id: 'shield_bash', name: 'Shield Bash', icon: '🛡️', damage: '1d8+4', description: 'Bash with your shield' },
           { id: 'aura_courage', name: 'Aura of Courage', icon: '💪', damage: null, description: 'Grant allies immunity to fear' }
         ],
+        spells: {
+          1: [
+            { id: 'bless', name: 'Bless', prepared: true, icon: '✨', damage: null, description: '+1d4 to attack rolls and saves' },
+            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Heal an ally' },
+            { id: 'shield_of_faith', name: 'Shield of Faith', prepared: true, icon: '🛡️', damage: null, description: '+2 AC to target' }
+          ],
+          2: [
+            { id: 'aid', name: 'Aid', prepared: true, icon: '💪', damage: null, description: '+5 max HP to 3 allies' },
+            { id: 'lesser_restoration', name: 'Lesser Restoration', prepared: false, icon: '🩹', damage: null, description: 'End disease or condition' }
+          ],
+          3: [
+            { id: 'aura_of_vitality', name: 'Aura of Vitality', prepared: true, icon: '❤️‍🔥', damage: '2d6', description: 'Heal allies over time' },
+            { id: 'revivify', name: 'Revivify', prepared: false, icon: '⚰️', damage: null, description: 'Bring back the dead' }
+          ]
+        },
         states: {
           default: { mood: 'noble', greeting: 'Greetings, friend. How may I serve justice this day?' },
           battle: { mood: 'righteous', greeting: 'By the light, evil shall not prevail!' },
@@ -1432,12 +1634,21 @@
         name: 'Zara Infernalis',
         emoji: '🔮',
         class: 'Wizard',
+        classType: 'caster',
         level: 9,
         hp: { current: 42, max: 54 },
         ac: 13,
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
         portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
         location: 'ruins',
+        inventory: [
+          { id: 'staff', name: 'Staff of Power', type: 'weapon', equipped: true },
+          { id: 'robes', name: 'Robes of the Archmagi', type: 'armor', equipped: true },
+          { id: 'component_pouch', name: 'Component Pouch', type: 'gear', equipped: true },
+          { id: 'spellbook', name: 'Spellbook', type: 'gear', equipped: true },
+          { id: 'scroll_fireball', name: 'Scroll of Fireball', type: 'consumable', quantity: 1 },
+          { id: 'scroll_counterspell', name: 'Scroll of Counterspell', type: 'consumable', quantity: 2 }
+        ],
         skills: {
           acrobatics: ['dex', 0],
           animalHandling: ['wis', 0],
@@ -1458,12 +1669,36 @@
           stealth: ['dex', 0],
           survival: ['wis', 0]
         },
-        abilities: [
-          { id: 'fireball', name: 'Fireball', icon: '🔥', damage: '8d6', description: 'Devastating explosion of flame' },
-          { id: 'counterspell', name: 'Counterspell', icon: '🚫', damage: null, description: 'Negate enemy spells' },
-          { id: 'magic_missile', name: 'Magic Missile', icon: '✨', damage: '3d4+3', description: 'Unerring magical darts' },
-          { id: 'lightning_bolt', name: 'Lightning Bolt', icon: '⚡', damage: '8d6', description: 'Line of electrical energy' }
-        ],
+        abilities: [],
+        spells: {
+          0: [
+            { id: 'fire_bolt', name: 'Fire Bolt', prepared: true, icon: '🔥', damage: '2d10', description: 'Ranged fire attack cantrip' },
+            { id: 'mage_hand', name: 'Mage Hand', prepared: true, icon: '✋', damage: null, description: 'Telekinetic manipulation' },
+            { id: 'prestidigitation', name: 'Prestidigitation', prepared: true, icon: '✨', damage: null, description: 'Minor magical trick' }
+          ],
+          1: [
+            { id: 'magic_missile', name: 'Magic Missile', prepared: true, icon: '✨', damage: '3d4+3', description: 'Unerring magical darts' },
+            { id: 'shield', name: 'Shield', prepared: true, icon: '🛡️', damage: null, description: '+5 AC until your next turn' },
+            { id: 'detect_magic', name: 'Detect Magic', prepared: false, icon: '🔮', damage: null, description: 'Sense magical auras' }
+          ],
+          2: [
+            { id: 'misty_step', name: 'Misty Step', prepared: true, icon: '💨', damage: null, description: 'Teleport 30 feet' },
+            { id: 'scorching_ray', name: 'Scorching Ray', prepared: false, icon: '🔥', damage: '2d6', description: 'Three rays of fire' }
+          ],
+          3: [
+            { id: 'fireball', name: 'Fireball', prepared: true, icon: '🔥', damage: '8d6', description: 'Devastating explosion of flame' },
+            { id: 'counterspell', name: 'Counterspell', prepared: true, icon: '🚫', damage: null, description: 'Negate enemy spells' },
+            { id: 'lightning_bolt', name: 'Lightning Bolt', prepared: false, icon: '⚡', damage: '8d6', description: 'Line of electrical energy' }
+          ],
+          4: [
+            { id: 'polymorph', name: 'Polymorph', prepared: true, icon: '🐸', damage: null, description: 'Transform target into beast' },
+            { id: 'wall_of_fire', name: 'Wall of Fire', prepared: false, icon: '🔥', damage: '5d8', description: 'Create wall of flames' }
+          ],
+          5: [
+            { id: 'cone_of_cold', name: 'Cone of Cold', prepared: true, icon: '❄️', damage: '8d8', description: 'Blast of frigid air' },
+            { id: 'wall_of_force', name: 'Wall of Force', prepared: false, icon: '🛡️', damage: null, description: 'Invisible wall' }
+          ]
+        },
         states: {
           default: { mood: 'curious', greeting: 'Fascinating... the magical energies here are quite unusual.' },
           battle: { mood: 'calculating', greeting: 'Let me show you the true power of the arcane!' },
@@ -1477,12 +1712,22 @@
         name: 'Kael Quickfingers',
         emoji: '🗡️',
         class: 'Rogue',
+        classType: 'melee',
         level: 7,
         hp: { current: 38, max: 45 },
         ac: 15,
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
         portrait: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
         location: 'tavern',
+        inventory: [
+          { id: 'rapier', name: 'Rapier +1', type: 'weapon', equipped: true },
+          { id: 'dagger', name: 'Dagger', type: 'weapon', equipped: true, quantity: 3 },
+          { id: 'leather_armor', name: 'Studded Leather Armor', type: 'armor', equipped: true },
+          { id: 'thieves_tools', name: "Thieves' Tools", type: 'gear', equipped: true },
+          { id: 'healing_potion', name: 'Potion of Healing', type: 'consumable', quantity: 2 },
+          { id: 'poison', name: 'Vial of Poison', type: 'consumable', quantity: 3 },
+          { id: 'grappling_hook', name: 'Grappling Hook', type: 'gear', quantity: 1 }
+        ],
         skills: {
           acrobatics: ['dex', 2], // Expertise
           animalHandling: ['wis', 0],
@@ -1627,20 +1872,53 @@
       const abilitiesGrid = document.getElementById('abilitiesGrid');
       let html = '';
 
-      currentCharacter.abilities.forEach(ability => {
-        html += `
-          <div class="ability-card" onclick="useAbility('${ability.id}')">
-            <div class="ability-header">
-              <div class="ability-icon">${ability.icon}</div>
-              <div class="ability-info">
-                <div class="ability-name">${ability.name}</div>
-                ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
+      // Show abilities (for all classes)
+      if (currentCharacter.abilities && currentCharacter.abilities.length > 0) {
+        html += '<div style="margin-bottom: 20px;"><strong style="color: var(--text-primary);">Abilities</strong></div>';
+        currentCharacter.abilities.forEach(ability => {
+          html += `
+            <div class="ability-card" onclick="useAbility('${ability.id}')">
+              <div class="ability-header">
+                <div class="ability-icon">${ability.icon}</div>
+                <div class="ability-info">
+                  <div class="ability-name">${ability.name}</div>
+                  ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
+                </div>
               </div>
+              <div class="ability-description">${ability.description}</div>
             </div>
-            <div class="ability-description">${ability.description}</div>
-          </div>
-        `;
-      });
+          `;
+        });
+      }
+
+      // Show spells (for casters and halfcasters)
+      if (currentCharacter.spells && (currentCharacter.classType === 'caster' || currentCharacter.classType === 'halfcaster')) {
+        html += '<div style="margin: 20px 0;"><strong style="color: var(--text-primary);">Spells</strong></div>';
+
+        Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
+          const levelName = level === '0' ? 'Cantrips' : `Level ${level}`;
+          html += `<div class="spell-level-section">
+            <div class="spell-level-header">${levelName}</div>`;
+
+          currentCharacter.spells[level].forEach(spell => {
+            html += `
+              <div class="spell-card ${spell.prepared ? 'prepared' : ''}" onclick="toggleSpellPrepared('${spell.id}', ${level})">
+                <div class="spell-header">
+                  <div class="spell-icon">${spell.icon}</div>
+                  <div class="spell-info">
+                    <div class="spell-name">${spell.name}</div>
+                    ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
+                  </div>
+                  ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
+                </div>
+                <div class="spell-description">${spell.description}</div>
+              </div>
+            `;
+          });
+
+          html += '</div>';
+        });
+      }
 
       abilitiesGrid.innerHTML = html;
     }
@@ -1693,6 +1971,12 @@
       document.getElementById('conversationMode').style.display = mode === 'conversation' ? 'block' : 'none';
       document.getElementById('battleMode').style.display = mode === 'battle' ? 'block' : 'none';
       document.getElementById('skillsMode').style.display = mode === 'skills' ? 'block' : 'none';
+      document.getElementById('inventoryMode').style.display = mode === 'inventory' ? 'block' : 'none';
+
+      // Update inventory when switching to inventory mode
+      if (mode === 'inventory') {
+        updateInventory();
+      }
     }
 
     function changeCharacterState() {
@@ -1949,21 +2233,52 @@
 
     function updateImageDisplay() {
       const imageDisplay = document.getElementById('imageDisplay');
+      const hpState = getCharacterState();
 
       if (currentImageTab === 'portrait' || currentImageTab === 'battle') {
-        // Show portrait
+        // Show portrait with HP-based filter
+        let filter = '';
+        let borderColor = 'var(--accent-color)';
+
+        if (hpState === 'critical') {
+          filter = 'grayscale(50%) brightness(0.7) sepia(30%) hue-rotate(-10deg)';
+          borderColor = '#e74c3c';
+        } else if (hpState === 'injured') {
+          filter = 'brightness(0.8) sepia(20%) hue-rotate(-5deg)';
+          borderColor = '#e67e22';
+        } else if (hpState === 'wounded') {
+          filter = 'brightness(0.9)';
+          borderColor = '#f39c12';
+        }
+
         imageDisplay.innerHTML = `
-          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image">
+          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image" style="filter: ${filter}">
         `;
       } else if (currentImageTab === 'canvas') {
         // Show location background with character overlay
         const location = locations.find(l => l.id === currentCharacter.location);
+        let overlayColor = '';
+        let stateText = '';
+
+        if (hpState === 'critical') {
+          overlayColor = 'rgba(231, 76, 60, 0.3)';
+          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(231, 76, 60, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">⚠️ Critically Injured</div>';
+        } else if (hpState === 'injured') {
+          overlayColor = 'rgba(230, 126, 34, 0.2)';
+          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(230, 126, 34, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🩹 Injured</div>';
+        } else if (hpState === 'wounded') {
+          overlayColor = 'rgba(243, 156, 18, 0.15)';
+          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(243, 156, 18, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🤕 Wounded</div>';
+        }
+
         imageDisplay.innerHTML = `
           <div class="canvas-display" style="background-image: url('${location.image}')">
+            ${overlayColor ? `<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: ${overlayColor}; pointer-events: none;"></div>` : ''}
             <div class="location-name">${location.name}</div>
             <div class="character-overlay">
               <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}">
             </div>
+            ${stateText}
           </div>
         `;
       }
@@ -2017,6 +2332,63 @@
       element.appendChild(input);
       input.focus();
       input.select();
+    }
+
+    function toggleSpellPrepared(spellId, level) {
+      const spell = currentCharacter.spells[level].find(s => s.id === spellId);
+      if (spell) {
+        spell.prepared = !spell.prepared;
+        updateAbilities();
+      }
+    }
+
+    function updateInventory() {
+      const inventoryGrid = document.getElementById('inventoryGrid');
+      if (!currentCharacter.inventory) {
+        inventoryGrid.innerHTML = '<p style="color: var(--text-secondary); padding: 20px;">No items in inventory.</p>';
+        return;
+      }
+
+      // Group items by type
+      const grouped = {};
+      currentCharacter.inventory.forEach(item => {
+        if (!grouped[item.type]) grouped[item.type] = [];
+        grouped[item.type].push(item);
+      });
+
+      let html = '';
+      Object.keys(grouped).sort().forEach(type => {
+        html += `<div class="inventory-category">
+          <div class="inventory-category-title">${type}</div>`;
+
+        grouped[type].forEach(item => {
+          html += `
+            <div class="inventory-item ${item.equipped ? 'equipped' : ''}">
+              <div class="inventory-item-info">
+                <div class="inventory-item-name">${item.name}</div>
+                <div class="inventory-item-type">${item.type}</div>
+              </div>
+              ${item.quantity ? `<div class="inventory-item-quantity">×${item.quantity}</div>` : ''}
+              ${item.equipped ? '<div class="equipped-badge">Equipped</div>' : ''}
+            </div>
+          `;
+        });
+
+        html += '</div>';
+      });
+
+      inventoryGrid.innerHTML = html;
+    }
+
+    // Auto-update canvas based on HP percentage
+    function getCharacterState() {
+      const hpPercent = (currentCharacter.hp.current / currentCharacter.hp.max) * 100;
+
+      if (hpPercent <= 0) return 'dead';
+      if (hpPercent <= 25) return 'critical'; // Severely injured
+      if (hpPercent <= 50) return 'injured';  // Moderately injured
+      if (hpPercent <= 75) return 'wounded';  // Lightly injured
+      return 'default';
     }
   </script>
 </body>
