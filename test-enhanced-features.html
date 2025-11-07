@@ -886,6 +886,16 @@
       transform: translateY(-1px);
     }
 
+    .inventory-item.consumable-item:hover {
+      background: rgba(46, 204, 113, 0.1);
+      border-color: #2ecc71;
+      cursor: pointer;
+    }
+
+    .inventory-item.consumable-item:active {
+      transform: scale(0.98);
+    }
+
     .inventory-item-info {
       flex: 1;
     }
@@ -1167,17 +1177,11 @@
   <div class="test-container">
     <!-- Header with Hamburger -->
     <div class="test-header">
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <button class="hamburger-btn" onclick="toggleMenu()">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 2rem;">🎮</span>
-          <span style="font-weight: 600; font-size: 1.1rem;">Character Foundry</span>
-        </div>
-      </div>
+      <button class="hamburger-btn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
       <div class="header-center">
         <h2 style="font-size: 1.5rem; margin: 0; color: var(--text-primary);">
@@ -1191,9 +1195,15 @@
           <span id="charClass">Ranger</span> •
           <span id="charSubclass" style="font-style: italic;">Hunter</span>
         </div>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 3px;" id="charLocationDisplay">
+          📍 <span id="charLocation">Moonlit Forest</span>
+        </div>
       </div>
 
-      <div style="width: 150px;"></div> <!-- Spacer for balance -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 2rem;">🎮</span>
+        <span style="font-weight: 600; font-size: 1.1rem;">Character Foundry</span>
+      </div>
     </div>
 
     <!-- Character Menu -->
@@ -1273,32 +1283,32 @@
             <div class="stat-block">
               <div class="stat-name">STR</div>
               <div class="stat-value editable-stat" id="strValue" onclick="editStat('str', this)" title="Click to edit">12</div>
-              <div class="stat-modifier" id="strMod">+1</div>
+              <div class="stat-modifier editable-stat" id="strMod" onclick="editModifier('str', this)" title="Click to edit">+1</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">DEX</div>
               <div class="stat-value editable-stat" id="dexValue" onclick="editStat('dex', this)" title="Click to edit">18</div>
-              <div class="stat-modifier" id="dexMod">+4</div>
+              <div class="stat-modifier editable-stat" id="dexMod" onclick="editModifier('dex', this)" title="Click to edit">+4</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">CON</div>
               <div class="stat-value editable-stat" id="conValue" onclick="editStat('con', this)" title="Click to edit">14</div>
-              <div class="stat-modifier" id="conMod">+2</div>
+              <div class="stat-modifier editable-stat" id="conMod" onclick="editModifier('con', this)" title="Click to edit">+2</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">INT</div>
               <div class="stat-value editable-stat" id="intValue" onclick="editStat('int', this)" title="Click to edit">13</div>
-              <div class="stat-modifier" id="intMod">+1</div>
+              <div class="stat-modifier editable-stat" id="intMod" onclick="editModifier('int', this)" title="Click to edit">+1</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">WIS</div>
               <div class="stat-value editable-stat" id="wisValue" onclick="editStat('wis', this)" title="Click to edit">16</div>
-              <div class="stat-modifier" id="wisMod">+3</div>
+              <div class="stat-modifier editable-stat" id="wisMod" onclick="editModifier('wis', this)" title="Click to edit">+3</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">CHA</div>
               <div class="stat-value editable-stat" id="chaValue" onclick="editStat('cha', this)" title="Click to edit">10</div>
-              <div class="stat-modifier" id="chaMod">+0</div>
+              <div class="stat-modifier editable-stat" id="chaMod" onclick="editModifier('cha', this)" title="Click to edit">+0</div>
             </div>
           </div>
 
@@ -1576,7 +1586,17 @@
         <button class="close-popup-btn" onclick="toggleDicePopup()">✕</button>
       </div>
       <div class="dice-popup-content">
-        <div style="margin-bottom: 15px;">
+        <div style="margin-bottom: 15px;" id="combatRollsSection">
+          <strong style="display: block; margin-bottom: 8px;">Combat Rolls</strong>
+          <div style="display: grid; gap: 8px;">
+            <!-- Attack & Ranged buttons (populated dynamically) -->
+            <div id="attackButtons" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+            <!-- Spell buttons (populated dynamically) -->
+            <div id="spellButtons" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
           <strong style="display: block; margin-bottom: 8px;">Custom Dice Roll</strong>
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
@@ -1645,8 +1665,12 @@
         ac: 16,
         food: { current: 70, max: 100 }, // Hunger/satiety level
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
-        portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
+        portrait: 'https://i.imgur.com/yXEiYQ7.png',
         location: 'forest',
+        attacks: {
+          melee: { name: 'Shortsword', damage: '1d6+4', toHit: 7 },
+          ranged: { name: 'Longbow +1', damage: '1d8+5', toHit: 8 }
+        },
         inventory: [
           { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true, attuned: true },
           { id: 'cloak', name: 'Cloak of Elvenkind', type: 'armor', equipped: true, attuned: true },
@@ -1714,8 +1738,12 @@
         ac: 18,
         food: { current: 85, max: 100 },
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
-        portrait: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
+        portrait: 'https://i.imgur.com/8KfPqXJ.png',
         location: 'temple',
+        attacks: {
+          melee: { name: 'Longsword of Justice', damage: '1d8+5', toHit: 9 },
+          ranged: { name: 'Javelin', damage: '1d6+4', toHit: 8 }
+        },
         inventory: [
           { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true, attuned: true },
           { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true, attuned: true },
@@ -1788,8 +1816,12 @@
         ac: 13,
         food: { current: 45, max: 100 },
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
-        portrait: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80',
+        portrait: 'https://i.imgur.com/mBvN2dK.png',
         location: 'ruins',
+        attacks: {
+          melee: { name: 'Quarterstaff', damage: '1d6-1', toHit: 1 },
+          ranged: null // Wizards typically don't use ranged weapons
+        },
         inventory: [
           { id: 'staff', name: 'Staff of Power', type: 'weapon', equipped: true },
           { id: 'robes', name: 'Robes of the Archmagi', type: 'armor', equipped: true },
@@ -1870,8 +1902,12 @@
         ac: 15,
         food: { current: 60, max: 100 },
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
-        portrait: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
+        portrait: 'https://i.imgur.com/RkH7Wd0.png',
         location: 'tavern',
+        attacks: {
+          melee: { name: 'Rapier +1', damage: '1d8+6', toHit: 9 },
+          ranged: { name: 'Dagger (Thrown)', damage: '1d4+5', toHit: 9 }
+        },
         inventory: [
           { id: 'rapier', name: 'Rapier +1', type: 'weapon', equipped: true },
           { id: 'dagger', name: 'Dagger', type: 'weapon', equipped: true, quantity: 3 },
@@ -1962,16 +1998,29 @@
     }
 
     function selectCharacterFromMenu(index) {
+      // Validate index
+      if (index < 0 || index >= characters.length) {
+        console.error('Invalid character index:', index);
+        return;
+      }
+
+      // Update current character
+      currentCharacter = characters[index];
+      currentState = 'default';
+      turnNumber = 1;
+
+      // Update all displays
+      updateCharacterDisplay();
+      updateMessages();
+
       // Update menu active state
       document.querySelectorAll('.character-item').forEach((item, i) => {
         item.classList.toggle('active', i === index);
       });
 
-      currentCharacter = characters[index];
-      currentState = 'default';
-      turnNumber = 1;
-      updateCharacterDisplay();
-      updateMessages();
+      // Update the character menu to show current HP, etc.
+      populateCharacterMenu();
+
       closeMenu();
     }
 
@@ -1984,6 +2033,8 @@
       document.getElementById('charRace').textContent = currentCharacter.race || 'Human';
       document.getElementById('charClass').textContent = currentCharacter.class;
       document.getElementById('charSubclass').textContent = currentCharacter.subclass || '';
+      const locationName = locations.find(l => l.id === currentCharacter.location)?.name || currentCharacter.location;
+      document.getElementById('charLocation').textContent = locationName;
       document.getElementById('characterEmoji').textContent = currentCharacter.emoji;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
 
@@ -2037,9 +2088,46 @@
       const abilitiesGrid = document.getElementById('abilitiesGrid');
       let html = '';
 
+      // Show attacks first (melee/ranged)
+      if (currentCharacter.attacks) {
+        html += '<div style="margin-bottom: 20px;"><strong style="color: var(--text-primary);">⚔️ Attacks</strong></div>';
+
+        if (currentCharacter.attacks.melee) {
+          const attack = currentCharacter.attacks.melee;
+          html += `
+            <div class="ability-card" onclick="rollWeaponAttack('melee')">
+              <div class="ability-header">
+                <div class="ability-icon">⚔️</div>
+                <div class="ability-info">
+                  <div class="ability-name">${attack.name} (Melee)</div>
+                  <div class="ability-damage">${attack.damage} | +${attack.toHit} to hit</div>
+                </div>
+              </div>
+              <div class="ability-description">Make a melee attack with your ${attack.name}</div>
+            </div>
+          `;
+        }
+
+        if (currentCharacter.attacks.ranged) {
+          const attack = currentCharacter.attacks.ranged;
+          html += `
+            <div class="ability-card" onclick="rollWeaponAttack('ranged')">
+              <div class="ability-header">
+                <div class="ability-icon">🏹</div>
+                <div class="ability-info">
+                  <div class="ability-name">${attack.name} (Ranged)</div>
+                  <div class="ability-damage">${attack.damage} | +${attack.toHit} to hit</div>
+                </div>
+              </div>
+              <div class="ability-description">Make a ranged attack with your ${attack.name}</div>
+            </div>
+          `;
+        }
+      }
+
       // Show abilities (for all classes)
       if (currentCharacter.abilities && currentCharacter.abilities.length > 0) {
-        html += '<div style="margin-bottom: 20px;"><strong style="color: var(--text-primary);">Abilities</strong></div>';
+        html += '<div style="margin: 20px 0;"><strong style="color: var(--text-primary);">Abilities</strong></div>';
         currentCharacter.abilities.forEach(ability => {
           html += `
             <div class="ability-card" onclick="useAbility('${ability.id}')">
@@ -2150,8 +2238,14 @@
     }
 
     function updateMessages() {
-      const stateConfig = currentCharacter.states[currentState];
-      document.getElementById('greetingMessage').textContent = stateConfig.greeting;
+      const stateConfig = currentCharacter.states?.[currentState];
+      if (stateConfig && stateConfig.greeting) {
+        document.getElementById('greetingMessage').textContent = stateConfig.greeting;
+      } else {
+        // Fallback if state doesn't exist
+        console.warn(`State '${currentState}' not found for character ${currentCharacter.name}`);
+        document.getElementById('greetingMessage').textContent = `${currentCharacter.name} is ready for adventure.`;
+      }
     }
 
     function sendMessage() {
@@ -2499,6 +2593,50 @@
       input.select();
     }
 
+    function editModifier(statName, element) {
+      const currentValue = element.textContent.replace(/[+\-]/g, '');
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.value = parseInt(currentValue);
+      input.style.width = '50px';
+      input.style.padding = '4px';
+      input.style.background = 'var(--background-color)';
+      input.style.color = 'var(--text-primary)';
+      input.style.border = '2px solid var(--accent-color)';
+      input.style.borderRadius = '4px';
+      input.style.textAlign = 'center';
+      input.style.fontSize = '0.9rem';
+
+      input.onblur = function() {
+        const newModifier = parseInt(input.value);
+        if (!isNaN(newModifier) && newModifier >= -5 && newModifier <= 10) {
+          // Back-calculate ability score from modifier
+          // modifier = floor((score - 10) / 2)
+          // score = (modifier * 2) + 10
+          const newScore = (newModifier * 2) + 10;
+          currentCharacter.stats[statName] = newScore;
+          updateCharacterDisplay();
+        } else {
+          element.textContent = currentValue;
+        }
+      };
+
+      input.onkeydown = function(e) {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          element.textContent = (parseInt(currentValue) >= 0 ? '+' : '') + currentValue;
+          element.style.display = '';
+          input.remove();
+        }
+      };
+
+      element.textContent = '';
+      element.appendChild(input);
+      input.focus();
+      input.select();
+    }
+
     function toggleSpellPrepared(spellId, level) {
       const spell = currentCharacter.spells[level].find(s => s.id === spellId);
       if (spell) {
@@ -2545,26 +2683,33 @@
 
       html += '</div></div>';
 
-      // Regular inventory grouped by type
+      // Group inventory by type with custom order
       const grouped = {};
       currentCharacter.inventory.forEach(item => {
         if (!grouped[item.type]) grouped[item.type] = [];
         grouped[item.type].push(item);
       });
 
-      Object.keys(grouped).sort().forEach(type => {
+      // Custom sort order: weapons, armor, consumables, ammunition, gear (magic items)
+      const typeOrder = ['weapon', 'armor', 'consumable', 'ammunition', 'gear'];
+      const sortedTypes = typeOrder.filter(type => grouped[type]);
+
+      sortedTypes.forEach(type => {
+        const typeName = type.charAt(0).toUpperCase() + type.slice(1) + (type !== 'gear' ? 's' : '');
         html += `<div class="inventory-category">
-          <div class="inventory-category-title">${type}</div>`;
+          <div class="inventory-category-title">${typeName}</div>`;
 
         grouped[type].forEach(item => {
           const equippedIcon = item.equipped ? '⚡ ' : '';
           const attunedIcon = item.attuned ? '✨ ' : '';
+          const isConsumable = item.type === 'consumable' && item.quantity > 0;
+          const clickHandler = isConsumable ? `onclick="consumeItem('${item.id}')" style="cursor: pointer;"` : '';
 
           html += `
-            <div class="inventory-item ${item.equipped ? 'equipped' : ''}">
+            <div class="inventory-item ${item.equipped ? 'equipped' : ''} ${isConsumable ? 'consumable-item' : ''}" ${clickHandler}>
               <div class="inventory-item-info">
                 <div class="inventory-item-name">${attunedIcon}${equippedIcon}${item.name}</div>
-                <div class="inventory-item-type">${item.type}</div>
+                <div class="inventory-item-type">${item.type}${isConsumable ? ' (click to use)' : ''}</div>
               </div>
               ${item.quantity ? `<div class="inventory-item-quantity">×${item.quantity}</div>` : ''}
               ${item.equipped ? '<div class="equipped-badge">Equipped</div>' : ''}
@@ -2617,9 +2762,196 @@
       }
     }
 
+    function consumeItem(itemId) {
+      const item = currentCharacter.inventory?.find(i => i.id === itemId);
+      if (!item || item.type !== 'consumable' || !item.quantity || item.quantity <= 0) {
+        return;
+      }
+
+      // Consume 1 of the item
+      item.quantity--;
+
+      // Apply effects based on item type
+      let effect = '';
+      if (item.name.toLowerCase().includes('healing')) {
+        // Healing potion
+        let healing = 7; // 2d4+2 average for regular potion
+        if (item.name.toLowerCase().includes('greater')) {
+          healing = 20; // 4d4+4 average for greater
+        } else if (item.name.toLowerCase().includes('superior')) {
+          healing = 28; // 8d4+8 average for superior
+        }
+
+        currentCharacter.hp.current = Math.min(currentCharacter.hp.max, currentCharacter.hp.current + healing);
+        effect = `restored ${healing} HP`;
+      } else if (item.name.toLowerCase().includes('ration')) {
+        // Food ration
+        const foodRestored = 30;
+        if (currentCharacter.food) {
+          currentCharacter.food.current = Math.min(currentCharacter.food.max, currentCharacter.food.current + foodRestored);
+          effect = `restored ${foodRestored} satiety`;
+        }
+      } else {
+        // Generic consumable
+        effect = `used ${item.name}`;
+      }
+
+      updateCharacterDisplay();
+      addBattleLog(`${currentCharacter.name} consumed ${item.name} and ${effect}!`);
+
+      // Remove item if quantity reaches 0
+      if (item.quantity === 0) {
+        const index = currentCharacter.inventory.indexOf(item);
+        if (index > -1) currentCharacter.inventory.splice(index, 1);
+        addBattleLog(`⚠️ Out of ${item.name}!`);
+      }
+    }
+
     function toggleDicePopup() {
       const popup = document.getElementById('dicePopup');
       popup.classList.toggle('show');
+
+      // Update combat buttons when popup is opened
+      if (popup.classList.contains('show')) {
+        updateDicePopupButtons();
+      }
+    }
+
+    function updateDicePopupButtons() {
+      const attackButtonsDiv = document.getElementById('attackButtons');
+      const spellButtonsDiv = document.getElementById('spellButtons');
+
+      if (!attackButtonsDiv || !spellButtonsDiv) return;
+
+      let attackHtml = '';
+      let spellHtml = '';
+
+      // Add attack buttons (melee/ranged)
+      if (currentCharacter.attacks) {
+        if (currentCharacter.attacks.melee) {
+          attackHtml += `<button class="test-btn" onclick="rollWeaponAttack('melee'); toggleDicePopup();" style="margin: 0; flex: 1; min-width: 120px;">⚔️ ${currentCharacter.attacks.melee.name}</button>`;
+        }
+        if (currentCharacter.attacks.ranged) {
+          attackHtml += `<button class="test-btn" onclick="rollWeaponAttack('ranged'); toggleDicePopup();" style="margin: 0; flex: 1; min-width: 120px;">🏹 ${currentCharacter.attacks.ranged.name}</button>`;
+        }
+      }
+
+      // Add spell buttons (from prepared spells)
+      if (currentCharacter.spells) {
+        const preparedSpells = [];
+        Object.keys(currentCharacter.spells).forEach(level => {
+          if (Array.isArray(currentCharacter.spells[level])) {
+            currentCharacter.spells[level].forEach(spell => {
+              if (spell.prepared) {
+                preparedSpells.push({ ...spell, level: parseInt(level) });
+              }
+            });
+          }
+        });
+
+        // Show up to 4 prepared spells
+        preparedSpells.slice(0, 4).forEach(spell => {
+          spellHtml += `<button class="test-btn" onclick="rollSpellAttack('${spell.id}', ${spell.level}); toggleDicePopup();" style="margin: 0; flex: 1; min-width: 120px;">${spell.icon} ${spell.name}</button>`;
+        });
+      }
+
+      attackButtonsDiv.innerHTML = attackHtml;
+      spellButtonsDiv.innerHTML = spellHtml;
+
+      // Hide combat rolls section if no attacks or spells
+      const combatSection = document.getElementById('combatRollsSection');
+      if (combatSection) {
+        combatSection.style.display = (attackHtml || spellHtml) ? 'block' : 'none';
+      }
+    }
+
+    function rollWeaponAttack(type) {
+      const attack = type === 'melee' ? currentCharacter.attacks.melee : currentCharacter.attacks.ranged;
+      if (!attack) return;
+
+      // Roll attack (d20 + toHit)
+      const attackRoll = Math.floor(Math.random() * 20) + 1;
+      const attackTotal = attackRoll + attack.toHit;
+      const attackBreakdown = `1d20+${attack.toHit}`;
+
+      showDiceRoll(`${attack.name} Attack`, 'd20', attackRoll, attackTotal, attackBreakdown,
+        attackRoll === 20 ? 'success' : (attackRoll === 1 ? 'fail' : null));
+
+      addBattleLog(`${currentCharacter.name} attacks with ${attack.name}: ${attackTotal} to hit`);
+
+      // If hit, prompt for damage roll or auto-roll
+      if (attackRoll >= 10) { // Simplified - assume hits on 10+
+        setTimeout(() => {
+          // Parse damage (e.g., "1d8+4")
+          const match = attack.damage.match(/(\d+)d(\d+)([\+\-]\d+)?/);
+          if (match) {
+            const numDice = parseInt(match[1]);
+            const diceSize = parseInt(match[2]);
+            const modifier = match[3] ? parseInt(match[3]) : 0;
+
+            let damageTotal = 0;
+            for (let i = 0; i < numDice; i++) {
+              damageTotal += Math.floor(Math.random() * diceSize) + 1;
+            }
+            damageTotal += modifier;
+
+            showDiceRoll(`${attack.name} Damage`, `d${diceSize}`, damageTotal - modifier, damageTotal, attack.damage, null);
+            addBattleLog(`${attack.name} deals ${damageTotal} damage!`);
+          }
+        }, 1000);
+      }
+    }
+
+    function rollSpellAttack(spellId, level) {
+      // Find the spell
+      let spell = null;
+      if (currentCharacter.spells && currentCharacter.spells[level]) {
+        spell = currentCharacter.spells[level].find(s => s.id === spellId);
+      }
+
+      if (!spell) return;
+
+      // Calculate spell attack modifier (using primary stat)
+      const statMod = currentCharacter.classType === 'caster'
+        ? Math.floor((currentCharacter.stats.int - 10) / 2)
+        : Math.floor((currentCharacter.stats.wis - 10) / 2);
+      const profBonus = Math.ceil(currentCharacter.level / 4) + 1; // Proficiency bonus
+      const spellAttackMod = statMod + profBonus;
+
+      // Roll spell attack if it has damage
+      if (spell.damage) {
+        const attackRoll = Math.floor(Math.random() * 20) + 1;
+        const attackTotal = attackRoll + spellAttackMod;
+        const attackBreakdown = `1d20+${spellAttackMod}`;
+
+        showDiceRoll(`${spell.name} Attack`, 'd20', attackRoll, attackTotal, attackBreakdown,
+          attackRoll === 20 ? 'success' : (attackRoll === 1 ? 'fail' : null));
+
+        addBattleLog(`${currentCharacter.name} casts ${spell.name}: ${attackTotal} to hit`);
+
+        // Roll damage on hit
+        if (attackRoll >= 10) {
+          setTimeout(() => {
+            const match = spell.damage.match(/(\d+)d(\d+)/);
+            if (match) {
+              const numDice = parseInt(match[1]);
+              const diceSize = parseInt(match[2]);
+
+              let damageTotal = 0;
+              for (let i = 0; i < numDice; i++) {
+                damageTotal += Math.floor(Math.random() * diceSize) + 1;
+              }
+
+              showDiceRoll(`${spell.name} Damage`, `d${diceSize}`, damageTotal, damageTotal, spell.damage, null);
+              addBattleLog(`${spell.name} deals ${damageTotal} damage!`);
+            }
+          }, 1000);
+        }
+      } else {
+        // Non-damage spell (utility/buff)
+        addBattleLog(`${currentCharacter.name} casts ${spell.name}!`);
+        showDiceRoll(spell.name, spell.icon, '✨', '✨', 'Cast successfully', 'success');
+      }
     }
   </script>
 </body>
