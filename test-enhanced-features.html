@@ -299,6 +299,63 @@
       opacity: 0.3;
     }
 
+    .portrait-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .canvas-display {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .character-overlay {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--accent-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      background: var(--background-color);
+    }
+
+    .character-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .location-name {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    .editable-stat {
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .editable-stat:hover {
+      background: var(--hover-color);
+      outline: 1px solid var(--accent-color);
+    }
+
     .portrait-types {
       display: flex;
       flex-wrap: wrap;
@@ -927,6 +984,21 @@
             <button class="portrait-type-btn" onclick="switchPortraitType('injured')">Injured</button>
             <button class="portrait-type-btn" onclick="switchPortraitType('triumphant')">Triumphant</button>
           </div>
+
+          <!-- Location Selector -->
+          <div style="margin-top: 15px; padding: 15px; background: var(--background-color); border-radius: 8px;">
+            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">📍 Location</div>
+            <select id="locationSelect" onchange="changeLocation()" style="width: 100%; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; cursor: pointer;">
+              <option value="forest">Moonlit Forest</option>
+              <option value="tavern">The Drunken Dragon Tavern</option>
+              <option value="dungeon">Ancient Dungeon</option>
+              <option value="castle">Royal Castle</option>
+              <option value="town">Town Square</option>
+              <option value="mountains">Mountain Pass</option>
+              <option value="ruins">Ancient Ruins</option>
+              <option value="temple">Sacred Temple</option>
+            </select>
+          </div>
         </div>
 
         <!-- Stats -->
@@ -939,37 +1011,41 @@
               <div class="hp-fill" id="hpFill" style="width: 85%"></div>
               <div class="hp-text" id="hpText">58 / 68</div>
             </div>
+            <div style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.85rem; color: var(--text-secondary);">
+              <span>Current: <span class="editable-stat" id="hpCurrentEdit" onclick="editStat('hpCurrent', this)" title="Click to edit">58</span></span>
+              <span>Max: <span class="editable-stat" id="hpMaxEdit" onclick="editStat('hpMax', this)" title="Click to edit">68</span></span>
+            </div>
           </div>
 
           <div class="stats-grid">
             <div class="stat-block">
               <div class="stat-name">STR</div>
-              <div class="stat-value" id="strValue">12</div>
+              <div class="stat-value editable-stat" id="strValue" onclick="editStat('str', this)" title="Click to edit">12</div>
               <div class="stat-modifier" id="strMod">+1</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">DEX</div>
-              <div class="stat-value" id="dexValue">18</div>
+              <div class="stat-value editable-stat" id="dexValue" onclick="editStat('dex', this)" title="Click to edit">18</div>
               <div class="stat-modifier" id="dexMod">+4</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">CON</div>
-              <div class="stat-value" id="conValue">14</div>
+              <div class="stat-value editable-stat" id="conValue" onclick="editStat('con', this)" title="Click to edit">14</div>
               <div class="stat-modifier" id="conMod">+2</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">INT</div>
-              <div class="stat-value" id="intValue">13</div>
+              <div class="stat-value editable-stat" id="intValue" onclick="editStat('int', this)" title="Click to edit">13</div>
               <div class="stat-modifier" id="intMod">+1</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">WIS</div>
-              <div class="stat-value" id="wisValue">16</div>
+              <div class="stat-value editable-stat" id="wisValue" onclick="editStat('wis', this)" title="Click to edit">16</div>
               <div class="stat-modifier" id="wisMod">+3</div>
             </div>
             <div class="stat-block">
               <div class="stat-name">CHA</div>
-              <div class="stat-value" id="chaValue">10</div>
+              <div class="stat-value editable-stat" id="chaValue" onclick="editStat('cha', this)" title="Click to edit">10</div>
               <div class="stat-modifier" id="chaMod">+0</div>
             </div>
           </div>
@@ -977,7 +1053,7 @@
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
             <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
               <div style="font-size: 0.8rem; color: var(--text-secondary);">AC</div>
-              <div style="font-size: 1.5rem; font-weight: 900;" id="acValue">16</div>
+              <div class="editable-stat" style="font-size: 1.5rem; font-weight: 900;" id="acValue" onclick="editStat('ac', this)" title="Click to edit">16</div>
             </div>
             <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
               <div style="font-size: 0.8rem; color: var(--text-secondary);">Initiative</div>
@@ -1211,9 +1287,27 @@
 
     <!-- Test Controls -->
     <div class="test-controls">
-      <button class="test-btn" onclick="rollRandomDice()">🎲 Random Roll</button>
-      <button class="test-btn" onclick="takeDamage()">💔 Damage</button>
-      <button class="test-btn" onclick="heal()">❤️ Heal</button>
+      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+          <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <option value="4">d4</option>
+            <option value="6">d6</option>
+            <option value="8">d8</option>
+            <option value="10">d10</option>
+            <option value="12">d12</option>
+            <option value="20" selected>d20</option>
+            <option value="100">d100</option>
+          </select>
+          <input type="number" id="diceModifier" value="0" min="-10" max="20" placeholder="+/-" style="width: 60px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+          <button class="test-btn" onclick="rollCustomDice()" style="margin: 0;">🎲 Roll</button>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
+        <input type="number" id="damageAmount" value="10" min="1" max="999" placeholder="Damage" style="width: 80px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+        <button class="test-btn" onclick="takeDamage()" style="margin: 0;">💔 Apply</button>
+        <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
+      </div>
     </div>
   </div>
 
@@ -1228,6 +1322,18 @@
   </div>
 
   <script>
+    // Location Data
+    const locations = [
+      { id: 'tavern', name: 'The Drunken Dragon Tavern', image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80' },
+      { id: 'forest', name: 'Moonlit Forest', image: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=800&q=80' },
+      { id: 'dungeon', name: 'Ancient Dungeon', image: 'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=800&q=80' },
+      { id: 'castle', name: 'Royal Castle', image: 'https://images.unsplash.com/photo-1549048430-7f0e636b069e?w=800&q=80' },
+      { id: 'town', name: 'Town Square', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80' },
+      { id: 'mountains', name: 'Mountain Pass', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
+      { id: 'ruins', name: 'Ancient Ruins', image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80' },
+      { id: 'temple', name: 'Sacred Temple', image: 'https://images.unsplash.com/photo-1512699355324-f07e3106dae5?w=800&q=80' }
+    ];
+
     // Character Data with Skills
     const characters = [
       {
@@ -1239,6 +1345,8 @@
         hp: { current: 58, max: 68 },
         ac: 16,
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
+        portrait: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
+        location: 'forest',
         skills: {
           // Format: [ability, proficiency] where proficiency: 0=none, 1=proficient, 2=expertise
           acrobatics: ['dex', 1],
@@ -1283,6 +1391,8 @@
         hp: { current: 88, max: 104 },
         ac: 18,
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
+        portrait: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
+        location: 'temple',
         skills: {
           acrobatics: ['dex', 0],
           animalHandling: ['wis', 0],
@@ -1326,6 +1436,8 @@
         hp: { current: 42, max: 54 },
         ac: 13,
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
+        portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
+        location: 'ruins',
         skills: {
           acrobatics: ['dex', 0],
           animalHandling: ['wis', 0],
@@ -1369,6 +1481,8 @@
         hp: { current: 38, max: 45 },
         ac: 15,
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
+        portrait: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+        location: 'tavern',
         skills: {
           acrobatics: ['dex', 2], // Expertise
           animalHandling: ['wis', 0],
@@ -1483,6 +1597,8 @@
       const hpPercent = (currentCharacter.hp.current / currentCharacter.hp.max) * 100;
       document.getElementById('hpFill').style.width = hpPercent + '%';
       document.getElementById('hpText').textContent = `${currentCharacter.hp.current} / ${currentCharacter.hp.max}`;
+      document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
+      document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
 
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
@@ -1490,6 +1606,12 @@
       // Update Initiative
       const dexMod = Math.floor((stats.dex - 10) / 2);
       document.getElementById('initValue').textContent = (dexMod >= 0 ? '+' : '') + dexMod;
+
+      // Update location selector
+      document.getElementById('locationSelect').value = currentCharacter.location;
+
+      // Update image display
+      updateImageDisplay();
 
       // Update abilities
       updateAbilities();
@@ -1546,14 +1668,7 @@
       });
       event.target.classList.add('active');
 
-      const placeholder = document.querySelector('.image-placeholder p');
-      if (tab === 'portrait') {
-        placeholder.textContent = 'AI-Generated Portrait';
-      } else if (tab === 'battle') {
-        placeholder.textContent = 'Battle Pose';
-      } else if (tab === 'canvas') {
-        placeholder.textContent = 'Scene/Environment';
-      }
+      updateImageDisplay();
     }
 
     function switchPortraitType(type) {
@@ -1784,7 +1899,8 @@
     }
 
     function takeDamage() {
-      const damage = Math.floor(Math.random() * 15) + 5;
+      const damageInput = document.getElementById('damageAmount');
+      const damage = parseInt(damageInput.value) || 10;
       currentCharacter.hp.current = Math.max(0, currentCharacter.hp.current - damage);
       updateCharacterDisplay();
       showDiceRoll('Damage Taken', 'd20', 0, damage, `${damage} damage`, null);
@@ -1797,6 +1913,110 @@
       updateCharacterDisplay();
       showDiceRoll('Healing', 'd20', 0, healing, `${healing} HP`, null);
       addBattleLog(`${currentCharacter.name} heals ${healing} HP!`);
+    }
+
+    function rollCustomDice() {
+      const numDice = parseInt(document.getElementById('numDice').value) || 1;
+      const diceType = parseInt(document.getElementById('diceType').value) || 20;
+      const modifier = parseInt(document.getElementById('diceModifier').value) || 0;
+
+      let total = 0;
+      let rolls = [];
+      for (let i = 0; i < numDice; i++) {
+        const roll = Math.floor(Math.random() * diceType) + 1;
+        rolls.push(roll);
+        total += roll;
+      }
+
+      const finalTotal = total + modifier;
+      const breakdown = `${numDice}d${diceType}${modifier !== 0 ? (modifier >= 0 ? '+' : '') + modifier : ''}`;
+      const isCritical = diceType === 20 && numDice === 1 && (rolls[0] === 20 || rolls[0] === 1);
+
+      showDiceRoll('Custom Roll', `d${diceType}`, rolls[0] || total, finalTotal, breakdown,
+        isCritical ? (rolls[0] === 20 ? 'success' : 'fail') : null);
+
+      if (currentChatMode === 'battle') {
+        addBattleLog(`${currentCharacter.name} rolled ${breakdown}: ${finalTotal}`);
+      }
+    }
+
+    function changeLocation() {
+      const newLocation = document.getElementById('locationSelect').value;
+      currentCharacter.location = newLocation;
+      updateImageDisplay();
+      addBattleLog(`${currentCharacter.name} moved to ${locations.find(l => l.id === newLocation).name}`);
+    }
+
+    function updateImageDisplay() {
+      const imageDisplay = document.getElementById('imageDisplay');
+
+      if (currentImageTab === 'portrait' || currentImageTab === 'battle') {
+        // Show portrait
+        imageDisplay.innerHTML = `
+          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image">
+        `;
+      } else if (currentImageTab === 'canvas') {
+        // Show location background with character overlay
+        const location = locations.find(l => l.id === currentCharacter.location);
+        imageDisplay.innerHTML = `
+          <div class="canvas-display" style="background-image: url('${location.image}')">
+            <div class="location-name">${location.name}</div>
+            <div class="character-overlay">
+              <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}">
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function editStat(statName, element) {
+      const currentValue = element.textContent;
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.value = parseInt(currentValue);
+      input.style.width = '60px';
+      input.style.padding = '4px';
+      input.style.background = 'var(--background-color)';
+      input.style.color = 'var(--text-primary)';
+      input.style.border = '2px solid var(--accent-color)';
+      input.style.borderRadius = '4px';
+      input.style.textAlign = 'center';
+      input.style.fontSize = element.style.fontSize || '1rem';
+
+      input.onblur = function() {
+        const newValue = parseInt(input.value);
+        if (!isNaN(newValue) && newValue >= 0) {
+          // Update character data
+          if (statName === 'hpCurrent') {
+            currentCharacter.hp.current = Math.min(newValue, currentCharacter.hp.max);
+          } else if (statName === 'hpMax') {
+            currentCharacter.hp.max = newValue;
+            currentCharacter.hp.current = Math.min(currentCharacter.hp.current, newValue);
+          } else if (statName === 'ac') {
+            currentCharacter.ac = newValue;
+          } else if (['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(statName)) {
+            currentCharacter.stats[statName] = newValue;
+          }
+          updateCharacterDisplay();
+        } else {
+          element.textContent = currentValue;
+        }
+      };
+
+      input.onkeydown = function(e) {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          element.textContent = currentValue;
+          element.style.display = '';
+          input.remove();
+        }
+      };
+
+      element.textContent = '';
+      element.appendChild(input);
+      input.focus();
+      input.select();
     }
   </script>
 </body>
