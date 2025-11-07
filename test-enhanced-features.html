@@ -82,6 +82,15 @@
       text-align: center;
     }
 
+    .header-center {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
     .header-content h1 {
       font-size: 2rem;
       margin-bottom: 5px;
@@ -1014,31 +1023,117 @@
       20%, 40%, 60%, 80% { transform: translateX(5px); }
     }
 
-    /* Test Controls */
-    .test-controls {
+    /* Floating Action Button */
+    .fab-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background: var(--accent-color);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .fab-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .fab-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Dice Popup */
+    .dice-popup {
+      position: fixed;
+      bottom: 110px;
+      right: 30px;
+      width: 350px;
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      display: none;
+      animation: popupSlideIn 0.3s ease-out;
+    }
+
+    .dice-popup.show {
+      display: block;
+    }
+
+    @keyframes popupSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dice-popup-header {
       display: flex;
-      gap: 10px;
-      z-index: 100;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .dice-popup-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .close-popup-btn {
+      width: 30px;
+      height: 30px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .close-popup-btn:hover {
+      border-color: var(--accent-color);
+      background: var(--hover-color);
+    }
+
+    .dice-popup-content {
+      padding: 20px;
     }
 
     .test-btn {
-      padding: 15px 25px;
+      padding: 10px 20px;
       background: var(--accent-color);
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       color: white;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
 
     .test-btn:hover {
       background: var(--accent-hover);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
     @media (max-width: 1200px) {
@@ -1072,21 +1167,33 @@
   <div class="test-container">
     <!-- Header with Hamburger -->
     <div class="test-header">
-      <button class="hamburger-btn" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <div class="header-content">
-        <h1>🎮 Character Foundry</h1>
-        <div class="current-character">
-          <span class="current-character-emoji" id="currentCharEmoji">🏹</span>
-          <span id="currentCharName">Aelindra Moonwhisper</span>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <button class="hamburger-btn" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 2rem;">🎮</span>
+          <span style="font-weight: 600; font-size: 1.1rem;">Character Foundry</span>
         </div>
       </div>
 
-      <div style="width: 50px;"></div> <!-- Spacer for symmetry -->
+      <div class="header-center">
+        <h2 style="font-size: 1.5rem; margin: 0; color: var(--text-primary);">
+          <span class="current-character-emoji" id="currentCharEmoji">🏹</span>
+          <span id="currentCharName">Aelindra Moonwhisper</span>
+        </h2>
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px;" id="characterDetails">
+          <span id="charAlignment">Neutral Good</span> •
+          Level <span id="charLevel">8</span>
+          <span id="charRace">Half-Elf</span>
+          <span id="charClass">Ranger</span> •
+          <span id="charSubclass" style="font-style: italic;">Hunter</span>
+        </div>
+      </div>
+
+      <div style="width: 150px;"></div> <!-- Spacer for balance -->
     </div>
 
     <!-- Character Menu -->
@@ -1203,6 +1310,18 @@
             <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
               <div style="font-size: 0.8rem; color: var(--text-secondary);">Initiative</div>
               <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-color);" id="initValue">+4</div>
+            </div>
+          </div>
+
+          <!-- Food/Hunger Bar -->
+          <div style="margin-top: 15px; padding: 15px; background: var(--background-color); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <strong>🍖 Satiety</strong>
+              <button onclick="consumeFood()" style="padding: 4px 12px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer;">Eat</button>
+            </div>
+            <div class="hp-bar" style="margin-top: 0;">
+              <div id="foodFill" style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #e67e22); border-radius: 15px; transition: all 0.3s ease;"></div>
+              <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
             </div>
           </div>
         </div>
@@ -1445,28 +1564,44 @@
       </div>
     </div>
 
-    <!-- Test Controls -->
-    <div class="test-controls">
-      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-          <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-            <option value="4">d4</option>
-            <option value="6">d6</option>
-            <option value="8">d8</option>
-            <option value="10">d10</option>
-            <option value="12">d12</option>
-            <option value="20" selected>d20</option>
-            <option value="100">d100</option>
-          </select>
-          <input type="number" id="diceModifier" value="0" min="-10" max="20" placeholder="+/-" style="width: 60px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-          <button class="test-btn" onclick="rollCustomDice()" style="margin: 0;">🎲 Roll</button>
-        </div>
+    <!-- Floating Action Button -->
+    <button class="fab-btn" onclick="toggleDicePopup()" title="Dice & Quick Actions">
+      🎲
+    </button>
+
+    <!-- Dice Popup -->
+    <div class="dice-popup" id="dicePopup">
+      <div class="dice-popup-header">
+        <h3>🎲 Dice & Actions</h3>
+        <button class="close-popup-btn" onclick="toggleDicePopup()">✕</button>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
-        <input type="number" id="damageAmount" value="10" min="1" max="999" placeholder="Damage" style="width: 80px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-        <button class="test-btn" onclick="takeDamage()" style="margin: 0;">💔 Apply</button>
-        <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
+      <div class="dice-popup-content">
+        <div style="margin-bottom: 15px;">
+          <strong style="display: block; margin-bottom: 8px;">Custom Dice Roll</strong>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+              <option value="4">d4</option>
+              <option value="6">d6</option>
+              <option value="8">d8</option>
+              <option value="10">d10</option>
+              <option value="12">d12</option>
+              <option value="20" selected>d20</option>
+              <option value="100">d100</option>
+            </select>
+            <input type="number" id="diceModifier" value="0" min="-10" max="20" placeholder="+/-" style="width: 60px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <button class="test-btn" onclick="rollCustomDice()" style="margin: 0;">Roll</button>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+          <strong style="display: block; margin-bottom: 8px;">Quick Actions</strong>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="number" id="damageAmount" value="10" min="1" max="999" placeholder="Damage" style="width: 80px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <button class="test-btn" onclick="takeDamage()" style="margin: 0;">💔 Damage</button>
+            <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1501,15 +1636,20 @@
         name: 'Aelindra Moonwhisper',
         emoji: '🏹',
         class: 'Ranger',
+        subclass: 'Hunter',
+        race: 'Half-Elf',
+        alignment: 'Neutral Good',
         classType: 'halfcaster', // melee, halfcaster, or caster
         level: 8,
         hp: { current: 58, max: 68 },
         ac: 16,
+        food: { current: 70, max: 100 }, // Hunger/satiety level
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
-        portrait: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
+        portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
         location: 'forest',
         inventory: [
-          { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true },
+          { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true, attuned: true },
+          { id: 'cloak', name: 'Cloak of Elvenkind', type: 'armor', equipped: true, attuned: true },
           { id: 'arrows', name: 'Arrows', type: 'ammunition', quantity: 40 },
           { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: true },
           { id: 'healing_potion', name: 'Potion of Healing', type: 'consumable', quantity: 3 },
@@ -1565,17 +1705,22 @@
         name: 'Theron Brightshield',
         emoji: '🛡️',
         class: 'Paladin',
+        subclass: 'Oath of Vengeance',
+        race: 'Human',
+        alignment: 'Lawful Good',
         classType: 'halfcaster',
         level: 10,
         hp: { current: 88, max: 104 },
         ac: 18,
+        food: { current: 85, max: 100 },
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
-        portrait: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
+        portrait: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
         location: 'temple',
         inventory: [
-          { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true },
+          { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true, attuned: true },
+          { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true, attuned: true },
+          { id: 'amulet', name: 'Amulet of Health', type: 'gear', equipped: true, attuned: true },
           { id: 'plate_armor', name: 'Plate Armor', type: 'armor', equipped: true },
-          { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true },
           { id: 'holy_symbol', name: 'Holy Symbol', type: 'gear', equipped: true },
           { id: 'healing_potion', name: 'Potion of Greater Healing', type: 'consumable', quantity: 2 },
           { id: 'oil_of_sharpness', name: 'Oil of Sharpness', type: 'consumable', quantity: 1 }
@@ -1634,12 +1779,16 @@
         name: 'Zara Infernalis',
         emoji: '🔮',
         class: 'Wizard',
+        subclass: 'School of Evocation',
+        race: 'Tiefling',
+        alignment: 'Chaotic Neutral',
         classType: 'caster',
         level: 9,
         hp: { current: 42, max: 54 },
         ac: 13,
+        food: { current: 45, max: 100 },
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
-        portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
+        portrait: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80',
         location: 'ruins',
         inventory: [
           { id: 'staff', name: 'Staff of Power', type: 'weapon', equipped: true },
@@ -1712,12 +1861,16 @@
         name: 'Kael Quickfingers',
         emoji: '🗡️',
         class: 'Rogue',
+        subclass: 'Arcane Trickster',
+        race: 'Halfling',
+        alignment: 'Chaotic Good',
         classType: 'melee',
         level: 7,
         hp: { current: 38, max: 45 },
         ac: 15,
+        food: { current: 60, max: 100 },
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
-        portrait: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+        portrait: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
         location: 'tavern',
         inventory: [
           { id: 'rapier', name: 'Rapier +1', type: 'weapon', equipped: true },
@@ -1826,6 +1979,11 @@
       // Update header
       document.getElementById('currentCharEmoji').textContent = currentCharacter.emoji;
       document.getElementById('currentCharName').textContent = currentCharacter.name;
+      document.getElementById('charAlignment').textContent = currentCharacter.alignment || 'Neutral';
+      document.getElementById('charLevel').textContent = currentCharacter.level;
+      document.getElementById('charRace').textContent = currentCharacter.race || 'Human';
+      document.getElementById('charClass').textContent = currentCharacter.class;
+      document.getElementById('charSubclass').textContent = currentCharacter.subclass || '';
       document.getElementById('characterEmoji').textContent = currentCharacter.emoji;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
 
@@ -1844,6 +2002,13 @@
       document.getElementById('hpText').textContent = `${currentCharacter.hp.current} / ${currentCharacter.hp.max}`;
       document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
       document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
+
+      // Update Food
+      if (currentCharacter.food) {
+        const foodPercent = (currentCharacter.food.current / currentCharacter.food.max) * 100;
+        document.getElementById('foodFill').style.width = foodPercent + '%';
+        document.getElementById('foodText').textContent = `${currentCharacter.food.current} / ${currentCharacter.food.max}`;
+      }
 
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
@@ -2349,23 +2514,56 @@
         return;
       }
 
-      // Group items by type
+      let html = '';
+
+      // Attuned Items Section (max 3 slots)
+      const attunedItems = currentCharacter.inventory.filter(item => item.attuned);
+      html += `<div style="margin-bottom: 25px; padding: 15px; background: rgba(74, 144, 226, 0.1); border: 2px solid var(--accent-color); border-radius: 8px;">
+        <div style="font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;">✨ Attuned Items (${attunedItems.length}/3)</div>
+        <div style="display: grid; gap: 8px;">`;
+
+      for (let i = 0; i < 3; i++) {
+        const item = attunedItems[i];
+        if (item) {
+          html += `
+            <div class="inventory-item equipped">
+              <div class="inventory-item-info">
+                <div class="inventory-item-name">✨ ${item.name}</div>
+                <div class="inventory-item-type">${item.type}</div>
+              </div>
+              <div class="equipped-badge">Attuned</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="padding: 15px; background: rgba(255,255,255,0.05); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+              Empty Attunement Slot
+            </div>
+          `;
+        }
+      }
+
+      html += '</div></div>';
+
+      // Regular inventory grouped by type
       const grouped = {};
       currentCharacter.inventory.forEach(item => {
         if (!grouped[item.type]) grouped[item.type] = [];
         grouped[item.type].push(item);
       });
 
-      let html = '';
       Object.keys(grouped).sort().forEach(type => {
         html += `<div class="inventory-category">
           <div class="inventory-category-title">${type}</div>`;
 
         grouped[type].forEach(item => {
+          const equippedIcon = item.equipped ? '⚡ ' : '';
+          const attunedIcon = item.attuned ? '✨ ' : '';
+
           html += `
             <div class="inventory-item ${item.equipped ? 'equipped' : ''}">
               <div class="inventory-item-info">
-                <div class="inventory-item-name">${item.name}</div>
+                <div class="inventory-item-name">${attunedIcon}${equippedIcon}${item.name}</div>
                 <div class="inventory-item-type">${item.type}</div>
               </div>
               ${item.quantity ? `<div class="inventory-item-quantity">×${item.quantity}</div>` : ''}
@@ -2389,6 +2587,39 @@
       if (hpPercent <= 50) return 'injured';  // Moderately injured
       if (hpPercent <= 75) return 'wounded';  // Lightly injured
       return 'default';
+    }
+
+    function consumeFood() {
+      if (!currentCharacter.food) return;
+
+      // Find rations in inventory
+      const rations = currentCharacter.inventory?.find(item => item.name.toLowerCase().includes('ration'));
+
+      if (rations && rations.quantity > 0) {
+        // Consume 1 ration
+        rations.quantity--;
+
+        // Restore food (satiety)
+        const foodRestored = 30;
+        currentCharacter.food.current = Math.min(currentCharacter.food.max, currentCharacter.food.current + foodRestored);
+
+        updateCharacterDisplay();
+        addBattleLog(`${currentCharacter.name} ate some rations and restored ${foodRestored} satiety.`);
+
+        if (rations.quantity === 0) {
+          // Remove from inventory
+          const index = currentCharacter.inventory.indexOf(rations);
+          if (index > -1) currentCharacter.inventory.splice(index, 1);
+          addBattleLog(`⚠️ Out of rations!`);
+        }
+      } else {
+        addBattleLog(`⚠️ ${currentCharacter.name} has no rations to eat!`);
+      }
+    }
+
+    function toggleDicePopup() {
+      const popup = document.getElementById('dicePopup');
+      popup.classList.toggle('show');
     }
   </script>
 </body>
