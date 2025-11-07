@@ -1648,7 +1648,8 @@
         portrait: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80',
         location: 'forest',
         inventory: [
-          { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true },
+          { id: 'longbow', name: 'Longbow +1', type: 'weapon', equipped: true, attuned: true },
+          { id: 'cloak', name: 'Cloak of Elvenkind', type: 'armor', equipped: true, attuned: true },
           { id: 'arrows', name: 'Arrows', type: 'ammunition', quantity: 40 },
           { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: true },
           { id: 'healing_potion', name: 'Potion of Healing', type: 'consumable', quantity: 3 },
@@ -1716,9 +1717,10 @@
         portrait: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
         location: 'temple',
         inventory: [
-          { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true },
+          { id: 'longsword', name: 'Longsword of Justice', type: 'weapon', equipped: true, attuned: true },
+          { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true, attuned: true },
+          { id: 'amulet', name: 'Amulet of Health', type: 'gear', equipped: true, attuned: true },
           { id: 'plate_armor', name: 'Plate Armor', type: 'armor', equipped: true },
-          { id: 'shield', name: 'Shield +1', type: 'armor', equipped: true },
           { id: 'holy_symbol', name: 'Holy Symbol', type: 'gear', equipped: true },
           { id: 'healing_potion', name: 'Potion of Greater Healing', type: 'consumable', quantity: 2 },
           { id: 'oil_of_sharpness', name: 'Oil of Sharpness', type: 'consumable', quantity: 1 }
@@ -2512,23 +2514,56 @@
         return;
       }
 
-      // Group items by type
+      let html = '';
+
+      // Attuned Items Section (max 3 slots)
+      const attunedItems = currentCharacter.inventory.filter(item => item.attuned);
+      html += `<div style="margin-bottom: 25px; padding: 15px; background: rgba(74, 144, 226, 0.1); border: 2px solid var(--accent-color); border-radius: 8px;">
+        <div style="font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;">✨ Attuned Items (${attunedItems.length}/3)</div>
+        <div style="display: grid; gap: 8px;">`;
+
+      for (let i = 0; i < 3; i++) {
+        const item = attunedItems[i];
+        if (item) {
+          html += `
+            <div class="inventory-item equipped">
+              <div class="inventory-item-info">
+                <div class="inventory-item-name">✨ ${item.name}</div>
+                <div class="inventory-item-type">${item.type}</div>
+              </div>
+              <div class="equipped-badge">Attuned</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="padding: 15px; background: rgba(255,255,255,0.05); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+              Empty Attunement Slot
+            </div>
+          `;
+        }
+      }
+
+      html += '</div></div>';
+
+      // Regular inventory grouped by type
       const grouped = {};
       currentCharacter.inventory.forEach(item => {
         if (!grouped[item.type]) grouped[item.type] = [];
         grouped[item.type].push(item);
       });
 
-      let html = '';
       Object.keys(grouped).sort().forEach(type => {
         html += `<div class="inventory-category">
           <div class="inventory-category-title">${type}</div>`;
 
         grouped[type].forEach(item => {
+          const equippedIcon = item.equipped ? '⚡ ' : '';
+          const attunedIcon = item.attuned ? '✨ ' : '';
+
           html += `
             <div class="inventory-item ${item.equipped ? 'equipped' : ''}">
               <div class="inventory-item-info">
-                <div class="inventory-item-name">${item.name}</div>
+                <div class="inventory-item-name">${attunedIcon}${equippedIcon}${item.name}</div>
                 <div class="inventory-item-type">${item.type}</div>
               </div>
               ${item.quantity ? `<div class="inventory-item-quantity">×${item.quantity}</div>` : ''}
