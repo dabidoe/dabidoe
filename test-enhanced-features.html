@@ -36,78 +36,190 @@
       margin: 0 auto;
     }
 
+    /* Header with Hamburger */
     .test-header {
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 40px;
-      padding: 30px;
+      padding: 20px 30px;
       background: var(--surface-color);
       border-radius: 12px;
       border: 2px solid var(--border-color);
+      position: relative;
     }
 
-    .test-header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: var(--accent-color);
-    }
-
-    .test-header p {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-    }
-
-    .character-selector {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 30px;
-      padding: 20px;
-      background: var(--surface-color);
-      border-radius: 12px;
-      flex-wrap: wrap;
-    }
-
-    .character-btn {
-      flex: 1;
-      min-width: 150px;
-      padding: 15px 20px;
+    .hamburger-btn {
+      width: 50px;
+      height: 50px;
       background: var(--background-color);
       border: 2px solid var(--border-color);
       border-radius: 8px;
-      color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
     }
 
-    .character-btn:hover {
+    .hamburger-btn:hover {
       border-color: var(--accent-color);
-      transform: translateY(-2px);
+      background: var(--hover-color);
     }
 
-    .character-btn.active {
+    .hamburger-btn span {
+      width: 25px;
+      height: 3px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .header-content {
+      flex: 1;
+      text-align: center;
+    }
+
+    .header-content h1 {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      color: var(--accent-color);
+    }
+
+    .current-character {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+    }
+
+    .current-character-emoji {
+      font-size: 1.5rem;
+      margin-right: 8px;
+    }
+
+    /* Character Menu Overlay */
+    .character-menu {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100vh;
+      background: var(--surface-color);
+      border-right: 2px solid var(--border-color);
+      z-index: 9999;
+      transition: left 0.3s ease;
+      overflow-y: auto;
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .character-menu.open {
+      left: 0;
+    }
+
+    .menu-header {
+      padding: 20px;
+      background: var(--background-color);
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-header h3 {
+      color: var(--accent-color);
+    }
+
+    .close-menu-btn {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .character-list {
+      padding: 10px;
+    }
+
+    .character-item {
+      padding: 15px;
+      margin-bottom: 10px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .character-item:hover {
+      border-color: var(--accent-color);
+      transform: translateX(5px);
+    }
+
+    .character-item.active {
       background: var(--accent-color);
       border-color: var(--accent-color);
     }
 
-    .character-emoji {
+    .character-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .character-item-emoji {
       font-size: 2rem;
     }
 
-    .character-name {
-      font-weight: 600;
-      font-size: 1rem;
+    .character-item-info {
+      flex: 1;
     }
 
-    .character-class {
+    .character-item-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 3px;
+    }
+
+    .character-item-class {
       font-size: 0.85rem;
       color: var(--text-secondary);
     }
 
-    .character-btn.active .character-class {
+    .character-item.active .character-item-class {
       color: rgba(255, 255, 255, 0.8);
+    }
+
+    .character-item-stats {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85rem;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .character-item.active .character-item-stats {
+      border-top-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9998;
+      display: none;
+    }
+
+    .menu-overlay.show {
+      display: block;
     }
 
     .demo-layout {
@@ -132,7 +244,7 @@
       padding-bottom: 10px;
     }
 
-    /* Image Tabs Styles */
+    /* Image Tabs */
     .image-tabs-nav {
       display: flex;
       gap: 10px;
@@ -170,12 +282,6 @@
       border-radius: 8px;
       overflow: hidden;
       margin-bottom: 15px;
-    }
-
-    .character-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     .image-placeholder {
@@ -219,7 +325,7 @@
       border-color: var(--accent-color);
     }
 
-    /* Stats Styles */
+    /* Stats */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -292,7 +398,7 @@
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    /* Chat Styles */
+    /* Chat Modes */
     .chat-modes {
       display: flex;
       gap: 10px;
@@ -323,6 +429,46 @@
       color: white;
     }
 
+    /* Turn Tracker */
+    .turn-tracker {
+      margin-bottom: 15px;
+      padding: 12px;
+      background: var(--background-color);
+      border: 2px solid var(--battle-color);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .turn-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .turn-number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--battle-color);
+    }
+
+    .turn-controls button {
+      padding: 8px 16px;
+      background: var(--battle-color);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .turn-controls button:hover {
+      opacity: 0.8;
+    }
+
+    /* State Selector */
     .state-selector {
       margin-bottom: 15px;
       padding: 12px;
@@ -343,8 +489,9 @@
       font-size: 0.9rem;
     }
 
+    /* Messages */
     .messages-area {
-      height: 300px;
+      height: 350px;
       overflow-y: auto;
       padding: 15px;
       background: var(--background-color);
@@ -356,10 +503,26 @@
       display: flex;
       gap: 10px;
       margin-bottom: 15px;
+      animation: messageSlide 0.3s ease-out;
+    }
+
+    @keyframes messageSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .message.player {
       flex-direction: row-reverse;
+    }
+
+    .message.system {
+      justify-content: center;
     }
 
     .message-avatar {
@@ -374,6 +537,10 @@
       flex-shrink: 0;
     }
 
+    .message.system .message-avatar {
+      background: var(--battle-color);
+    }
+
     .message-content {
       flex: 1;
       padding: 12px;
@@ -384,6 +551,13 @@
 
     .message.player .message-content {
       background: var(--accent-color);
+    }
+
+    .message.system .message-content {
+      background: rgba(231, 76, 60, 0.2);
+      border: 2px solid var(--battle-color);
+      max-width: 90%;
+      text-align: center;
     }
 
     .message-header {
@@ -401,7 +575,139 @@
       line-height: 1.5;
     }
 
-    /* Dice Roll Overlay */
+    /* Battle Actions */
+    .battle-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .action-btn {
+      padding: 12px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    /* Abilities */
+    .abilities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .ability-card {
+      padding: 15px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ability-card:hover {
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    .ability-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .ability-icon {
+      font-size: 2rem;
+    }
+
+    .ability-info {
+      flex: 1;
+    }
+
+    .ability-name {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .ability-damage {
+      font-size: 0.85rem;
+      color: var(--accent-color);
+      font-weight: 700;
+    }
+
+    .ability-description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .skill-btn {
+      padding: 12px 8px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .skill-btn:hover {
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .skill-emoji {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .skill-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .skill-modifier {
+      font-size: 0.7rem;
+      color: var(--accent-color);
+      font-weight: 700;
+    }
+
+    .skills-section {
+      margin-bottom: 20px;
+    }
+
+    .skills-section h3 {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* Dice Overlay */
     .dice-overlay {
       position: fixed;
       top: 50%;
@@ -435,6 +741,7 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(74, 144, 226, 0.3);
       text-align: center;
       backdrop-filter: blur(10px);
+      min-width: 200px;
     }
 
     .dice-icon {
@@ -455,6 +762,7 @@
       color: var(--text-secondary);
       text-transform: uppercase;
       margin-bottom: 10px;
+      letter-spacing: 1px;
     }
 
     .dice-value {
@@ -462,6 +770,15 @@
       font-weight: 900;
       text-shadow: 0 2px 10px currentColor;
       animation: resultPulse 0.5s ease-out;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .dice-breakdown {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-family: 'Courier New', monospace;
+      margin-top: 8px;
     }
 
     @keyframes resultPulse {
@@ -495,72 +812,14 @@
       20%, 40%, 60%, 80% { transform: translateX(5px); }
     }
 
-    /* Battle Interface */
-    .battle-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .action-btn {
-      padding: 12px;
-      background: var(--background-color);
-      border: 2px solid var(--border-color);
-      border-radius: 8px;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-    }
-
-    .action-btn:hover {
-      border-color: var(--accent-color);
-      transform: translateY(-2px);
-    }
-
-    .abilities-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .ability-btn {
-      padding: 15px;
-      background: var(--background-color);
-      border: 2px solid var(--border-color);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-    }
-
-    .ability-btn:hover {
-      border-color: var(--accent-color);
-      transform: translateY(-2px);
-    }
-
-    .ability-icon {
-      font-size: 2rem;
-      margin-bottom: 8px;
-    }
-
-    .ability-name {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .ability-damage {
-      font-size: 0.85rem;
-      color: var(--accent-color);
-    }
-
+    /* Test Controls */
     .test-controls {
       position: fixed;
       bottom: 20px;
       right: 20px;
       display: flex;
       gap: 10px;
+      z-index: 100;
     }
 
     .test-btn {
@@ -587,10 +846,6 @@
     }
 
     @media (max-width: 768px) {
-      .character-selector {
-        flex-direction: column;
-      }
-
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -598,39 +853,50 @@
       .battle-actions {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .test-controls {
+        bottom: 10px;
+        right: 10px;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
   <div class="test-container">
-    <!-- Header -->
+    <!-- Header with Hamburger -->
     <div class="test-header">
-      <h1>🎨 Enhanced Features Test</h1>
-      <p>Multi-Image Characters • State-Based Conversations • Dice Rolls • Expanded Stats</p>
+      <button class="hamburger-btn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="header-content">
+        <h1>🎮 Character Foundry</h1>
+        <div class="current-character">
+          <span class="current-character-emoji" id="currentCharEmoji">🏹</span>
+          <span id="currentCharName">Aelindra Moonwhisper</span>
+        </div>
+      </div>
+
+      <div style="width: 50px;"></div> <!-- Spacer for symmetry -->
     </div>
 
-    <!-- Character Selector -->
-    <div class="character-selector">
-      <button class="character-btn active" onclick="selectCharacter(0)">
-        <span class="character-emoji">🏹</span>
-        <span class="character-name">Aelindra</span>
-        <span class="character-class">Elven Ranger</span>
-      </button>
-      <button class="character-btn" onclick="selectCharacter(1)">
-        <span class="character-emoji">🛡️</span>
-        <span class="character-name">Theron</span>
-        <span class="character-class">Human Paladin</span>
-      </button>
-      <button class="character-btn" onclick="selectCharacter(2)">
-        <span class="character-emoji">🔮</span>
-        <span class="character-name">Zara</span>
-        <span class="character-class">Tiefling Wizard</span>
-      </button>
-      <button class="character-btn" onclick="selectCharacter(3)">
-        <span class="character-emoji">🗡️</span>
-        <span class="character-name">Kael</span>
-        <span class="character-class">Halfling Rogue</span>
-      </button>
+    <!-- Character Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+    <div class="character-menu" id="characterMenu">
+      <div class="menu-header">
+        <h3>Characters</h3>
+        <button class="close-menu-btn" onclick="closeMenu()">✕</button>
+      </div>
+      <div class="character-list" id="characterList">
+        <!-- Will be populated by JS -->
+      </div>
     </div>
 
     <!-- Demo Layout -->
@@ -665,7 +931,7 @@
 
         <!-- Stats -->
         <div class="demo-section">
-          <h2>📊 Expanded Stats</h2>
+          <h2>📊 Character Stats</h2>
 
           <div class="hp-display">
             <strong>Hit Points</strong>
@@ -730,7 +996,7 @@
           <div class="chat-modes">
             <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
             <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
-            <button class="mode-btn" onclick="switchChatMode('skills')">✨ Skills</button>
+            <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
           </div>
 
           <!-- Conversation Mode -->
@@ -772,12 +1038,28 @@
 
           <!-- Battle Mode -->
           <div id="battleMode" style="display: none;">
-            <div style="margin-bottom: 15px; padding: 15px; background: var(--background-color); border-radius: 8px;">
+            <div class="turn-tracker">
+              <div class="turn-info">
+                <div>
+                  <strong style="color: var(--text-secondary); font-size: 0.85rem;">Turn</strong>
+                  <div class="turn-number" id="turnNumber">1</div>
+                </div>
+                <div style="border-left: 2px solid var(--border-color); padding-left: 15px; margin-left: 15px;">
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Current</div>
+                  <div style="font-weight: 600; color: var(--text-primary);" id="currentTurn">Your Turn</div>
+                </div>
+              </div>
+              <div class="turn-controls">
+                <button onclick="nextTurn()">Next Turn ➤</button>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
               <strong style="color: var(--text-primary);">Quick Actions</strong>
             </div>
 
             <div class="battle-actions">
-              <button class="action-btn" onclick="rollDice('Attack', 'd20')">⚔️ Attack</button>
+              <button class="action-btn" onclick="rollAttack()">⚔️ Attack</button>
               <button class="action-btn" onclick="rollDice('Initiative', 'd20')">🎲 Initiative</button>
               <button class="action-btn" onclick="rollDice('Save', 'd20')">🛡️ Save</button>
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
@@ -786,7 +1068,7 @@
             </div>
 
             <div style="margin: 20px 0;">
-              <strong style="color: var(--text-primary);">Combat Abilities</strong>
+              <strong style="color: var(--text-primary);">Abilities</strong>
             </div>
 
             <div class="abilities-grid" id="abilitiesGrid">
@@ -797,14 +1079,130 @@
           <!-- Skills Mode -->
           <div id="skillsMode" style="display: none;">
             <div style="padding: 15px; background: var(--background-color); border-radius: 8px; margin-bottom: 15px;">
-              <strong style="color: var(--text-primary); margin-bottom: 10px; display: block;">Character Abilities</strong>
+              <strong style="color: var(--text-primary); margin-bottom: 10px; display: block;">D&D 5e Skill Checks</strong>
               <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
-                Click an ability to use it. Images will be generated for spell casts and special attacks.
+                Click any skill to roll a check. Modifiers are automatically calculated based on your character's stats and proficiencies.
               </p>
             </div>
 
-            <div id="skillsAbilitiesGrid" style="display: grid; gap: 15px;">
-              <!-- Will be populated dynamically -->
+            <div class="skills-section">
+              <h3>🧠 Intelligence Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Arcana', 'int')">
+                  <span class="skill-emoji">🔮</span>
+                  <div class="skill-name">Arcana</div>
+                  <div class="skill-modifier" id="skill-arcana">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('History', 'int')">
+                  <span class="skill-emoji">📜</span>
+                  <div class="skill-name">History</div>
+                  <div class="skill-modifier" id="skill-history">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Investigation', 'int')">
+                  <span class="skill-emoji">🔍</span>
+                  <div class="skill-name">Investigation</div>
+                  <div class="skill-modifier" id="skill-investigation">+4</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Nature', 'int')">
+                  <span class="skill-emoji">🌿</span>
+                  <div class="skill-name">Nature</div>
+                  <div class="skill-modifier" id="skill-nature">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Religion', 'int')">
+                  <span class="skill-emoji">⛪</span>
+                  <div class="skill-name">Religion</div>
+                  <div class="skill-modifier" id="skill-religion">+1</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="skills-section">
+              <h3>👁️ Wisdom Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Animal Handling', 'wis')">
+                  <span class="skill-emoji">🐺</span>
+                  <div class="skill-name">Animal Handling</div>
+                  <div class="skill-modifier" id="skill-animal">+6</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Insight', 'wis')">
+                  <span class="skill-emoji">💭</span>
+                  <div class="skill-name">Insight</div>
+                  <div class="skill-modifier" id="skill-insight">+3</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Medicine', 'wis')">
+                  <span class="skill-emoji">⚕️</span>
+                  <div class="skill-name">Medicine</div>
+                  <div class="skill-modifier" id="skill-medicine">+3</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Perception', 'wis')">
+                  <span class="skill-emoji">👁️</span>
+                  <div class="skill-name">Perception</div>
+                  <div class="skill-modifier" id="skill-perception">+6</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Survival', 'wis')">
+                  <span class="skill-emoji">🏕️</span>
+                  <div class="skill-name">Survival</div>
+                  <div class="skill-modifier" id="skill-survival">+9</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="skills-section">
+              <h3>✨ Charisma Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Deception', 'cha')">
+                  <span class="skill-emoji">🎭</span>
+                  <div class="skill-name">Deception</div>
+                  <div class="skill-modifier" id="skill-deception">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Intimidation', 'cha')">
+                  <span class="skill-emoji">😠</span>
+                  <div class="skill-name">Intimidation</div>
+                  <div class="skill-modifier" id="skill-intimidation">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Performance', 'cha')">
+                  <span class="skill-emoji">🎪</span>
+                  <div class="skill-name">Performance</div>
+                  <div class="skill-modifier" id="skill-performance">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Persuasion', 'cha')">
+                  <span class="skill-emoji">🤝</span>
+                  <div class="skill-name">Persuasion</div>
+                  <div class="skill-modifier" id="skill-persuasion">+0</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="skills-section">
+              <h3>🤸 Dexterity Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Acrobatics', 'dex')">
+                  <span class="skill-emoji">🤸</span>
+                  <div class="skill-name">Acrobatics</div>
+                  <div class="skill-modifier" id="skill-acrobatics">+7</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Sleight of Hand', 'dex')">
+                  <span class="skill-emoji">🃏</span>
+                  <div class="skill-name">Sleight of Hand</div>
+                  <div class="skill-modifier" id="skill-sleight">+4</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Stealth', 'dex')">
+                  <span class="skill-emoji">🥷</span>
+                  <div class="skill-name">Stealth</div>
+                  <div class="skill-modifier" id="skill-stealth">+10</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="skills-section">
+              <h3>💪 Strength Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Athletics', 'str')">
+                  <span class="skill-emoji">💪</span>
+                  <div class="skill-name">Athletics</div>
+                  <div class="skill-modifier" id="skill-athletics">+1</div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -813,8 +1211,8 @@
 
     <!-- Test Controls -->
     <div class="test-controls">
-      <button class="test-btn" onclick="rollRandomDice()">🎲 Test Dice Roll</button>
-      <button class="test-btn" onclick="takeDamage()">💔 Take Damage</button>
+      <button class="test-btn" onclick="rollRandomDice()">🎲 Random Roll</button>
+      <button class="test-btn" onclick="takeDamage()">💔 Damage</button>
       <button class="test-btn" onclick="heal()">❤️ Heal</button>
     </div>
   </div>
@@ -825,11 +1223,12 @@
       <div class="dice-icon" id="diceIcon">🎲</div>
       <div class="dice-type" id="diceType">Attack Roll</div>
       <div class="dice-value" id="diceValue">18</div>
+      <div class="dice-breakdown" id="diceBreakdown"></div>
     </div>
   </div>
 
   <script>
-    // Character Data
+    // Character Data with Skills
     const characters = [
       {
         id: 'aelindra',
@@ -840,6 +1239,27 @@
         hp: { current: 58, max: 68 },
         ac: 16,
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
+        skills: {
+          // Format: [ability, proficiency] where proficiency: 0=none, 1=proficient, 2=expertise
+          acrobatics: ['dex', 1],
+          animalHandling: ['wis', 1],
+          arcana: ['int', 0],
+          athletics: ['str', 0],
+          deception: ['cha', 0],
+          history: ['int', 0],
+          insight: ['wis', 0],
+          intimidation: ['cha', 0],
+          investigation: ['int', 1],
+          medicine: ['wis', 0],
+          nature: ['int', 0],
+          perception: ['wis', 1],
+          performance: ['cha', 0],
+          persuasion: ['cha', 0],
+          religion: ['int', 0],
+          sleightOfHand: ['dex', 0],
+          stealth: ['dex', 2], // Expertise
+          survival: ['wis', 2]  // Expertise
+        },
         abilities: [
           { id: 'hunters_mark', name: "Hunter's Mark", icon: '🎯', damage: '1d6', description: 'Mark a target for extra damage' },
           { id: 'multiattack', name: 'Multiattack', icon: '⚔️', damage: '2d8+4', description: 'Make two attacks' },
@@ -863,6 +1283,26 @@
         hp: { current: 88, max: 104 },
         ac: 18,
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
+        skills: {
+          acrobatics: ['dex', 0],
+          animalHandling: ['wis', 0],
+          arcana: ['int', 0],
+          athletics: ['str', 1],
+          deception: ['cha', 0],
+          history: ['int', 0],
+          insight: ['wis', 1],
+          intimidation: ['cha', 1],
+          investigation: ['int', 0],
+          medicine: ['wis', 1],
+          nature: ['int', 0],
+          perception: ['wis', 0],
+          performance: ['cha', 0],
+          persuasion: ['cha', 1],
+          religion: ['int', 1],
+          sleightOfHand: ['dex', 0],
+          stealth: ['dex', 0],
+          survival: ['wis', 0]
+        },
         abilities: [
           { id: 'divine_smite', name: 'Divine Smite', icon: '⚡', damage: '4d8', description: 'Channel divine energy into your strike' },
           { id: 'lay_on_hands', name: 'Lay on Hands', icon: '✨', damage: '50', description: 'Heal with divine touch' },
@@ -886,6 +1326,26 @@
         hp: { current: 42, max: 54 },
         ac: 13,
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
+        skills: {
+          acrobatics: ['dex', 0],
+          animalHandling: ['wis', 0],
+          arcana: ['int', 2], // Expertise
+          athletics: ['str', 0],
+          deception: ['cha', 0],
+          history: ['int', 1],
+          insight: ['wis', 0],
+          intimidation: ['cha', 0],
+          investigation: ['int', 1],
+          medicine: ['wis', 0],
+          nature: ['int', 1],
+          perception: ['wis', 0],
+          performance: ['cha', 0],
+          persuasion: ['cha', 0],
+          religion: ['int', 1],
+          sleightOfHand: ['dex', 0],
+          stealth: ['dex', 0],
+          survival: ['wis', 0]
+        },
         abilities: [
           { id: 'fireball', name: 'Fireball', icon: '🔥', damage: '8d6', description: 'Devastating explosion of flame' },
           { id: 'counterspell', name: 'Counterspell', icon: '🚫', damage: null, description: 'Negate enemy spells' },
@@ -909,11 +1369,31 @@
         hp: { current: 38, max: 45 },
         ac: 15,
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
+        skills: {
+          acrobatics: ['dex', 2], // Expertise
+          animalHandling: ['wis', 0],
+          arcana: ['int', 0],
+          athletics: ['str', 0],
+          deception: ['cha', 1],
+          history: ['int', 0],
+          insight: ['wis', 0],
+          intimidation: ['cha', 0],
+          investigation: ['int', 1],
+          medicine: ['wis', 0],
+          nature: ['int', 0],
+          perception: ['wis', 1],
+          performance: ['cha', 0],
+          persuasion: ['cha', 1],
+          religion: ['int', 0],
+          sleightOfHand: ['dex', 2], // Expertise
+          stealth: ['dex', 2], // Expertise
+          survival: ['wis', 0]
+        },
         abilities: [
           { id: 'sneak_attack', name: 'Sneak Attack', icon: '🗡️', damage: '4d6', description: 'Strike from the shadows' },
           { id: 'cunning_action', name: 'Cunning Action', icon: '💨', damage: null, description: 'Bonus action dash/disengage/hide' },
           { id: 'evasion', name: 'Evasion', icon: '🤸', damage: null, description: 'Dodge area effects' },
-          { id: 'thieves_cant', name: "Thieves' Tools", icon: '🔓', damage: null, description: 'Pick locks and disable traps' }
+          { id: 'thieves_tools', name: "Thieves' Tools", icon: '🔓', damage: null, description: 'Pick locks and disable traps' }
         ],
         states: {
           default: { mood: 'sly', greeting: '*leaning casually* Well, well, what brings you to this part of town?' },
@@ -930,24 +1410,63 @@
     let currentPortraitType = 'standard';
     let currentChatMode = 'conversation';
     let currentState = 'default';
+    let turnNumber = 1;
 
     // Initialize
     updateCharacterDisplay();
+    populateCharacterMenu();
 
-    function selectCharacter(index) {
-      // Update button states
-      document.querySelectorAll('.character-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', i === index);
+    function populateCharacterMenu() {
+      const list = document.getElementById('characterList');
+      list.innerHTML = characters.map((char, index) => `
+        <div class="character-item ${index === 0 ? 'active' : ''}" onclick="selectCharacterFromMenu(${index})">
+          <div class="character-item-header">
+            <div class="character-item-emoji">${char.emoji}</div>
+            <div class="character-item-info">
+              <div class="character-item-name">${char.name}</div>
+              <div class="character-item-class">${char.class} ${char.level}</div>
+            </div>
+          </div>
+          <div class="character-item-stats">
+            <span>HP: ${char.hp.current}/${char.hp.max}</span>
+            <span>AC: ${char.ac}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('characterMenu');
+      const overlay = document.getElementById('menuOverlay');
+      menu.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+
+    function closeMenu() {
+      const menu = document.getElementById('characterMenu');
+      const overlay = document.getElementById('menuOverlay');
+      menu.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    function selectCharacterFromMenu(index) {
+      // Update menu active state
+      document.querySelectorAll('.character-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
       });
 
       currentCharacter = characters[index];
       currentState = 'default';
+      turnNumber = 1;
       updateCharacterDisplay();
       updateMessages();
+      closeMenu();
     }
 
     function updateCharacterDisplay() {
-      // Update emoji
+      // Update header
+      document.getElementById('currentCharEmoji').textContent = currentCharacter.emoji;
+      document.getElementById('currentCharName').textContent = currentCharacter.name;
       document.getElementById('characterEmoji').textContent = currentCharacter.emoji;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
 
@@ -974,47 +1493,50 @@
 
       // Update abilities
       updateAbilities();
+
+      // Update skills
+      updateSkills();
+
+      // Update turn tracker
+      document.getElementById('turnNumber').textContent = turnNumber;
     }
 
     function updateAbilities() {
       const abilitiesGrid = document.getElementById('abilitiesGrid');
-      const skillsGrid = document.getElementById('skillsAbilitiesGrid');
-
-      let battleHTML = '';
-      let skillsHTML = '';
+      let html = '';
 
       currentCharacter.abilities.forEach(ability => {
-        // Battle mode abilities
-        battleHTML += `
-          <button class="ability-btn" onclick="useAbility('${ability.id}')">
-            <div class="ability-icon">${ability.icon}</div>
-            <div class="ability-name">${ability.name}</div>
-            ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
-          </button>
-        `;
-
-        // Skills mode abilities (more detailed)
-        skillsHTML += `
-          <div style="padding: 20px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;" onclick="useAbility('${ability.id}')">
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-              <div style="font-size: 2.5rem;">${ability.icon}</div>
-              <div>
-                <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 5px;">${ability.name}</div>
-                <div style="font-size: 0.9rem; color: var(--text-secondary);">${ability.description}</div>
+        html += `
+          <div class="ability-card" onclick="useAbility('${ability.id}')">
+            <div class="ability-header">
+              <div class="ability-icon">${ability.icon}</div>
+              <div class="ability-info">
+                <div class="ability-name">${ability.name}</div>
+                ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
               </div>
             </div>
-            ${ability.damage ? `
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--surface-color); border-radius: 6px;">
-                <span style="color: var(--text-secondary);">Damage:</span>
-                <span style="font-weight: 700; color: var(--accent-color);">${ability.damage}</span>
-              </div>
-            ` : ''}
+            <div class="ability-description">${ability.description}</div>
           </div>
         `;
       });
 
-      abilitiesGrid.innerHTML = battleHTML;
-      skillsGrid.innerHTML = skillsHTML;
+      abilitiesGrid.innerHTML = html;
+    }
+
+    function updateSkills() {
+      const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
+
+      Object.entries(currentCharacter.skills).forEach(([skillName, [ability, proficiency]]) => {
+        const abilityMod = Math.floor((currentCharacter.stats[ability] - 10) / 2);
+        const profMod = proficiency * profBonus;
+        const total = abilityMod + profMod;
+
+        const skillId = 'skill-' + skillName.toLowerCase().replace(/\s+/g, '');
+        const element = document.getElementById(skillId);
+        if (element) {
+          element.textContent = (total >= 0 ? '+' : '') + total;
+        }
+      });
     }
 
     function switchImageTab(tab) {
@@ -1024,7 +1546,6 @@
       });
       event.target.classList.add('active');
 
-      // Update display based on tab
       const placeholder = document.querySelector('.image-placeholder p');
       if (tab === 'portrait') {
         placeholder.textContent = 'AI-Generated Portrait';
@@ -1115,31 +1636,63 @@
       messagesArea.scrollTop = messagesArea.scrollHeight;
     }
 
-    function rollDice(type, dice) {
-      const sides = parseInt(dice.substring(1));
-      const roll = Math.floor(Math.random() * sides) + 1;
+    function addBattleLog(message) {
+      // If in conversation mode, don't add to messages
+      if (currentChatMode === 'conversation') return;
 
-      let modifier = 0;
-      if (type === 'Attack' || type === 'Initiative') {
-        modifier = Math.floor((currentCharacter.stats.dex - 10) / 2);
-      }
-
-      const total = roll + modifier;
-      const isCritical = sides === 20 && (roll === 20 || roll === 1);
-
-      showDiceRoll(type, dice, total, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
+      const messagesArea = document.getElementById('messagesArea');
+      messagesArea.innerHTML += `
+        <div class="message system">
+          <div class="message-avatar">⚔️</div>
+          <div class="message-content">
+            <div class="message-text">${message}</div>
+          </div>
+        </div>
+      `;
+      messagesArea.scrollTop = messagesArea.scrollHeight;
     }
 
-    function showDiceRoll(type, diceType, value, critical) {
+    function rollAttack() {
+      // Auto-switch to battle mode
+      if (currentChatMode !== 'battle') {
+        switchChatMode('battle');
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.mode-btn')[1].classList.add('active'); // Battle tab
+        document.getElementById('conversationMode').style.display = 'none';
+        document.getElementById('battleMode').style.display = 'block';
+        document.getElementById('skillsMode').style.display = 'none';
+      }
+
+      rollDice('Attack', 'd20', Math.floor((currentCharacter.stats.dex - 10) / 2));
+    }
+
+    function rollDice(type, dice, modifier = 0) {
+      const sides = parseInt(dice.substring(1));
+      const roll = Math.floor(Math.random() * sides) + 1;
+      const total = roll + modifier;
+      const breakdown = modifier !== 0 ? `1${dice}${modifier >= 0 ? '+' : ''}${modifier}` : `1${dice}`;
+      const isCritical = sides === 20 && (roll === 20 || roll === 1);
+
+      showDiceRoll(type, dice, roll, total, breakdown, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
+
+      // Add to battle log
+      if (currentChatMode === 'battle') {
+        addBattleLog(`${currentCharacter.name} rolled ${type}: ${total} (${breakdown})`);
+      }
+    }
+
+    function showDiceRoll(type, diceType, baseRoll, total, breakdown, critical) {
       const overlay = document.getElementById('diceOverlay');
       const result = document.getElementById('diceResult');
       const icon = document.getElementById('diceIcon');
       const typeEl = document.getElementById('diceType');
       const valueEl = document.getElementById('diceValue');
+      const breakdownEl = document.getElementById('diceBreakdown');
 
       icon.textContent = '🎲';
       typeEl.textContent = type;
-      valueEl.textContent = value;
+      valueEl.textContent = total;
+      breakdownEl.textContent = breakdown;
 
       // Apply critical styling
       result.className = 'dice-result';
@@ -1153,48 +1706,62 @@
 
       setTimeout(() => {
         overlay.classList.remove('show');
-      }, 2500);
+      }, 2800);
+    }
+
+    function rollSkill(skillName, ability) {
+      const skillKey = skillName.toLowerCase().replace(/\s+/g, '');
+      const [, proficiency] = currentCharacter.skills[skillKey] || [ability, 0];
+
+      const abilityMod = Math.floor((currentCharacter.stats[ability] - 10) / 2);
+      const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
+      const modifier = abilityMod + (proficiency * profBonus);
+
+      const roll = Math.floor(Math.random() * 20) + 1;
+      const total = roll + modifier;
+      const breakdown = `1d20${modifier >= 0 ? '+' : ''}${modifier}`;
+
+      showDiceRoll(skillName, 'd20', roll, total, breakdown, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
+
+      // Add to battle log if in battle
+      if (currentChatMode === 'battle') {
+        addBattleLog(`${currentCharacter.name} rolled ${skillName}: ${total}`);
+      }
     }
 
     function rollRandomDice() {
       const types = ['Attack Roll', 'Saving Throw', 'Ability Check', 'Damage Roll'];
       const type = types[Math.floor(Math.random() * types.length)];
-      rollDice(type, 'd20');
+      const modifier = Math.floor(Math.random() * 6);
+      rollDice(type, 'd20', modifier);
     }
 
     function useAbility(abilityId) {
       const ability = currentCharacter.abilities.find(a => a.id === abilityId);
       if (!ability) return;
 
-      // Show ability usage message
-      const messagesArea = document.getElementById('messagesArea');
-      messagesArea.innerHTML += `
-        <div class="message">
-          <div class="message-avatar">${currentCharacter.emoji}</div>
-          <div class="message-content">
-            <div class="message-header">${currentCharacter.name}</div>
-            <div class="message-text">
-              <strong>${ability.icon} ${ability.name}</strong><br>
-              ${ability.description}
-            </div>
-          </div>
-        </div>
-      `;
-      messagesArea.scrollTop = messagesArea.scrollHeight;
+      // Add to battle log
+      addBattleLog(`${currentCharacter.name} uses ${ability.icon} ${ability.name}!`);
 
       // Roll dice if ability has damage
       if (ability.damage) {
         setTimeout(() => {
           // Parse damage (e.g., "4d6", "2d8+4")
-          const match = ability.damage.match(/(\d+)d(\d+)/);
+          const match = ability.damage.match(/(\d+)d(\d+)([+-]\d+)?/);
           if (match) {
             const count = parseInt(match[1]);
             const sides = parseInt(match[2]);
-            let total = 0;
+            const modifier = match[3] ? parseInt(match[3]) : 0;
+
+            let total = modifier;
             for (let i = 0; i < count; i++) {
               total += Math.floor(Math.random() * sides) + 1;
             }
-            showDiceRoll(ability.name, `d${sides}`, total, null);
+
+            const breakdown = `${count}d${sides}${modifier >= 0 && modifier !== 0 ? '+' : ''}${modifier !== 0 ? modifier : ''}`;
+            showDiceRoll(ability.name, `d${sides}`, 0, total, breakdown, null);
+
+            addBattleLog(`Damage: ${total} (${breakdown})`);
           }
         }, 500);
       }
@@ -1207,21 +1774,29 @@
         help: `${currentCharacter.name} helps an ally!`
       };
 
-      alert(messages[action] || 'Action performed!');
+      addBattleLog(messages[action] || 'Action performed!');
+    }
+
+    function nextTurn() {
+      turnNumber++;
+      document.getElementById('turnNumber').textContent = turnNumber;
+      addBattleLog(`--- Turn ${turnNumber} ---`);
     }
 
     function takeDamage() {
       const damage = Math.floor(Math.random() * 15) + 5;
       currentCharacter.hp.current = Math.max(0, currentCharacter.hp.current - damage);
       updateCharacterDisplay();
-      showDiceRoll('Damage Taken', 'd20', damage, null);
+      showDiceRoll('Damage Taken', 'd20', 0, damage, `${damage} damage`, null);
+      addBattleLog(`${currentCharacter.name} takes ${damage} damage!`);
     }
 
     function heal() {
       const healing = Math.floor(Math.random() * 20) + 10;
       currentCharacter.hp.current = Math.min(currentCharacter.hp.max, currentCharacter.hp.current + healing);
       updateCharacterDisplay();
-      showDiceRoll('Healing', 'd20', healing, null);
+      showDiceRoll('Healing', 'd20', 0, healing, `${healing} HP`, null);
+      addBattleLog(`${currentCharacter.name} heals ${healing} HP!`);
     }
   </script>
 </body>
