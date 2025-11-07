@@ -1023,31 +1023,117 @@
       20%, 40%, 60%, 80% { transform: translateX(5px); }
     }
 
-    /* Test Controls */
-    .test-controls {
+    /* Floating Action Button */
+    .fab-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background: var(--accent-color);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .fab-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .fab-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Dice Popup */
+    .dice-popup {
+      position: fixed;
+      bottom: 110px;
+      right: 30px;
+      width: 350px;
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      display: none;
+      animation: popupSlideIn 0.3s ease-out;
+    }
+
+    .dice-popup.show {
+      display: block;
+    }
+
+    @keyframes popupSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dice-popup-header {
       display: flex;
-      gap: 10px;
-      z-index: 100;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .dice-popup-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .close-popup-btn {
+      width: 30px;
+      height: 30px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .close-popup-btn:hover {
+      border-color: var(--accent-color);
+      background: var(--hover-color);
+    }
+
+    .dice-popup-content {
+      padding: 20px;
     }
 
     .test-btn {
-      padding: 15px 25px;
+      padding: 10px 20px;
       background: var(--accent-color);
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       color: white;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
 
     .test-btn:hover {
       background: var(--accent-hover);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     }
 
     @media (max-width: 1200px) {
@@ -1478,28 +1564,44 @@
       </div>
     </div>
 
-    <!-- Test Controls -->
-    <div class="test-controls">
-      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-          <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-            <option value="4">d4</option>
-            <option value="6">d6</option>
-            <option value="8">d8</option>
-            <option value="10">d10</option>
-            <option value="12">d12</option>
-            <option value="20" selected>d20</option>
-            <option value="100">d100</option>
-          </select>
-          <input type="number" id="diceModifier" value="0" min="-10" max="20" placeholder="+/-" style="width: 60px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-          <button class="test-btn" onclick="rollCustomDice()" style="margin: 0;">🎲 Roll</button>
-        </div>
+    <!-- Floating Action Button -->
+    <button class="fab-btn" onclick="toggleDicePopup()" title="Dice & Quick Actions">
+      🎲
+    </button>
+
+    <!-- Dice Popup -->
+    <div class="dice-popup" id="dicePopup">
+      <div class="dice-popup-header">
+        <h3>🎲 Dice & Actions</h3>
+        <button class="close-popup-btn" onclick="toggleDicePopup()">✕</button>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center; background: var(--surface-color); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color);">
-        <input type="number" id="damageAmount" value="10" min="1" max="999" placeholder="Damage" style="width: 80px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-        <button class="test-btn" onclick="takeDamage()" style="margin: 0;">💔 Apply</button>
-        <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
+      <div class="dice-popup-content">
+        <div style="margin-bottom: 15px;">
+          <strong style="display: block; margin-bottom: 8px;">Custom Dice Roll</strong>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+              <option value="4">d4</option>
+              <option value="6">d6</option>
+              <option value="8">d8</option>
+              <option value="10">d10</option>
+              <option value="12">d12</option>
+              <option value="20" selected>d20</option>
+              <option value="100">d100</option>
+            </select>
+            <input type="number" id="diceModifier" value="0" min="-10" max="20" placeholder="+/-" style="width: 60px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <button class="test-btn" onclick="rollCustomDice()" style="margin: 0;">Roll</button>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+          <strong style="display: block; margin-bottom: 8px;">Quick Actions</strong>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="number" id="damageAmount" value="10" min="1" max="999" placeholder="Damage" style="width: 80px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <button class="test-btn" onclick="takeDamage()" style="margin: 0;">💔 Damage</button>
+            <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2478,6 +2580,11 @@
       } else {
         addBattleLog(`⚠️ ${currentCharacter.name} has no rations to eat!`);
       }
+    }
+
+    function toggleDicePopup() {
+      const popup = document.getElementById('dicePopup');
+      popup.classList.toggle('show');
     }
   </script>
 </body>
