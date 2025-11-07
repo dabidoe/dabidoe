@@ -9,21 +9,91 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api'
 
 /**
+ * Custom API Error class for better error handling
+ */
+export class APIError extends Error {
+  constructor(message, status, data = null) {
+    super(message)
+    this.name = 'APIError'
+    this.status = status
+    this.data = data
+  }
+}
+
+/**
+ * Retry a fetch request with exponential backoff
+ * @param {Function} fetchFn - The fetch function to retry
+ * @param {number} maxRetries - Maximum number of retries
+ * @param {number} baseDelay - Base delay in ms for exponential backoff
+ * @returns {Promise} Result of the fetch
+ */
+const retryFetch = async (fetchFn, maxRetries = 3, baseDelay = 1000) => {
+  let lastError
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchFn()
+    } catch (error) {
+      lastError = error
+
+      // Don't retry on client errors (4xx) or last attempt
+      if (error.status >= 400 && error.status < 500) {
+        throw error
+      }
+
+      if (attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt)
+        console.log(`Retrying request in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`)
+        await new Promise(resolve => setTimeout(resolve, delay))
+      }
+    }
+  }
+
+  throw lastError
+}
+
+/**
+ * Generic fetch wrapper with error handling
+ * @param {string} url - The URL to fetch
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Object>} JSON response
+ */
+const apiFetch = async (url, options = {}) => {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  })
+
+  if (!response.ok) {
+    let errorData = null
+    try {
+      errorData = await response.json()
+    } catch (e) {
+      // Response body is not JSON
+    }
+
+    throw new APIError(
+      errorData?.message || `Request failed: ${response.statusText}`,
+      response.status,
+      errorData
+    )
+  }
+
+  return await response.json()
+}
+
+/**
  * Fetch character data by ID
  * @param {string} characterId - The ID of the character to fetch
  * @returns {Promise<Object>} Character data
  */
 export const getCharacter = async (characterId) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/characters/${characterId}`)
-    if (!response.ok) {
-      throw new Error(`Failed to fetch character: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error fetching character:', error)
-    throw error
-  }
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/characters/${characterId}`)
+  )
 }
 
 /**
@@ -31,16 +101,9 @@ export const getCharacter = async (characterId) => {
  * @returns {Promise<Array>} List of characters
  */
 export const getAllCharacters = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/characters`)
-    if (!response.ok) {
-      throw new Error(`Failed to fetch characters: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error fetching characters:', error)
-    throw error
-  }
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/characters`)
+  )
 }
 
 /**
@@ -49,22 +112,12 @@ export const getAllCharacters = async () => {
  * @returns {Promise<Object>} Newly created character data
  */
 export const createCharacter = async (prompt) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/characters/create`, {
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/characters/create`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ prompt })
     })
-    if (!response.ok) {
-      throw new Error(`Failed to create character: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error creating character:', error)
-    throw error
-  }
+  )
 }
 
 /**
@@ -75,26 +128,16 @@ export const createCharacter = async (prompt) => {
  * @returns {Promise<Object>} Character's response
  */
 export const sendMessage = async (characterId, message, conversationHistory = []) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         characterId,
         message,
         conversationHistory
       })
     })
-    if (!response.ok) {
-      throw new Error(`Failed to send message: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error sending message:', error)
-    throw error
-  }
+  )
 }
 
 /**
@@ -105,26 +148,16 @@ export const sendMessage = async (characterId, message, conversationHistory = []
  * @returns {Promise<Object>} Ability result
  */
 export const useAbility = async (characterId, abilityName, context = {}) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/abilities/use`, {
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/abilities/use`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         characterId,
         abilityName,
         context
       })
     })
-    if (!response.ok) {
-      throw new Error(`Failed to use ability: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error using ability:', error)
-    throw error
-  }
+  )
 }
 
 /**
@@ -134,20 +167,10 @@ export const useAbility = async (characterId, abilityName, context = {}) => {
  * @returns {Promise<Object>} Updated character data
  */
 export const updateCharacterStats = async (characterId, updates) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/characters/${characterId}/stats`, {
+  return retryFetch(() =>
+    apiFetch(`${API_BASE_URL}/characters/${characterId}/stats`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(updates)
     })
-    if (!response.ok) {
-      throw new Error(`Failed to update character stats: ${response.statusText}`)
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Error updating character stats:', error)
-    throw error
-  }
+  )
 }

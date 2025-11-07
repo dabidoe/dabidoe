@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Creation Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f4e8d0 0%, #e8dcc4 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      color: #2b2520;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #5a4a3a;
+      font-size: 16px;
+    }
+
+    /* Choice Screen */
+    .choice-container {
+      background: #fff;
+      border: 3px solid #d4c4a8;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 8px 24px rgba(43, 37, 32, 0.15);
+    }
+
+    .choice-title {
+      font-size: 24px;
+      color: #2b2520;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .choice-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .choice-btn {
+      background: #fff;
+      border: 3px solid #d4c4a8;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .choice-btn:hover {
+      border-color: #b85c4a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(184, 92, 74, 0.2);
+    }
+
+    .choice-btn-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .choice-btn-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2b2520;
+      margin-bottom: 4px;
+    }
+
+    .choice-btn-desc {
+      color: #5a4a3a;
+      font-size: 14px;
+    }
+
+    /* Prompt Creator */
+    .creator-container {
+      background: #fff;
+      border: 3px solid #d4c4a8;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 8px 24px rgba(43, 37, 32, 0.15);
+    }
+
+    .creator-title {
+      font-size: 24px;
+      color: #2b2520;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2b2520;
+      margin-bottom: 8px;
+    }
+
+    .form-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #faf8f4;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      color: #2b2520;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-textarea:focus {
+      border-color: #b85c4a;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #faf8f4;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      color: #2b2520;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+      border-color: #b85c4a;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #faf8f4;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      color: #2b2520;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-select:focus {
+      border-color: #b85c4a;
+    }
+
+    .examples {
+      margin-top: 16px;
+      padding: 16px;
+      background: #faf8f4;
+      border-radius: 8px;
+      border: 1px solid #e8dcc4;
+    }
+
+    .examples-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #5a4a3a;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .example-prompt {
+      font-size: 13px;
+      color: #5a4a3a;
+      font-style: italic;
+      margin-bottom: 6px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+    }
+
+    .example-prompt:hover {
+      background: #e8dcc4;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-back {
+      flex: 1;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      color: #5a4a3a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+      border-color: #b85c4a;
+      color: #2b2520;
+    }
+
+    .btn-primary {
+      flex: 2;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #b85c4a;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #a04a38;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(184, 92, 74, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #d4c4a8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .loading-spinner {
+      font-size: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 16px;
+      color: #5a4a3a;
+      font-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Level Slider */
+    .level-slider-container {
+      padding: 16px;
+      background: #faf8f4;
+      border-radius: 8px;
+    }
+
+    .level-display {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #b85c4a;
+      margin-bottom: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #e8dcc4;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #b85c4a;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #b85c4a;
+      cursor: pointer;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚔️ Character Foundry</h1>
+      <p>Create Your Character</p>
+    </div>
+
+    <!-- Choice Screen -->
+    <div id="choiceScreen" class="choice-container">
+      <h2 class="choice-title">How would you like to create?</h2>
+      <div class="choice-buttons">
+        <button class="choice-btn" onclick="showPromptCreator()">
+          <span class="choice-btn-icon">✍️</span>
+          <div class="choice-btn-title">Describe</div>
+          <div class="choice-btn-desc">Tell me about your character in your own words</div>
+        </button>
+        <button class="choice-btn" onclick="showQuickCreator()">
+          <span class="choice-btn-icon">⚡</span>
+          <div class="choice-btn-title">Quick Pick</div>
+          <div class="choice-btn-desc">Choose from options and I'll fill in the rest</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Prompt Creator -->
+    <div id="promptCreator" class="creator-container hidden">
+      <h2 class="creator-title">Describe Your Character</h2>
+      <form onsubmit="generateFromPrompt(event)">
+        <div class="form-group">
+          <label class="form-label">Tell me about your character</label>
+          <textarea
+            id="promptText"
+            class="form-textarea"
+            placeholder="A battle-hardened dwarf warrior who left the mountains to seek redemption..."
+          ></textarea>
+          <div class="examples">
+            <div class="examples-title">Example Prompts</div>
+            <div class="example-prompt" onclick="useExample(0)">
+              "A cunning rogue from the streets of Waterdeep with a heart of gold"
+            </div>
+            <div class="example-prompt" onclick="useExample(1)">
+              "An elderly wizard who's seen too much and just wants peace"
+            </div>
+            <div class="example-prompt" onclick="useExample(2)">
+              "A young paladin on their first quest, eager but naive"
+            </div>
+          </div>
+        </div>
+        <div class="button-group">
+          <button type="button" class="btn-back" onclick="showChoice()">Back</button>
+          <button type="submit" class="btn-primary" id="promptSubmit">Generate Character</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Quick Creator -->
+    <div id="quickCreator" class="creator-container hidden">
+      <h2 class="creator-title">Quick Character</h2>
+      <form onsubmit="generateFromQuick(event)">
+        <div class="form-group">
+          <label class="form-label">Character Name</label>
+          <input
+            type="text"
+            id="charName"
+            class="form-input"
+            placeholder="Enter name..."
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Race</label>
+          <select id="charRace" class="form-select">
+            <option value="">Choose race...</option>
+            <option value="human">Human</option>
+            <option value="elf">Elf</option>
+            <option value="dwarf">Dwarf</option>
+            <option value="halfling">Halfling</option>
+            <option value="dragonborn">Dragonborn</option>
+            <option value="gnome">Gnome</option>
+            <option value="half-elf">Half-Elf</option>
+            <option value="half-orc">Half-Orc</option>
+            <option value="tiefling">Tiefling</option>
+            <option value="orc">Orc</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Class</label>
+          <select id="charClass" class="form-select">
+            <option value="">Choose class...</option>
+            <option value="barbarian">Barbarian</option>
+            <option value="bard">Bard</option>
+            <option value="cleric">Cleric</option>
+            <option value="druid">Druid</option>
+            <option value="fighter">Fighter</option>
+            <option value="monk">Monk</option>
+            <option value="paladin">Paladin</option>
+            <option value="ranger">Ranger</option>
+            <option value="rogue">Rogue</option>
+            <option value="sorcerer">Sorcerer</option>
+            <option value="warlock">Warlock</option>
+            <option value="wizard">Wizard</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Level</label>
+          <div class="level-slider-container">
+            <div class="level-display" id="levelDisplay">1</div>
+            <input
+              type="range"
+              id="charLevel"
+              min="1"
+              max="20"
+              value="1"
+              oninput="updateLevel(this.value)"
+            />
+          </div>
+        </div>
+        <div class="button-group">
+          <button type="button" class="btn-back" onclick="showChoice()">Back</button>
+          <button type="submit" class="btn-primary" id="quickSubmit">Generate Character</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="creator-container hidden">
+      <div class="loading">
+        <div class="loading-spinner">✨</div>
+        <div class="loading-text">Forging your character...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const examples = [
+      "A cunning rogue from the streets of Waterdeep with a heart of gold",
+      "An elderly wizard who's seen too much and just wants peace",
+      "A young paladin on their first quest, eager but naive"
+    ];
+
+    function showChoice() {
+      document.getElementById('choiceScreen').classList.remove('hidden');
+      document.getElementById('promptCreator').classList.add('hidden');
+      document.getElementById('quickCreator').classList.add('hidden');
+      document.getElementById('loadingScreen').classList.add('hidden');
+    }
+
+    function showPromptCreator() {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('promptCreator').classList.remove('hidden');
+    }
+
+    function showQuickCreator() {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('quickCreator').classList.remove('hidden');
+    }
+
+    function showLoading() {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('promptCreator').classList.add('hidden');
+      document.getElementById('quickCreator').classList.add('hidden');
+      document.getElementById('loadingScreen').classList.remove('hidden');
+    }
+
+    function useExample(index) {
+      document.getElementById('promptText').value = examples[index];
+    }
+
+    function updateLevel(value) {
+      document.getElementById('levelDisplay').textContent = value;
+    }
+
+    function generateFromPrompt(event) {
+      event.preventDefault();
+      const prompt = document.getElementById('promptText').value.trim();
+
+      if (!prompt) {
+        alert('Please describe your character');
+        return;
+      }
+
+      showLoading();
+
+      // Simulate API call
+      console.log('Generating character from prompt:', prompt);
+
+      setTimeout(() => {
+        alert('Character created!\n\nPrompt: ' + prompt + '\n\n(In the real app, this would navigate to the character preview page)');
+        showChoice();
+      }, 2000);
+    }
+
+    function generateFromQuick(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('charName').value.trim();
+      const race = document.getElementById('charRace').value;
+      const charClass = document.getElementById('charClass').value;
+      const level = document.getElementById('charLevel').value;
+
+      if (!name || !race || !charClass) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      showLoading();
+
+      const data = { name, race, class: charClass, level: parseInt(level) };
+      console.log('Generating character from quick pick:', data);
+
+      setTimeout(() => {
+        alert(`Character created!\n\nName: ${name}\nRace: ${race}\nClass: ${charClass}\nLevel: ${level}\n\n(In the real app, this would navigate to the character preview page)`);
+        showChoice();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

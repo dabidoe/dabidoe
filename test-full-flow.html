@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Foundry - Full Flow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Garamond', serif;
+      background: linear-gradient(135deg, #e8dcc4 0%, #f4e8d0 50%, #e8dcc4 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #2b2520;
+      position: relative;
+    }
+
+    /* Parchment texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(0,0,0,0.02) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0,0,0,0.02) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(0,0,0,0.01) 0%, transparent 30%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 24px 0;
+    }
+
+    .logo {
+      font-family: 'Palatino', 'Book Antiqua', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #5a4a3a;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: #8a7a6a;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+
+    /* Parchment Card */
+    .parchment-card {
+      background: linear-gradient(135deg, #faf8f4 0%, #f4eee4 100%);
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow:
+        0 2px 8px rgba(43, 37, 32, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .parchment-card::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #b85c4a 0%, #8a3a28 100%);
+      border-radius: 50%;
+      opacity: 0.15;
+    }
+
+    .section-title {
+      font-family: 'Palatino', 'Book Antiqua', serif;
+      font-size: 22px;
+      color: #5a4a3a;
+      margin-bottom: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Advanced Options Bubbles */
+    .option-bubbles {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .bubble-btn {
+      padding: 8px 16px;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #5a4a3a;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .bubble-btn:hover {
+      border-color: #b85c4a;
+      background: #faf8f4;
+    }
+
+    .bubble-btn.active {
+      background: #b85c4a;
+      color: #fff;
+      border-color: #b85c4a;
+    }
+
+    .dropdown-container {
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .dropdown-container.show {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #5a4a3a;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dropdown-select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #faf8f4;
+      border: 1px solid #d4c4a8;
+      border-radius: 6px;
+      color: #2b2520;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .dropdown-select:focus {
+      border-color: #b85c4a;
+    }
+
+    .dropdown-input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #faf8f4;
+      border: 1px solid #d4c4a8;
+      border-radius: 6px;
+      color: #2b2520;
+      outline: none;
+    }
+
+    .dropdown-input:focus {
+      border-color: #b85c4a;
+    }
+
+    /* Prompt Textarea */
+    .prompt-textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 16px;
+      font-size: 15px;
+      font-family: 'Georgia', serif;
+      line-height: 1.6;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      color: #2b2520;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .prompt-textarea:focus {
+      border-color: #b85c4a;
+    }
+
+    .prompt-textarea::placeholder {
+      color: #a89888;
+      font-style: italic;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      background: linear-gradient(135deg, #b85c4a 0%, #9a4a38 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(184, 92, 74, 0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(184, 92, 74, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Character Preview */
+    .character-preview {
+      text-align: center;
+    }
+
+    .portrait-frame {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+      border: 4px solid #d4c4a8;
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .char-name {
+      font-family: 'Palatino', 'Book Antiqua', serif;
+      font-size: 28px;
+      color: #2b2520;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .char-subtitle {
+      font-size: 14px;
+      color: #8a7a6a;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .stat-badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-badge {
+      padding: 8px 16px;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      color: #b85c4a;
+      font-size: 18px;
+      display: block;
+    }
+
+    .stat-label {
+      color: #8a7a6a;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      background: #fff;
+      color: #5a4a3a;
+      border: 2px solid #d4c4a8;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: #b85c4a;
+      background: #faf8f4;
+    }
+
+    /* Chat Interface */
+    .chat-header {
+      background: linear-gradient(135deg, #5a4a3a 0%, #4a3a2a 100%);
+      color: #f4e8d0;
+      padding: 16px 20px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #d4c4a8;
+      object-fit: cover;
+    }
+
+    .chat-char-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .chat-char-info p {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .chat-messages {
+      background: #faf8f4;
+      border-left: 2px solid #d4c4a8;
+      border-right: 2px solid #d4c4a8;
+      padding: 20px;
+      min-height: 400px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message.user {
+      align-items: flex-end;
+    }
+
+    .message-bubble {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .message.user .message-bubble {
+      background: #b85c4a;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant .message-bubble {
+      background: #fff;
+      color: #2b2520;
+      border: 1px solid #d4c4a8;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: #8a7a6a;
+      margin-top: 4px;
+      padding: 0 4px;
+    }
+
+    .dice-roll {
+      background: #fff;
+      border: 2px solid #b85c4a;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .dice-result {
+      font-size: 20px;
+      font-weight: 700;
+      color: #b85c4a;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: #f4eee4;
+      border-left: 2px solid #d4c4a8;
+      border-right: 2px solid #d4c4a8;
+      overflow-x: auto;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #5a4a3a;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      border-color: #b85c4a;
+      background: #faf8f4;
+    }
+
+    .chat-input-area {
+      background: #faf8f4;
+      border: 2px solid #d4c4a8;
+      border-radius: 0 0 8px 8px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #fff;
+      border: 2px solid #d4c4a8;
+      border-radius: 24px;
+      color: #2b2520;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: #b85c4a;
+    }
+
+    .send-btn {
+      padding: 12px 24px;
+      background: #b85c4a;
+      color: #fff;
+      border: none;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .send-btn:hover {
+      background: #9a4a38;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Level Slider */
+    .level-slider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .level-display {
+      font-size: 24px;
+      font-weight: 700;
+      color: #b85c4a;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #e8dcc4;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #b85c4a;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #b85c4a;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Character Foundry</div>
+      <div class="tagline">Forge Your Legend</div>
+    </div>
+
+    <!-- SCREEN 1: Character Creation -->
+    <div id="creationScreen" class="parchment-card">
+      <h2 class="section-title">Create Character</h2>
+
+      <div class="option-bubbles">
+        <button class="bubble-btn" onclick="toggleDropdown('raceDropdown', this)">Race</button>
+        <button class="bubble-btn" onclick="toggleDropdown('classDropdown', this)">Class</button>
+        <button class="bubble-btn" onclick="toggleDropdown('levelDropdown', this)">Level</button>
+      </div>
+
+      <div id="raceDropdown" class="dropdown-container">
+        <label class="dropdown-label">Race</label>
+        <select class="dropdown-select" id="raceSelect">
+          <option value="">Any (AI decides)</option>
+          <option value="human">Human</option>
+          <option value="elf">Elf</option>
+          <option value="dwarf">Dwarf</option>
+          <option value="halfling">Halfling</option>
+          <option value="dragonborn">Dragonborn</option>
+          <option value="tiefling">Tiefling</option>
+          <option value="other">Other (specify in prompt)</option>
+        </select>
+      </div>
+
+      <div id="classDropdown" class="dropdown-container">
+        <label class="dropdown-label">Class</label>
+        <select class="dropdown-select" id="classSelect">
+          <option value="">Any (AI decides)</option>
+          <option value="fighter">Fighter</option>
+          <option value="wizard">Wizard</option>
+          <option value="rogue">Rogue</option>
+          <option value="cleric">Cleric</option>
+          <option value="barbarian">Barbarian</option>
+          <option value="ranger">Ranger</option>
+          <option value="paladin">Paladin</option>
+          <option value="other">Other (specify in prompt)</option>
+        </select>
+      </div>
+
+      <div id="levelDropdown" class="dropdown-container">
+        <label class="dropdown-label">Starting Level</label>
+        <div class="level-slider">
+          <input type="range" id="levelSlider" min="1" max="20" value="1" oninput="updateLevel(this.value)">
+          <span class="level-display" id="levelDisplay">1</span>
+        </div>
+      </div>
+
+      <textarea
+        class="prompt-textarea"
+        id="charPrompt"
+        placeholder="Describe your character...
+
+Examples:
+• A grizzled veteran warrior haunted by past battles
+• An ambitious young mage seeking forbidden knowledge
+• A street thief with a code of honor"
+      ></textarea>
+
+      <button class="btn-primary" onclick="generateCharacter()">Forge Character</button>
+    </div>
+
+    <!-- SCREEN 2: Character Preview -->
+    <div id="previewScreen" class="parchment-card hidden">
+      <div class="character-preview">
+        <div class="portrait-frame">
+          <img src="https://placehold.co/200x200/8a7a6a/f4e8d0?text=Portrait" alt="Character Portrait" id="charPortrait">
+        </div>
+
+        <h2 class="char-name" id="charName">Theron Blackwood</h2>
+        <p class="char-subtitle" id="charSubtitle">Human Fighter • Level 5</p>
+
+        <div class="stat-badges">
+          <div class="stat-badge">
+            <span class="stat-value">45</span>
+            <span class="stat-label">HP</span>
+          </div>
+          <div class="stat-badge">
+            <span class="stat-value">16</span>
+            <span class="stat-label">AC</span>
+          </div>
+          <div class="stat-badge">
+            <span class="stat-value">+2</span>
+            <span class="stat-label">Init</span>
+          </div>
+        </div>
+
+        <p style="color: #5a4a3a; line-height: 1.6; margin-bottom: 20px; font-size: 14px;">
+          A battle-hardened mercenary from the northern kingdoms, scarred by years of war.
+          Theron seeks redemption for past sins while struggling with the violence that defined his life.
+        </p>
+
+        <button class="btn-primary" onclick="startAdventure()">Begin Adventure</button>
+        <button class="btn-secondary" onclick="showCreation()">Create Different Character</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Chat Interface -->
+    <div id="chatScreen" class="hidden">
+      <div class="parchment-card" style="padding: 0; overflow: hidden;">
+        <div class="chat-header">
+          <img src="https://placehold.co/40x40/8a7a6a/f4e8d0?text=T" alt="Avatar" class="chat-avatar">
+          <div class="chat-char-info">
+            <h3>Theron Blackwood</h3>
+            <p>HP: 45/45 • AC: 16</p>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message assistant">
+            <div class="message-bubble">
+              You push open the heavy oak door of The Rusty Flagon. The tavern is dimly lit, smoke hanging in the air.
+              A gruff bartender polishes mugs behind the counter. Two hooded figures whisper in the corner.
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message user">
+            <div class="message-bubble">
+              I approach the bar and order an ale
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message assistant">
+            <div class="message-bubble">
+              The bartender grunts and slides a foaming mug across the bar. "Two coppers," he mutters,
+              eyeing your worn armor. "You look like trouble. We don't want any here."
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message user">
+            <div class="message-bubble">
+              Roll perception to notice anything unusual
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message assistant">
+            <div class="message-bubble">
+              <div class="dice-roll">
+                Perception Check
+                <div class="dice-result">d20 (15) + 2 = 17</div>
+              </div>
+              You notice one of the hooded figures has a dagger concealed under their cloak,
+              and they're watching the door intently. The bartender's hand rests suspiciously close to something beneath the counter.
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message user">
+            <div class="message-bubble">
+              I ready my hand near my sword and keep watching
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+
+          <div class="message assistant">
+            <div class="message-bubble">
+              The door bursts open. Three armed thugs rush in. "Nobody move!" one shouts.
+              The hooded figures stand up, hands on weapons. This is about to get messy.
+              <br><br>
+              <strong>Roll for initiative?</strong>
+            </div>
+            <div class="message-time">Just now</div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="action-btn" onclick="quickAction('initiative')">Roll Initiative</button>
+          <button class="action-btn" onclick="quickAction('attack')">Attack</button>
+          <button class="action-btn" onclick="quickAction('dodge')">Dodge</button>
+          <button class="action-btn" onclick="quickAction('help')">Help</button>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" placeholder="What do you do?" id="chatInput">
+          <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+
+      <button class="btn-secondary" onclick="showPreview()" style="margin-top: 16px;">View Character Sheet</button>
+    </div>
+  </div>
+
+  <script>
+    let activeDropdowns = new Set();
+
+    function toggleDropdown(id, btn) {
+      const dropdown = document.getElementById(id);
+      const isActive = dropdown.classList.contains('show');
+
+      if (isActive) {
+        dropdown.classList.remove('show');
+        btn.classList.remove('active');
+        activeDropdowns.delete(id);
+      } else {
+        dropdown.classList.add('show');
+        btn.classList.add('active');
+        activeDropdowns.add(id);
+      }
+    }
+
+    function updateLevel(value) {
+      document.getElementById('levelDisplay').textContent = value;
+    }
+
+    function generateCharacter() {
+      const prompt = document.getElementById('charPrompt').value.trim();
+      const race = document.getElementById('raceSelect').value;
+      const charClass = document.getElementById('classSelect').value;
+      const level = document.getElementById('levelSlider').value;
+
+      console.log('Generating character:', { prompt, race, class: charClass, level });
+
+      // Simulate API call
+      setTimeout(() => {
+        showPreview();
+      }, 1000);
+    }
+
+    function showCreation() {
+      document.getElementById('creationScreen').classList.remove('hidden');
+      document.getElementById('previewScreen').classList.add('hidden');
+      document.getElementById('chatScreen').classList.add('hidden');
+    }
+
+    function showPreview() {
+      document.getElementById('creationScreen').classList.add('hidden');
+      document.getElementById('previewScreen').classList.remove('hidden');
+      document.getElementById('chatScreen').classList.add('hidden');
+    }
+
+    function startAdventure() {
+      document.getElementById('creationScreen').classList.add('hidden');
+      document.getElementById('previewScreen').classList.add('hidden');
+      document.getElementById('chatScreen').classList.remove('hidden');
+
+      // Scroll to bottom of chat
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function quickAction(action) {
+      const input = document.getElementById('chatInput');
+      const actions = {
+        'initiative': 'Roll initiative',
+        'attack': 'Attack with sword',
+        'dodge': 'Dodge',
+        'help': 'Help ally'
+      };
+      input.value = actions[action] || action;
+      input.focus();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      console.log('Sending message:', message);
+
+      // In real app, would send to backend and update chat
+      input.value = '';
+    }
+
+    // Allow Enter to send
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
