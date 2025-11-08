@@ -12,29 +12,26 @@ import './CharacterImageTabs.css';
 
 function CharacterImageTabs({ character, currentState = 'default' }) {
   const [activeTab, setActiveTab] = useState('portrait');
-  const [activePortrait, setActivePortrait] = useState('standard');
   const [activeCanvas, setActiveCanvas] = useState(null);
 
   // Get state-specific settings
   const stateConfig = character.conversationStates?.[currentState] || character.conversationStates?.default;
-  const defaultPortrait = stateConfig?.activePortrait || 'standard';
   const defaultCanvas = stateConfig?.activeCanvas;
 
   // Get available images
   const portraits = character.images?.portraits || {};
   const canvasImages = character.images?.canvas || {};
 
-  // Determine active image based on state
-  const currentPortrait = portraits[activePortrait] || portraits.standard;
+  // Determine active image based on tab - intelligent tab switching
+  const currentPortrait = portraits.standard || portraits[Object.keys(portraits)[0]];
+  const battlePortrait = portraits.battle || portraits.standard || portraits[Object.keys(portraits)[0]];
   const currentCanvas = activeCanvas ? canvasImages[activeCanvas] : (defaultCanvas ? canvasImages[defaultCanvas] : null);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
 
-    // Auto-select defaults when switching tabs
-    if (tab === 'portrait' && !activePortrait) {
-      setActivePortrait(defaultPortrait);
-    } else if (tab === 'canvas' && !activeCanvas) {
+    // Auto-select default canvas when switching to canvas tab
+    if (tab === 'canvas' && !activeCanvas) {
       setActiveCanvas(defaultCanvas || Object.keys(canvasImages)[0]);
     }
   };
@@ -76,16 +73,11 @@ function CharacterImageTabs({ character, currentState = 'default' }) {
           <div className="portrait-view">
             <div className="image-container">
               {currentPortrait ? (
-                <>
-                  <img
-                    src={currentPortrait.url}
-                    alt={`${character.name} - ${activePortrait}`}
-                    className="character-image"
-                  />
-                  <div className="image-info">
-                    <span className="image-type">{activePortrait}</span>
-                  </div>
-                </>
+                <img
+                  src={currentPortrait.url}
+                  alt={`${character.name} portrait`}
+                  className="character-image"
+                />
               ) : (
                 <div className="image-placeholder">
                   <span className="placeholder-emoji">{character.images?.emoji || '🎭'}</span>
@@ -93,30 +85,16 @@ function CharacterImageTabs({ character, currentState = 'default' }) {
                 </div>
               )}
             </div>
-
-            {/* Portrait Type Selector */}
-            <div className="portrait-types">
-              {Object.keys(portraits).map(type => (
-                <button
-                  key={type}
-                  className={`portrait-type-btn ${activePortrait === type ? 'active' : ''}`}
-                  onClick={() => setActivePortrait(type)}
-                  disabled={!portraits[type]}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
           </div>
         )}
 
         {activeTab === 'battle' && (
           <div className="battle-view">
             <div className="image-container battle-frame">
-              {portraits.battle ? (
+              {battlePortrait ? (
                 <>
                   <img
-                    src={portraits.battle.url}
+                    src={battlePortrait.url}
                     alt={`${character.name} - Battle`}
                     className="character-image battle-pose"
                   />
