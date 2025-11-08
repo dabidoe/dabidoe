@@ -478,6 +478,30 @@
       color: white;
     }
 
+    /* Stat Tabs */
+    .stat-tab-btn {
+      flex: 1;
+      padding: 10px 15px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .stat-tab-btn:hover {
+      background: var(--hover-color);
+      color: var(--text-primary);
+    }
+
+    .stat-tab-btn.active {
+      background: var(--accent-color);
+      color: white;
+    }
+
     /* Turn Tracker */
     .turn-tracker {
       margin-bottom: 15px;
@@ -1240,64 +1264,202 @@
         </div>
       </div>
 
-      <!-- Stats Section -->
+      <!-- Stats/Skills/Inventory Tabbed Container -->
       <div class="section-stats" data-order="3">
         <div class="demo-section">
-          <h2>Stats</h2>
+          <!-- Tabs -->
+          <div class="stat-tabs" style="display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color);">
+            <button class="stat-tab-btn active" onclick="switchStatTab('stats')" id="statsTabBtn">📊 Stats</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('skills')" id="skillsTabBtn">🎯 Skills</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('inventory')" id="inventoryTabBtn">🎒 Inventory</button>
+          </div>
 
-          <div class="hp-display">
-            <strong>Hit Points</strong>
-            <div class="hp-bar">
-              <div class="hp-fill" id="hpFill" style="width: 85%"></div>
-              <div class="hp-text" id="hpText">58 / 68</div>
+          <!-- Stats Tab -->
+          <div id="statsTab">
+            <div class="hp-display">
+              <strong>Hit Points</strong>
+              <div class="hp-bar">
+                <div class="hp-fill" id="hpFill" style="width: 85%"></div>
+                <div class="hp-text" id="hpText">58 / 68</div>
+              </div>
+              <div style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.85rem; color: var(--text-secondary);">
+                <span>Current: <span class="editable-stat" id="hpCurrentEdit" onclick="editStat('hpCurrent', this)" title="Click to edit">58</span></span>
+                <span>Max: <span class="editable-stat" id="hpMaxEdit" onclick="editStat('hpMax', this)" title="Click to edit">68</span></span>
+              </div>
             </div>
-            <div style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.85rem; color: var(--text-secondary);">
-              <span>Current: <span class="editable-stat" id="hpCurrentEdit" onclick="editStat('hpCurrent', this)" title="Click to edit">58</span></span>
-              <span>Max: <span class="editable-stat" id="hpMaxEdit" onclick="editStat('hpMax', this)" title="Click to edit">68</span></span>
+
+            <div class="stats-grid">
+              <div class="stat-block">
+                <div class="stat-name">STR</div>
+                <div class="stat-value editable-stat" id="strValue" onclick="editStat('str', this)" title="Click to edit">12</div>
+                <div class="stat-modifier editable-stat" id="strMod" onclick="editModifier('str', this)" title="Click to edit">+1</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-name">DEX</div>
+                <div class="stat-value editable-stat" id="dexValue" onclick="editStat('dex', this)" title="Click to edit">18</div>
+                <div class="stat-modifier editable-stat" id="dexMod" onclick="editModifier('dex', this)" title="Click to edit">+4</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-name">CON</div>
+                <div class="stat-value editable-stat" id="conValue" onclick="editStat('con', this)" title="Click to edit">14</div>
+                <div class="stat-modifier editable-stat" id="conMod" onclick="editModifier('con', this)" title="Click to edit">+2</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-name">INT</div>
+                <div class="stat-value editable-stat" id="intValue" onclick="editStat('int', this)" title="Click to edit">13</div>
+                <div class="stat-modifier editable-stat" id="intMod" onclick="editModifier('int', this)" title="Click to edit">+1</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-name">WIS</div>
+                <div class="stat-value editable-stat" id="wisValue" onclick="editStat('wis', this)" title="Click to edit">16</div>
+                <div class="stat-modifier editable-stat" id="wisMod" onclick="editModifier('wis', this)" title="Click to edit">+3</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-name">CHA</div>
+                <div class="stat-value editable-stat" id="chaValue" onclick="editStat('cha', this)" title="Click to edit">10</div>
+                <div class="stat-modifier editable-stat" id="chaMod" onclick="editModifier('cha', this)" title="Click to edit">+0</div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+              <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">AC</div>
+                <div class="editable-stat" style="font-size: 1.5rem; font-weight: 900;" id="acValue" onclick="editStat('ac', this)" title="Click to edit">16</div>
+              </div>
+              <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Initiative</div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-color);" id="initValue">+4</div>
+              </div>
             </div>
           </div>
 
-          <div class="stats-grid">
-            <div class="stat-block">
-              <div class="stat-name">STR</div>
-              <div class="stat-value editable-stat" id="strValue" onclick="editStat('str', this)" title="Click to edit">12</div>
-              <div class="stat-modifier editable-stat" id="strMod" onclick="editModifier('str', this)" title="Click to edit">+1</div>
+          <!-- Skills Tab -->
+          <div id="skillsTab" style="display: none;">
+            <div class="skills-section">
+              <h3>🧠 Intelligence Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Arcana', 'int')">
+                  <span class="skill-emoji">✨</span>
+                  <div class="skill-name">Arcana</div>
+                  <div class="skill-modifier" id="skill-arcana">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('History', 'int')">
+                  <span class="skill-emoji">📜</span>
+                  <div class="skill-name">History</div>
+                  <div class="skill-modifier" id="skill-history">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Investigation', 'int')">
+                  <span class="skill-emoji">🔍</span>
+                  <div class="skill-name">Investigation</div>
+                  <div class="skill-modifier" id="skill-investigation">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Nature', 'int')">
+                  <span class="skill-emoji">🌿</span>
+                  <div class="skill-name">Nature</div>
+                  <div class="skill-modifier" id="skill-nature">+1</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Religion', 'int')">
+                  <span class="skill-emoji">⛪</span>
+                  <div class="skill-name">Religion</div>
+                  <div class="skill-modifier" id="skill-religion">+1</div>
+                </button>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-name">DEX</div>
-              <div class="stat-value editable-stat" id="dexValue" onclick="editStat('dex', this)" title="Click to edit">18</div>
-              <div class="stat-modifier editable-stat" id="dexMod" onclick="editModifier('dex', this)" title="Click to edit">+4</div>
+
+            <div class="skills-section">
+              <h3>🧘 Wisdom Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Animal Handling', 'wis')">
+                  <span class="skill-emoji">🐴</span>
+                  <div class="skill-name">Animal Handling</div>
+                  <div class="skill-modifier" id="skill-animalhandling">+3</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Insight', 'wis')">
+                  <span class="skill-emoji">👁️</span>
+                  <div class="skill-name">Insight</div>
+                  <div class="skill-modifier" id="skill-insight">+3</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Medicine', 'wis')">
+                  <span class="skill-emoji">⚕️</span>
+                  <div class="skill-name">Medicine</div>
+                  <div class="skill-modifier" id="skill-medicine">+3</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Perception', 'wis')">
+                  <span class="skill-emoji">👀</span>
+                  <div class="skill-name">Perception</div>
+                  <div class="skill-modifier" id="skill-perception">+7</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Survival', 'wis')">
+                  <span class="skill-emoji">🏕️</span>
+                  <div class="skill-name">Survival</div>
+                  <div class="skill-modifier" id="skill-survival">+7</div>
+                </button>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-name">CON</div>
-              <div class="stat-value editable-stat" id="conValue" onclick="editStat('con', this)" title="Click to edit">14</div>
-              <div class="stat-modifier editable-stat" id="conMod" onclick="editModifier('con', this)" title="Click to edit">+2</div>
+
+            <div class="skills-section">
+              <h3>😊 Charisma Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Deception', 'cha')">
+                  <span class="skill-emoji">🎭</span>
+                  <div class="skill-name">Deception</div>
+                  <div class="skill-modifier" id="skill-deception">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Intimidation', 'cha')">
+                  <span class="skill-emoji">😠</span>
+                  <div class="skill-name">Intimidation</div>
+                  <div class="skill-modifier" id="skill-intimidation">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Performance', 'cha')">
+                  <span class="skill-emoji">🎪</span>
+                  <div class="skill-name">Performance</div>
+                  <div class="skill-modifier" id="skill-performance">+0</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Persuasion', 'cha')">
+                  <span class="skill-emoji">🤝</span>
+                  <div class="skill-name">Persuasion</div>
+                  <div class="skill-modifier" id="skill-persuasion">+0</div>
+                </button>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-name">INT</div>
-              <div class="stat-value editable-stat" id="intValue" onclick="editStat('int', this)" title="Click to edit">13</div>
-              <div class="stat-modifier editable-stat" id="intMod" onclick="editModifier('int', this)" title="Click to edit">+1</div>
+
+            <div class="skills-section">
+              <h3>🤸 Dexterity Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Acrobatics', 'dex')">
+                  <span class="skill-emoji">🤸</span>
+                  <div class="skill-name">Acrobatics</div>
+                  <div class="skill-modifier" id="skill-acrobatics">+7</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Sleight of Hand', 'dex')">
+                  <span class="skill-emoji">👋</span>
+                  <div class="skill-name">Sleight of Hand</div>
+                  <div class="skill-modifier" id="skill-sleight">+4</div>
+                </button>
+                <button class="skill-btn" onclick="rollSkill('Stealth', 'dex')">
+                  <span class="skill-emoji">🥷</span>
+                  <div class="skill-name">Stealth</div>
+                  <div class="skill-modifier" id="skill-stealth">+10</div>
+                </button>
+              </div>
             </div>
-            <div class="stat-block">
-              <div class="stat-name">WIS</div>
-              <div class="stat-value editable-stat" id="wisValue" onclick="editStat('wis', this)" title="Click to edit">16</div>
-              <div class="stat-modifier editable-stat" id="wisMod" onclick="editModifier('wis', this)" title="Click to edit">+3</div>
-            </div>
-            <div class="stat-block">
-              <div class="stat-name">CHA</div>
-              <div class="stat-value editable-stat" id="chaValue" onclick="editStat('cha', this)" title="Click to edit">10</div>
-              <div class="stat-modifier editable-stat" id="chaMod" onclick="editModifier('cha', this)" title="Click to edit">+0</div>
+
+            <div class="skills-section">
+              <h3>💪 Strength Skills</h3>
+              <div class="skills-grid">
+                <button class="skill-btn" onclick="rollSkill('Athletics', 'str')">
+                  <span class="skill-emoji">💪</span>
+                  <div class="skill-name">Athletics</div>
+                  <div class="skill-modifier" id="skill-athletics">+1</div>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
-            <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
-              <div style="font-size: 0.8rem; color: var(--text-secondary);">AC</div>
-              <div class="editable-stat" style="font-size: 1.5rem; font-weight: 900;" id="acValue" onclick="editStat('ac', this)" title="Click to edit">16</div>
-            </div>
-            <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
-              <div style="font-size: 0.8rem; color: var(--text-secondary);">Initiative</div>
-              <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-color);" id="initValue">+4</div>
+          <!-- Inventory Tab -->
+          <div id="inventoryTab" style="display: none;">
+            <div id="inventoryGrid">
+              <!-- Will be populated dynamically -->
             </div>
           </div>
         </div>
@@ -1341,8 +1503,6 @@
           <div class="chat-modes" style="margin-bottom: 15px;">
             <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
             <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
-            <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
-            <button class="mode-btn" onclick="switchChatMode('inventory')">🎒 Inventory</button>
           </div>
 
           <!-- Conversation Mode -->
@@ -1663,7 +1823,7 @@
         ac: 16,
         food: { current: 70, max: 100 }, // Hunger/satiety level
         stats: { str: 12, dex: 18, con: 14, int: 13, wis: 16, cha: 10 },
-        portrait: 'https://i.imgur.com/yXEiYQ7.png',
+        // portrait: 'https://i.imgur.com/yXEiYQ7.png', // Placeholder - using emoji instead
         location: 'forest',
         attacks: {
           melee: { name: 'Shortsword', damage: '1d6+4', toHit: 7 },
@@ -1736,7 +1896,7 @@
         ac: 18,
         food: { current: 85, max: 100 },
         stats: { str: 18, dex: 10, con: 16, int: 10, wis: 14, cha: 16 },
-        portrait: 'https://i.imgur.com/8KfPqXJ.png',
+        // portrait: 'https://i.imgur.com/8KfPqXJ.png', // Placeholder - using emoji instead
         location: 'temple',
         attacks: {
           melee: { name: 'Longsword of Justice', damage: '1d8+5', toHit: 9 },
@@ -1814,7 +1974,7 @@
         ac: 13,
         food: { current: 45, max: 100 },
         stats: { str: 8, dex: 14, con: 13, int: 20, wis: 12, cha: 11 },
-        portrait: 'https://i.imgur.com/mBvN2dK.png',
+        // portrait: 'https://i.imgur.com/mBvN2dK.png', // Placeholder - using emoji instead
         location: 'ruins',
         attacks: {
           melee: { name: 'Quarterstaff', damage: '1d6-1', toHit: 1 },
@@ -1900,7 +2060,7 @@
         ac: 15,
         food: { current: 60, max: 100 },
         stats: { str: 10, dex: 20, con: 12, int: 14, wis: 13, cha: 14 },
-        portrait: 'https://i.imgur.com/RkH7Wd0.png',
+        // portrait: 'https://i.imgur.com/RkH7Wd0.png', // Placeholder - using emoji instead
         location: 'tavern',
         attacks: {
           melee: { name: 'Rapier +1', damage: '1d8+6', toHit: 9 },
@@ -2222,11 +2382,22 @@
       // Show/hide appropriate sections
       document.getElementById('conversationMode').style.display = mode === 'conversation' ? 'block' : 'none';
       document.getElementById('battleMode').style.display = mode === 'battle' ? 'block' : 'none';
-      document.getElementById('skillsMode').style.display = mode === 'skills' ? 'block' : 'none';
-      document.getElementById('inventoryMode').style.display = mode === 'inventory' ? 'block' : 'none';
+    }
 
-      // Update inventory when switching to inventory mode
-      if (mode === 'inventory') {
+    function switchStatTab(tab) {
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.stat-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Show/hide appropriate tabs
+      document.getElementById('statsTab').style.display = tab === 'stats' ? 'block' : 'none';
+      document.getElementById('skillsTab').style.display = tab === 'skills' ? 'block' : 'none';
+      document.getElementById('inventoryTab').style.display = tab === 'inventory' ? 'block' : 'none';
+
+      // Update inventory when switching to inventory tab
+      if (tab === 'inventory') {
         updateInventory();
       }
     }
