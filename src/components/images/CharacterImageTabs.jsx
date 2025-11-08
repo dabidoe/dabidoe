@@ -44,7 +44,6 @@ function CharacterImageTabs({ character, currentState = 'default' }) {
           className={`tab-button ${activeTab === 'portrait' ? 'active' : ''}`}
           onClick={() => handleTabChange('portrait')}
         >
-          <span className="tab-icon">🎨</span>
           Portrait
         </button>
 
@@ -53,7 +52,6 @@ function CharacterImageTabs({ character, currentState = 'default' }) {
           onClick={() => handleTabChange('battle')}
           disabled={!portraits.battle}
         >
-          <span className="tab-icon">⚔️</span>
           Battle
         </button>
 
@@ -62,7 +60,6 @@ function CharacterImageTabs({ character, currentState = 'default' }) {
           onClick={() => handleTabChange('canvas')}
           disabled={Object.keys(canvasImages).length === 0}
         >
-          <span className="tab-icon">🖼️</span>
           Canvas
         </button>
       </div>
