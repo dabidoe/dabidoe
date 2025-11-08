@@ -311,16 +311,25 @@
     font-size: 1rem;
   }
 
+  /* Reduced image height for mobile to save screen space */
   .image-display {
-    min-height: 250px;
+    min-height: 180px;
+    max-height: 200px;
   }
 
   .image-container {
-    min-height: 250px;
+    min-height: 180px;
+    max-height: 200px;
   }
 
   .image-placeholder {
-    height: 250px;
+    height: 180px;
+  }
+
+  .character-image,
+  .canvas-image {
+    object-fit: cover;
+    max-height: 200px;
   }
 
   .canvas-scenes {
