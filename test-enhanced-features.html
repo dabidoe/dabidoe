@@ -1144,6 +1144,17 @@
     }
 
     @media (max-width: 768px) {
+      /* Shrink portrait images for mobile */
+      .image-display {
+        aspect-ratio: auto;
+        height: 200px;
+        max-height: 200px;
+      }
+
+      .image-placeholder {
+        height: 200px;
+      }
+
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -1326,9 +1337,8 @@
       <!-- Chat Section -->
       <div class="section-chat" data-order="2">
         <div class="demo-section">
-          <h2>Chat</h2>
-
-          <div class="chat-modes">
+          <!-- Mode Selector (above chat) -->
+          <div class="chat-modes" style="margin-bottom: 15px;">
             <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
             <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
             <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
@@ -1337,17 +1347,6 @@
 
           <!-- Conversation Mode -->
           <div id="conversationMode">
-            <div class="state-selector">
-              <label style="color: var(--text-secondary); font-weight: 600;">State:</label>
-              <select id="characterState" onchange="changeCharacterState()">
-                <option value="default">Default (Calm)</option>
-                <option value="battle">Battle (Focused)</option>
-                <option value="injured">Injured (Pained)</option>
-                <option value="angry">Angry (Furious)</option>
-                <option value="triumphant">Triumphant (Joyful)</option>
-              </select>
-            </div>
-
             <div class="messages-area" id="messagesArea">
               <div class="message">
                 <div class="message-avatar">🏹</div>
@@ -1360,7 +1359,7 @@
               </div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
               <input
                 type="text"
                 id="messageInput"
@@ -1369,6 +1368,20 @@
                 onkeypress="if(event.key === 'Enter') sendMessage()"
               >
               <button class="test-btn" onclick="sendMessage()">Send</button>
+            </div>
+
+            <!-- State Selector (below chat) -->
+            <div style="padding-top: 15px; border-top: 1px solid var(--border-color);">
+              <div class="state-selector">
+                <label style="color: var(--text-secondary); font-weight: 600;">State:</label>
+                <select id="characterState" onchange="changeCharacterState()">
+                  <option value="default">Default (Calm)</option>
+                  <option value="battle">Battle (Focused)</option>
+                  <option value="injured">Injured (Pained)</option>
+                  <option value="angry">Angry (Furious)</option>
+                  <option value="triumphant">Triumphant (Joyful)</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -2472,8 +2485,13 @@
     function changeLocation() {
       const newLocation = document.getElementById('locationSelect').value;
       currentCharacter.location = newLocation;
+
+      // Update header location display
+      const locationName = locations.find(l => l.id === newLocation)?.name || newLocation;
+      document.getElementById('charLocation').textContent = locationName;
+
       updateImageDisplay();
-      addBattleLog(`${currentCharacter.name} moved to ${locations.find(l => l.id === newLocation).name}`);
+      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
     }
 
     function updateImageDisplay() {
@@ -2565,9 +2583,16 @@
           } else if (['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(statName)) {
             currentCharacter.stats[statName] = newValue;
           }
+          // Remove input first before updating display
+          if (input.parentNode === element) {
+            input.remove();
+          }
           updateCharacterDisplay();
         } else {
           element.textContent = currentValue;
+          if (input.parentNode === element) {
+            input.remove();
+          }
         }
       };
 
@@ -2609,9 +2634,16 @@
           // score = (modifier * 2) + 10
           const newScore = (newModifier * 2) + 10;
           currentCharacter.stats[statName] = newScore;
+          // Remove input first before updating display
+          if (input.parentNode === element) {
+            input.remove();
+          }
           updateCharacterDisplay();
         } else {
           element.textContent = currentValue;
+          if (input.parentNode === element) {
+            input.remove();
+          }
         }
       };
 
