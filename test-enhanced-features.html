@@ -1337,6 +1337,14 @@
       <!-- Chat Section -->
       <div class="section-chat" data-order="2">
         <div class="demo-section">
+          <!-- Mode Selector (above chat) -->
+          <div class="chat-modes" style="margin-bottom: 15px;">
+            <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
+            <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
+            <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
+            <button class="mode-btn" onclick="switchChatMode('inventory')">🎒 Inventory</button>
+          </div>
+
           <!-- Conversation Mode -->
           <div id="conversationMode">
             <div class="messages-area" id="messagesArea">
@@ -1362,15 +1370,8 @@
               <button class="test-btn" onclick="sendMessage()">Send</button>
             </div>
 
-            <!-- Mode + State Controls (below chat) -->
-            <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 15px; border-top: 1px solid var(--border-color);">
-              <div class="chat-modes">
-                <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
-                <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
-                <button class="mode-btn" onclick="switchChatMode('skills')">🎯 Skills</button>
-                <button class="mode-btn" onclick="switchChatMode('inventory')">🎒 Inventory</button>
-              </div>
-
+            <!-- State Selector (below chat) -->
+            <div style="padding-top: 15px; border-top: 1px solid var(--border-color);">
               <div class="state-selector">
                 <label style="color: var(--text-secondary); font-weight: 600;">State:</label>
                 <select id="characterState" onchange="changeCharacterState()">
@@ -2484,8 +2485,13 @@
     function changeLocation() {
       const newLocation = document.getElementById('locationSelect').value;
       currentCharacter.location = newLocation;
+
+      // Update header location display
+      const locationName = locations.find(l => l.id === newLocation)?.name || newLocation;
+      document.getElementById('charLocation').textContent = locationName;
+
       updateImageDisplay();
-      addBattleLog(`${currentCharacter.name} moved to ${locations.find(l => l.id === newLocation).name}`);
+      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
     }
 
     function updateImageDisplay() {
