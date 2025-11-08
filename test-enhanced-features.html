@@ -2583,9 +2583,16 @@
           } else if (['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(statName)) {
             currentCharacter.stats[statName] = newValue;
           }
+          // Remove input first before updating display
+          if (input.parentNode === element) {
+            input.remove();
+          }
           updateCharacterDisplay();
         } else {
           element.textContent = currentValue;
+          if (input.parentNode === element) {
+            input.remove();
+          }
         }
       };
 
@@ -2627,9 +2634,16 @@
           // score = (modifier * 2) + 10
           const newScore = (newModifier * 2) + 10;
           currentCharacter.stats[statName] = newScore;
+          // Remove input first before updating display
+          if (input.parentNode === element) {
+            input.remove();
+          }
           updateCharacterDisplay();
         } else {
           element.textContent = currentValue;
+          if (input.parentNode === element) {
+            input.remove();
+          }
         }
       };
 
