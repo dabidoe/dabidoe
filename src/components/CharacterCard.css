@@ -379,23 +379,75 @@
   background: #6a6a82;
 }
 
-/* Mobile Optimizations */
+/* Mobile Optimizations - Prioritize chat window visibility */
 @media (max-width: 768px) {
+  .character-header {
+    padding: 10px 15px;
+  }
+
   .character-name {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .stats-line {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  /* Reduce image section to make chat always visible */
+  .image-section {
+    min-height: 200px;
+    max-height: 35vh;
+    flex: 0 0 auto;
+  }
+
+  /* Ensure chat section takes priority on mobile */
+  .chat-section {
+    height: auto;
+    min-height: 400px;
+    flex: 1;
+  }
+
+  .chat-header {
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+
+  .chat-messages {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .message {
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .mode-tab {
+    padding: 10px 6px;
     font-size: 12px;
-    gap: 10px;
   }
 
   .quick-actions {
-    padding: 10px;
+    padding: 8px;
   }
 
   .action-btn {
     font-size: 11px;
     padding: 6px 10px;
+  }
+
+  .chat-input {
+    padding: 8px 12px;
+  }
+
+  .chat-input input {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .send-btn {
+    padding: 8px 16px;
+    font-size: 14px;
   }
 }

@@ -93,18 +93,14 @@ class CharacterImageGenerator {
 
   /**
    * Build portrait prompt based on character and type
+   * Simplified to use only 2 main portrait types for cleaner mobile UI
    */
   buildPortraitPrompt(character, type) {
     const baseDescription = `${character.description || character.type}, ${character.class}`;
 
     const typeModifiers = {
       standard: 'calm pose, neutral expression, professional portrait',
-      battle: 'action pose, fierce expression, combat ready, dynamic angle, weapons drawn',
-      injured: 'wounded, exhausted, battle-damaged armor, visible wounds, tired expression',
-      triumphant: 'victorious pose, confident smile, heroic stance, glowing with success',
-      angry: 'furious expression, aggressive stance, intense eyes, dramatic lighting',
-      stealth: 'shadowy, mysterious, hooded, hiding in darkness',
-      casting: 'casting spell, glowing magic, mystical energy, dramatic pose'
+      battle: 'action pose, fierce expression, combat ready, dynamic angle, weapons drawn'
     };
 
     const modifier = typeModifiers[type] || typeModifiers.standard;
