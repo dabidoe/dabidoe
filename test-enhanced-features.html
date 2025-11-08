@@ -365,30 +365,13 @@
       outline: 1px solid var(--accent-color);
     }
 
+    /* Portrait Types - Removed for cleaner mobile UI */
     .portrait-types {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: none;
     }
 
     .portrait-type-btn {
-      padding: 8px 16px;
-      background: var(--background-color);
-      border: 2px solid var(--border-color);
-      border-radius: 6px;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 0.85rem;
-    }
-
-    .portrait-type-btn:hover {
-      border-color: var(--accent-color);
-    }
-
-    .portrait-type-btn.active {
-      background: var(--accent-color);
-      border-color: var(--accent-color);
+      display: none;
     }
 
     /* Stats */
@@ -1224,27 +1207,20 @@
       <div>
         <!-- Image Tabs -->
         <div class="demo-section">
-          <h2>📸 Multi-Image System</h2>
+          <h2>📸 Character Images</h2>
 
           <div class="image-tabs-nav">
-            <button class="tab-button active" onclick="switchImageTab('portrait')">Portrait</button>
-            <button class="tab-button" onclick="switchImageTab('battle')">Battle</button>
-            <button class="tab-button" onclick="switchImageTab('canvas')">Canvas</button>
+            <button class="tab-button active" onclick="switchImageTab('portrait')">🎨 Portrait</button>
+            <button class="tab-button" onclick="switchImageTab('battle')">⚔️ Battle</button>
+            <button class="tab-button" onclick="switchImageTab('canvas')">🖼️ Canvas</button>
           </div>
 
           <div id="imageDisplay" class="image-display">
             <div class="image-placeholder">
               <div class="placeholder-emoji" id="characterEmoji">🏹</div>
               <p>AI-Generated Portrait</p>
-              <small style="color: var(--text-secondary);">Standard portrait type</small>
+              <small style="color: var(--text-secondary);" id="imageSubtitle">Standard portrait</small>
             </div>
-          </div>
-
-          <div class="portrait-types">
-            <button class="portrait-type-btn active" onclick="switchPortraitType('standard')">Standard</button>
-            <button class="portrait-type-btn" onclick="switchPortraitType('battle')">Battle</button>
-            <button class="portrait-type-btn" onclick="switchPortraitType('injured')">Injured</button>
-            <button class="portrait-type-btn" onclick="switchPortraitType('triumphant')">Triumphant</button>
           </div>
 
           <!-- Location Selector -->
@@ -1955,7 +1931,7 @@
 
     let currentCharacter = characters[0];
     let currentImageTab = 'portrait';
-    let currentPortraitType = 'standard';
+    // let currentPortraitType = 'standard'; // Removed - tabs now intelligently show appropriate images
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -2199,18 +2175,19 @@
       });
       event.target.classList.add('active');
 
+      // Intelligently set subtitle based on tab
+      const subtitle = document.getElementById('imageSubtitle');
+      if (subtitle) {
+        if (tab === 'portrait') {
+          subtitle.textContent = 'Standard portrait';
+        } else if (tab === 'battle') {
+          subtitle.textContent = 'Battle portrait';
+        } else if (tab === 'canvas') {
+          subtitle.textContent = 'Scene image';
+        }
+      }
+
       updateImageDisplay();
-    }
-
-    function switchPortraitType(type) {
-      currentPortraitType = type;
-      document.querySelectorAll('.portrait-type-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-
-      const subtitle = document.querySelector('.image-placeholder small');
-      subtitle.textContent = type + ' portrait type';
     }
 
     function switchChatMode(mode) {
@@ -2495,9 +2472,11 @@
       const hpState = getCharacterState();
 
       if (currentImageTab === 'portrait' || currentImageTab === 'battle') {
-        // Show portrait with HP-based filter
+        // Intelligently show appropriate portrait based on tab
+        // Portrait tab = standard portrait, Battle tab = battle portrait (or standard if battle not available)
         let filter = '';
         let borderColor = 'var(--accent-color)';
+        let portraitStyle = '';
 
         if (hpState === 'critical') {
           filter = 'grayscale(50%) brightness(0.7) sepia(30%) hue-rotate(-10deg)';
@@ -2510,8 +2489,14 @@
           borderColor = '#f39c12';
         }
 
+        // Add battle-specific styling for battle tab
+        if (currentImageTab === 'battle') {
+          borderColor = '#e74c3c';
+          portraitStyle = 'border: 3px solid ' + borderColor + '; box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);';
+        }
+
         imageDisplay.innerHTML = `
-          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image" style="filter: ${filter}">
+          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image" style="filter: ${filter}; ${portraitStyle}">
         `;
       } else if (currentImageTab === 'canvas') {
         // Show location background with character overlay
