@@ -1271,11 +1271,20 @@
           <div class="stat-tabs" style="display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color);">
             <button class="stat-tab-btn active" onclick="switchStatTab('stats')" id="statsTabBtn">📊 Stats</button>
             <button class="stat-tab-btn" onclick="switchStatTab('skills')" id="skillsTabBtn">🎯 Skills</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('abilities')" id="abilitiesTabBtn">⚡ Abilities</button>
             <button class="stat-tab-btn" onclick="switchStatTab('inventory')" id="inventoryTabBtn">🎒 Inventory</button>
           </div>
 
           <!-- Stats Tab -->
           <div id="statsTab">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <strong style="color: var(--text-primary);">Character Stats</strong>
+              <button id="statsLockBtn" onclick="toggleStatsLock()" style="padding: 6px 12px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <span id="lockIcon">🔒</span>
+                <span id="lockText">Unlock Edit</span>
+              </button>
+            </div>
+
             <div class="hp-display">
               <strong>Hit Points</strong>
               <div class="hp-bar">
@@ -1283,52 +1292,75 @@
                 <div class="hp-text" id="hpText">58 / 68</div>
               </div>
               <div style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.85rem; color: var(--text-secondary);">
-                <span>Current: <span class="editable-stat" id="hpCurrentEdit" onclick="editStat('hpCurrent', this)" title="Click to edit">58</span></span>
-                <span>Max: <span class="editable-stat" id="hpMaxEdit" onclick="editStat('hpMax', this)" title="Click to edit">68</span></span>
+                <span>Current: <span class="stat-readonly" id="hpCurrentEdit">58</span></span>
+                <span>Max: <span class="stat-readonly" id="hpMaxEdit">68</span></span>
               </div>
             </div>
 
             <div class="stats-grid">
               <div class="stat-block">
                 <div class="stat-name">STR</div>
-                <div class="stat-value editable-stat" id="strValue" onclick="editStat('str', this)" title="Click to edit">12</div>
-                <div class="stat-modifier editable-stat" id="strMod" onclick="editModifier('str', this)" title="Click to edit">+1</div>
+                <div class="stat-value stat-readonly" id="strValue" data-stat="str">12</div>
+                <div class="stat-modifier stat-readonly" id="strMod">+1</div>
               </div>
               <div class="stat-block">
                 <div class="stat-name">DEX</div>
-                <div class="stat-value editable-stat" id="dexValue" onclick="editStat('dex', this)" title="Click to edit">18</div>
-                <div class="stat-modifier editable-stat" id="dexMod" onclick="editModifier('dex', this)" title="Click to edit">+4</div>
+                <div class="stat-value stat-readonly" id="dexValue" data-stat="dex">18</div>
+                <div class="stat-modifier stat-readonly" id="dexMod">+4</div>
               </div>
               <div class="stat-block">
                 <div class="stat-name">CON</div>
-                <div class="stat-value editable-stat" id="conValue" onclick="editStat('con', this)" title="Click to edit">14</div>
-                <div class="stat-modifier editable-stat" id="conMod" onclick="editModifier('con', this)" title="Click to edit">+2</div>
+                <div class="stat-value stat-readonly" id="conValue" data-stat="con">14</div>
+                <div class="stat-modifier stat-readonly" id="conMod">+2</div>
               </div>
               <div class="stat-block">
                 <div class="stat-name">INT</div>
-                <div class="stat-value editable-stat" id="intValue" onclick="editStat('int', this)" title="Click to edit">13</div>
-                <div class="stat-modifier editable-stat" id="intMod" onclick="editModifier('int', this)" title="Click to edit">+1</div>
+                <div class="stat-value stat-readonly" id="intValue" data-stat="int">13</div>
+                <div class="stat-modifier stat-readonly" id="intMod">+1</div>
               </div>
               <div class="stat-block">
                 <div class="stat-name">WIS</div>
-                <div class="stat-value editable-stat" id="wisValue" onclick="editStat('wis', this)" title="Click to edit">16</div>
-                <div class="stat-modifier editable-stat" id="wisMod" onclick="editModifier('wis', this)" title="Click to edit">+3</div>
+                <div class="stat-value stat-readonly" id="wisValue" data-stat="wis">16</div>
+                <div class="stat-modifier stat-readonly" id="wisMod">+3</div>
               </div>
               <div class="stat-block">
                 <div class="stat-name">CHA</div>
-                <div class="stat-value editable-stat" id="chaValue" onclick="editStat('cha', this)" title="Click to edit">10</div>
-                <div class="stat-modifier editable-stat" id="chaMod" onclick="editModifier('cha', this)" title="Click to edit">+0</div>
+                <div class="stat-value stat-readonly" id="chaValue" data-stat="cha">10</div>
+                <div class="stat-modifier stat-readonly" id="chaMod">+0</div>
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
               <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
                 <div style="font-size: 0.8rem; color: var(--text-secondary);">AC</div>
-                <div class="editable-stat" style="font-size: 1.5rem; font-weight: 900;" id="acValue" onclick="editStat('ac', this)" title="Click to edit">16</div>
+                <div class="stat-readonly" style="font-size: 1.5rem; font-weight: 900;" id="acValue" data-stat="ac">16</div>
               </div>
               <div style="padding: 10px; background: var(--background-color); border-radius: 6px; text-align: center;">
                 <div style="font-size: 0.8rem; color: var(--text-secondary);">Initiative</div>
                 <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-color);" id="initValue">+4</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: var(--background-color); border-radius: 6px;">
+              <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">State</div>
+              <select id="characterStateStats" onchange="updateCharacterState()" style="width: 100%; padding: 8px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; cursor: pointer;">
+                <option value="normal">Normal</option>
+                <option value="paralyzed">Paralyzed</option>
+                <option value="poisoned">Poisoned</option>
+                <option value="prone">Prone</option>
+                <option value="unconscious">Unconscious</option>
+              </select>
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: var(--background-color); border-radius: 6px;">
+              <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">Temporary Modifiers</div>
+              <div style="display: grid; grid-template-columns: 1fr 60px; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="tempModName" placeholder="Modifier name (e.g., Bless)" style="padding: 8px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+                <input type="number" id="tempModValue" placeholder="+/-" style="padding: 8px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; text-align: center;">
+              </div>
+              <button onclick="addTempModifier()" style="width: 100%; padding: 8px; background: var(--accent-color); border: none; border-radius: 6px; color: white; font-size: 0.9rem; cursor: pointer;">Add Modifier</button>
+              <div id="tempModifiersList" style="margin-top: 10px;">
+                <!-- Temporary modifiers will appear here -->
               </div>
             </div>
           </div>
@@ -1456,6 +1488,16 @@
             </div>
           </div>
 
+          <!-- Abilities Tab -->
+          <div id="abilitiesTab" style="display: none;">
+            <div style="margin-bottom: 15px;">
+              <strong style="color: var(--text-primary);">Combat Abilities & Spells</strong>
+            </div>
+            <div id="abilitiesContent">
+              <!-- Will be populated dynamically with abilities and spells -->
+            </div>
+          </div>
+
           <!-- Inventory Tab -->
           <div id="inventoryTab" style="display: none;">
             <div id="inventoryGrid">
@@ -1491,7 +1533,7 @@
           </div>
           <div class="hp-bar" style="margin-top: 0;">
             <div id="foodFill" style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #e67e22); border-radius: 15px; transition: all 0.3s ease;"></div>
-            <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%; font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
+            <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
           </div>
         </div>
       </div>
@@ -1501,7 +1543,7 @@
         <div class="demo-section">
           <!-- Mode Selector (above chat) -->
           <div class="chat-modes" style="margin-bottom: 15px;">
-            <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
+            <button class="mode-btn active" onclick="switchChatMode('conversation')">💭 Mood</button>
             <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
           </div>
 
@@ -1563,25 +1605,28 @@
               </div>
             </div>
 
+            <!-- Battle Log -->
+            <div style="margin-bottom: 15px;">
+              <strong style="color: var(--text-primary);">Battle Log</strong>
+            </div>
+            <div id="battleLog" style="min-height: 200px; max-height: 300px; overflow-y: auto; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+              <div style="color: var(--text-secondary); font-size: 0.9rem; text-align: center; padding: 20px;">
+                Battle actions and rolls will appear here...
+              </div>
+            </div>
+
             <div style="margin-bottom: 15px;">
               <strong style="color: var(--text-primary);">Quick Actions</strong>
             </div>
 
             <div class="battle-actions">
               <button class="action-btn" onclick="rollAttack()">⚔️ Attack</button>
+              <button class="action-btn" onclick="castDefaultSpell()">✨ Cast Spell</button>
               <button class="action-btn" onclick="rollDice('Initiative', 'd20')">🎲 Initiative</button>
               <button class="action-btn" onclick="rollDice('Save', 'd20')">🛡️ Save</button>
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
               <button class="action-btn" onclick="quickAction('dodge')">💨 Dodge</button>
               <button class="action-btn" onclick="quickAction('help')">🤝 Help</button>
-            </div>
-
-            <div style="margin: 20px 0;">
-              <strong style="color: var(--text-primary);">Abilities</strong>
-            </div>
-
-            <div class="abilities-grid" id="abilitiesGrid">
-              <!-- Will be populated dynamically -->
             </div>
           </div>
 
@@ -2334,6 +2379,77 @@
       abilitiesGrid.innerHTML = html;
     }
 
+    // New function to update the Abilities tab in the stats section
+    function updateAbilitiesTab() {
+      const abilitiesContent = document.getElementById('abilitiesContent');
+      let html = '';
+
+      // Show abilities (for all classes)
+      if (currentCharacter.abilities && currentCharacter.abilities.length > 0) {
+        html += '<div style="margin-bottom: 20px;"><strong style="color: var(--text-primary);">⚔️ Abilities</strong></div>';
+        currentCharacter.abilities.forEach(ability => {
+          const isDefault = ability.isDefault || false;
+          html += `
+            <div class="ability-card" style="position: relative;">
+              <div class="ability-header">
+                <div class="ability-icon">${ability.icon}</div>
+                <div class="ability-info">
+                  <div class="ability-name">${ability.name} ${isDefault ? '(Default)' : ''}</div>
+                  ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
+                </div>
+              </div>
+              <div class="ability-description">${ability.description}</div>
+              <button
+                onclick="setDefaultAbility('${ability.id}')"
+                style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
+              >
+                ${isDefault ? 'Default ✓' : 'Set Default'}
+              </button>
+            </div>
+          `;
+        });
+      }
+
+      // Show spells (for casters and halfcasters)
+      if (currentCharacter.spells && (currentCharacter.classType === 'caster' || currentCharacter.classType === 'halfcaster')) {
+        html += '<div style="margin: 20px 0;"><strong style="color: var(--text-primary);">✨ Spells</strong></div>';
+        html += '<div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-secondary);">Click a spell to toggle preparation. Prepared spells are available in battle.</div>';
+
+        Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
+          const levelName = level === '0' ? 'Cantrips' : `Level ${level}`;
+          html += `<div class="spell-level-section">
+            <div class="spell-level-header">${levelName}</div>`;
+
+          currentCharacter.spells[level].forEach(spell => {
+            const isDefault = spell.isDefault || false;
+            html += `
+              <div class="spell-card ${spell.prepared ? 'prepared' : ''}" style="position: relative;">
+                <div class="spell-header" onclick="toggleSpellPrepared('${spell.id}', ${level})">
+                  <div class="spell-icon">${spell.icon}</div>
+                  <div class="spell-info">
+                    <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''}</div>
+                    ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
+                  </div>
+                  ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
+                </div>
+                <div class="spell-description">${spell.description}</div>
+                ${spell.prepared ? `<button
+                  onclick="event.stopPropagation(); setDefaultSpell('${spell.id}', ${level})"
+                  style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
+                >
+                  ${isDefault ? 'Default ✓' : 'Set Default'}
+                </button>` : ''}
+              </div>
+            `;
+          });
+
+          html += '</div>';
+        });
+      }
+
+      abilitiesContent.innerHTML = html;
+    }
+
     function updateSkills() {
       const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
 
@@ -2394,17 +2510,27 @@
       // Show/hide appropriate tabs
       document.getElementById('statsTab').style.display = tab === 'stats' ? 'block' : 'none';
       document.getElementById('skillsTab').style.display = tab === 'skills' ? 'block' : 'none';
+      document.getElementById('abilitiesTab').style.display = tab === 'abilities' ? 'block' : 'none';
       document.getElementById('inventoryTab').style.display = tab === 'inventory' ? 'block' : 'none';
 
-      // Update inventory when switching to inventory tab
+      // Update content when switching tabs
       if (tab === 'inventory') {
         updateInventory();
+      } else if (tab === 'abilities') {
+        updateAbilitiesTab();
       }
     }
 
     function changeCharacterState() {
       currentState = document.getElementById('characterState').value;
       updateMessages();
+    }
+
+    function updateCharacterState() {
+      const state = document.getElementById('characterStateStats').value;
+      console.log('Character state changed to:', state);
+      // This can be used to apply state-based modifiers or effects
+      // For now, just log the state change
     }
 
     function updateMessages() {
@@ -2465,19 +2591,25 @@
     }
 
     function addBattleLog(message) {
-      // If in conversation mode, don't add to messages
+      // If in conversation mode, don't add to battle log
       if (currentChatMode === 'conversation') return;
 
-      const messagesArea = document.getElementById('messagesArea');
-      messagesArea.innerHTML += `
-        <div class="message system">
-          <div class="message-avatar">⚔️</div>
-          <div class="message-content">
-            <div class="message-text">${message}</div>
-          </div>
+      const battleLog = document.getElementById('battleLog');
+      if (!battleLog) return;
+
+      // Clear placeholder if this is the first entry
+      if (battleLog.innerHTML.includes('Battle actions and rolls will appear here')) {
+        battleLog.innerHTML = '';
+      }
+
+      const timestamp = new Date().toLocaleTimeString();
+      battleLog.innerHTML += `
+        <div style="margin-bottom: 10px; padding: 8px; background: var(--surface-color); border-left: 3px solid var(--accent-color); border-radius: 4px;">
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px;">${timestamp}</div>
+          <div style="color: var(--text-primary);">${message}</div>
         </div>
       `;
-      messagesArea.scrollTop = messagesArea.scrollHeight;
+      battleLog.scrollTop = battleLog.scrollHeight;
     }
 
     function rollAttack() {
@@ -2605,6 +2737,55 @@
       addBattleLog(messages[action] || 'Action performed!');
     }
 
+    function castDefaultSpell() {
+      // Find the default spell
+      let defaultSpell = null;
+      let spellLevel = null;
+
+      if (currentCharacter.spells) {
+        Object.keys(currentCharacter.spells).forEach(level => {
+          currentCharacter.spells[level].forEach(spell => {
+            if (spell.isDefault && spell.prepared) {
+              defaultSpell = spell;
+              spellLevel = level;
+            }
+          });
+        });
+      }
+
+      if (!defaultSpell) {
+        addBattleLog('⚠️ No default spell set! Go to the Abilities tab to set a default prepared spell.');
+        return;
+      }
+
+      // Cast the spell
+      const spellName = defaultSpell.name;
+      const spellIcon = defaultSpell.icon || '✨';
+
+      addBattleLog(`${spellIcon} ${currentCharacter.name} casts ${spellName}!`);
+
+      if (defaultSpell.damage) {
+        // If spell has damage, roll it
+        setTimeout(() => {
+          const damageRoll = defaultSpell.damage.match(/(\d+)d(\d+)/);
+          if (damageRoll) {
+            const count = parseInt(damageRoll[1]);
+            const sides = parseInt(damageRoll[2]);
+            let total = 0;
+            const rolls = [];
+
+            for (let i = 0; i < count; i++) {
+              const roll = Math.floor(Math.random() * sides) + 1;
+              rolls.push(roll);
+              total += roll;
+            }
+
+            addBattleLog(`💥 Spell Damage: ${total} (${rolls.join(' + ')})`);
+          }
+        }, 300);
+      }
+    }
+
     function nextTurn() {
       turnNumber++;
       document.getElementById('turnNumber').textContent = turnNumber;
@@ -2726,6 +2907,89 @@
       }
     }
 
+    let statsLocked = true;
+    let tempModifiers = [];
+
+    function addTempModifier() {
+      const nameInput = document.getElementById('tempModName');
+      const valueInput = document.getElementById('tempModValue');
+      const name = nameInput.value.trim();
+      const value = parseInt(valueInput.value);
+
+      if (!name || isNaN(value)) {
+        return;
+      }
+
+      tempModifiers.push({ name, value });
+      updateTempModifiersList();
+
+      // Clear inputs
+      nameInput.value = '';
+      valueInput.value = '';
+    }
+
+    function removeTempModifier(index) {
+      tempModifiers.splice(index, 1);
+      updateTempModifiersList();
+    }
+
+    function updateTempModifiersList() {
+      const list = document.getElementById('tempModifiersList');
+      if (tempModifiers.length === 0) {
+        list.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.85rem; padding: 10px; text-align: center;">No temporary modifiers</div>';
+        return;
+      }
+
+      let html = '';
+      tempModifiers.forEach((mod, index) => {
+        const sign = mod.value >= 0 ? '+' : '';
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--surface-color); border-radius: 6px; margin-bottom: 6px;">
+            <span style="color: var(--text-primary);">${mod.name}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: ${mod.value >= 0 ? '#4caf50' : '#f44336'}; font-weight: 600;">${sign}${mod.value}</span>
+              <button onclick="removeTempModifier(${index})" style="padding: 4px 8px; background: var(--battle-color); border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer;">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
+
+    function toggleStatsLock() {
+      statsLocked = !statsLocked;
+      const lockIcon = document.getElementById('lockIcon');
+      const lockText = document.getElementById('lockText');
+      const allStats = document.querySelectorAll('.stat-readonly');
+
+      if (statsLocked) {
+        lockIcon.textContent = '🔒';
+        lockText.textContent = 'Unlock Edit';
+
+        // Remove onclick handlers and titles
+        allStats.forEach(el => {
+          el.onclick = null;
+          el.title = '';
+          el.style.cursor = 'default';
+        });
+      } else {
+        lockIcon.textContent = '🔓';
+        lockText.textContent = 'Lock Edit';
+
+        // Add onclick handlers and titles
+        allStats.forEach(el => {
+          if (el.classList.contains('stat-value') || el.id.includes('Value') || el.id === 'acValue' || el.id.includes('hpCurrentEdit') || el.id.includes('hpMaxEdit')) {
+            const statName = el.dataset.stat || (el.id.includes('hpCurrent') ? 'hpCurrent' : el.id.includes('hpMax') ? 'hpMax' : 'unknown');
+            if (statName !== 'unknown') {
+              el.onclick = function() { editStat(statName, this); };
+              el.title = 'Click to edit';
+              el.style.cursor = 'pointer';
+            }
+          }
+        });
+      }
+    }
+
     function editStat(statName, element) {
       const currentValue = element.textContent;
       const input = document.createElement('input');
@@ -2839,6 +3103,33 @@
       if (spell) {
         spell.prepared = !spell.prepared;
         updateAbilities();
+        updateAbilitiesTab();
+      }
+    }
+
+    function setDefaultAbility(abilityId) {
+      // Clear any existing defaults
+      currentCharacter.abilities.forEach(a => a.isDefault = false);
+
+      // Set the new default
+      const ability = currentCharacter.abilities.find(a => a.id === abilityId);
+      if (ability) {
+        ability.isDefault = true;
+        updateAbilitiesTab();
+      }
+    }
+
+    function setDefaultSpell(spellId, level) {
+      // Clear any existing defaults across all spell levels
+      Object.keys(currentCharacter.spells).forEach(lvl => {
+        currentCharacter.spells[lvl].forEach(s => s.isDefault = false);
+      });
+
+      // Set the new default
+      const spell = currentCharacter.spells[level].find(s => s.id === spellId);
+      if (spell && spell.prepared) {
+        spell.isDefault = true;
+        updateAbilitiesTab();
       }
     }
 
