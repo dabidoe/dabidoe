@@ -1131,8 +1131,16 @@
 
     @media (max-width: 1200px) {
       .demo-layout {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
       }
+
+      /* Mobile order: Images (1), Chat (2), Stats (3), Location (4), Satiety (5) */
+      .section-images { order: 1; }
+      .section-chat { order: 2; }
+      .section-stats { order: 3; }
+      .section-location { order: 4; }
+      .section-satiety { order: 5; }
     }
 
     @media (max-width: 768px) {
@@ -1184,7 +1192,6 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 2rem;">🎮</span>
         <span style="font-weight: 600; font-size: 1.1rem;">Character Foundry</span>
       </div>
     </div>
@@ -1203,16 +1210,13 @@
 
     <!-- Demo Layout -->
     <div class="demo-layout">
-      <!-- Left Column -->
-      <div>
-        <!-- Image Tabs -->
+      <!-- Images Section -->
+      <div class="section-images" data-order="1">
         <div class="demo-section">
-          <h2>📸 Character Images</h2>
-
           <div class="image-tabs-nav">
-            <button class="tab-button active" onclick="switchImageTab('portrait')">🎨 Portrait</button>
-            <button class="tab-button" onclick="switchImageTab('battle')">⚔️ Battle</button>
-            <button class="tab-button" onclick="switchImageTab('canvas')">🖼️ Canvas</button>
+            <button class="tab-button active" onclick="switchImageTab('portrait')">Portrait</button>
+            <button class="tab-button" onclick="switchImageTab('battle')">Battle</button>
+            <button class="tab-button" onclick="switchImageTab('canvas')">Canvas</button>
           </div>
 
           <div id="imageDisplay" class="image-display">
@@ -1222,26 +1226,13 @@
               <small style="color: var(--text-secondary);" id="imageSubtitle">Standard portrait</small>
             </div>
           </div>
-
-          <!-- Location Selector -->
-          <div style="margin-top: 15px; padding: 15px; background: var(--background-color); border-radius: 8px;">
-            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">📍 Location</div>
-            <select id="locationSelect" onchange="changeLocation()" style="width: 100%; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; cursor: pointer;">
-              <option value="forest">Moonlit Forest</option>
-              <option value="tavern">The Drunken Dragon Tavern</option>
-              <option value="dungeon">Ancient Dungeon</option>
-              <option value="castle">Royal Castle</option>
-              <option value="town">Town Square</option>
-              <option value="mountains">Mountain Pass</option>
-              <option value="ruins">Ancient Ruins</option>
-              <option value="temple">Sacred Temple</option>
-            </select>
-          </div>
         </div>
+      </div>
 
-        <!-- Stats -->
+      <!-- Stats Section -->
+      <div class="section-stats" data-order="3">
         <div class="demo-section">
-          <h2>📊 Character Stats</h2>
+          <h2>Stats</h2>
 
           <div class="hp-display">
             <strong>Hit Points</strong>
@@ -1298,26 +1289,44 @@
               <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-color);" id="initValue">+4</div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Food/Hunger Bar -->
-          <div style="margin-top: 15px; padding: 15px; background: var(--background-color); border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <strong>🍖 Satiety</strong>
-              <button onclick="consumeFood()" style="padding: 4px 12px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer;">Eat</button>
-            </div>
-            <div class="hp-bar" style="margin-top: 0;">
-              <div id="foodFill" style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #e67e22); border-radius: 15px; transition: all 0.3s ease;"></div>
-              <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
-            </div>
+      <!-- Location Section -->
+      <div class="section-location" data-order="4">
+        <div class="demo-section">
+          <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">📍 Location</div>
+          <select id="locationSelect" onchange="changeLocation()" style="width: 100%; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; cursor: pointer;">
+            <option value="forest">Moonlit Forest</option>
+            <option value="tavern">The Drunken Dragon Tavern</option>
+            <option value="dungeon">Ancient Dungeon</option>
+            <option value="castle">Royal Castle</option>
+            <option value="town">Town Square</option>
+            <option value="mountains">Mountain Pass</option>
+            <option value="ruins">Ancient Ruins</option>
+            <option value="temple">Sacred Temple</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Satiety Section -->
+      <div class="section-satiety" data-order="5">
+        <div class="demo-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <strong>🍖 Satiety</strong>
+            <button onclick="consumeFood()" style="padding: 4px 12px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer;">Eat</button>
+          </div>
+          <div class="hp-bar" style="margin-top: 0;">
+            <div id="foodFill" style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #e67e22); border-radius: 15px; transition: all 0.3s ease;"></div>
+            <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%; font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column -->
-      <div>
-        <!-- Chat Interface -->
+      <!-- Chat Section -->
+      <div class="section-chat" data-order="2">
         <div class="demo-section">
-          <h2>💬 Enhanced Chat Interface</h2>
+          <h2>Chat</h2>
 
           <div class="chat-modes">
             <button class="mode-btn active" onclick="switchChatMode('conversation')">💬 Conversation</button>
