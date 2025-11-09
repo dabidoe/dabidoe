@@ -1159,12 +1159,9 @@
         flex-direction: column;
       }
 
-      /* Mobile order: Images (1), Chat (2), Stats (3), Location (4), Satiety (5) */
-      .section-images { order: 1; }
-      .section-chat { order: 2; }
-      .section-stats { order: 3; }
-      .section-location { order: 4; }
-      .section-satiety { order: 5; }
+      /* Mobile order: Chat (1), Stats (2) */
+      .section-chat { order: 1; }
+      .section-stats { order: 2; }
     }
 
     @media (max-width: 768px) {
@@ -2150,8 +2147,6 @@
     ];
 
     let currentCharacter = characters[0];
-    let currentImageTab = 'portrait';
-    // let currentPortraitType = 'standard'; // Removed - tabs now intelligently show appropriate images
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -2221,17 +2216,12 @@
     }
 
     function updateCharacterDisplay() {
-      // Update header
-      document.getElementById('currentCharEmoji').textContent = currentCharacter.emoji;
+      // Update header (portrait and name only - removed emoji display)
       document.getElementById('currentCharName').textContent = currentCharacter.name;
       document.getElementById('charAlignment').textContent = currentCharacter.alignment || 'Neutral';
       document.getElementById('charLevel').textContent = currentCharacter.level;
       document.getElementById('charRace').textContent = currentCharacter.race || 'Human';
       document.getElementById('charClass').textContent = currentCharacter.class;
-      document.getElementById('charSubclass').textContent = currentCharacter.subclass || '';
-      const locationName = locations.find(l => l.id === currentCharacter.location)?.name || currentCharacter.location;
-      document.getElementById('charLocation').textContent = locationName;
-      document.getElementById('characterEmoji').textContent = currentCharacter.emoji;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
 
       // Update stats
@@ -2250,13 +2240,6 @@
       document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
       document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
 
-      // Update Food
-      if (currentCharacter.food) {
-        const foodPercent = (currentCharacter.food.current / currentCharacter.food.max) * 100;
-        document.getElementById('foodFill').style.width = foodPercent + '%';
-        document.getElementById('foodText').textContent = `${currentCharacter.food.current} / ${currentCharacter.food.max}`;
-      }
-
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
 
@@ -2266,9 +2249,6 @@
 
       // Update location selector
       document.getElementById('locationSelect').value = currentCharacter.location;
-
-      // Update image display
-      updateImageDisplay();
 
       // Update abilities
       updateAbilities();
@@ -2461,28 +2441,6 @@
           element.textContent = (total >= 0 ? '+' : '') + total;
         }
       });
-    }
-
-    function switchImageTab(tab) {
-      currentImageTab = tab;
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-
-      // Intelligently set subtitle based on tab
-      const subtitle = document.getElementById('imageSubtitle');
-      if (subtitle) {
-        if (tab === 'portrait') {
-          subtitle.textContent = 'Standard portrait';
-        } else if (tab === 'battle') {
-          subtitle.textContent = 'Battle portrait';
-        } else if (tab === 'canvas') {
-          subtitle.textContent = 'Scene image';
-        }
-      }
-
-      updateImageDisplay();
     }
 
     function switchChatMode(mode) {
@@ -2961,73 +2919,15 @@
       const newLocation = document.getElementById('locationSelect').value;
       currentCharacter.location = newLocation;
 
-      // Update header location display
       const locationName = locations.find(l => l.id === newLocation)?.name || newLocation;
-      document.getElementById('charLocation').textContent = locationName;
 
-      updateImageDisplay();
-      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
-    }
-
-    function updateImageDisplay() {
-      const imageDisplay = document.getElementById('imageDisplay');
-      const hpState = getCharacterState();
-
-      if (currentImageTab === 'portrait' || currentImageTab === 'battle') {
-        // Intelligently show appropriate portrait based on tab
-        // Portrait tab = standard portrait, Battle tab = battle portrait (or standard if battle not available)
-        let filter = '';
-        let borderColor = 'var(--accent-color)';
-        let portraitStyle = '';
-
-        if (hpState === 'critical') {
-          filter = 'grayscale(50%) brightness(0.7) sepia(30%) hue-rotate(-10deg)';
-          borderColor = '#e74c3c';
-        } else if (hpState === 'injured') {
-          filter = 'brightness(0.8) sepia(20%) hue-rotate(-5deg)';
-          borderColor = '#e67e22';
-        } else if (hpState === 'wounded') {
-          filter = 'brightness(0.9)';
-          borderColor = '#f39c12';
-        }
-
-        // Add battle-specific styling for battle tab
-        if (currentImageTab === 'battle') {
-          borderColor = '#e74c3c';
-          portraitStyle = 'border: 3px solid ' + borderColor + '; box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);';
-        }
-
-        imageDisplay.innerHTML = `
-          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image" style="filter: ${filter}; ${portraitStyle}">
-        `;
-      } else if (currentImageTab === 'canvas') {
-        // Show location background with character overlay
-        const location = locations.find(l => l.id === currentCharacter.location);
-        let overlayColor = '';
-        let stateText = '';
-
-        if (hpState === 'critical') {
-          overlayColor = 'rgba(231, 76, 60, 0.3)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(231, 76, 60, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">⚠️ Critically Injured</div>';
-        } else if (hpState === 'injured') {
-          overlayColor = 'rgba(230, 126, 34, 0.2)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(230, 126, 34, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🩹 Injured</div>';
-        } else if (hpState === 'wounded') {
-          overlayColor = 'rgba(243, 156, 18, 0.15)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(243, 156, 18, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🤕 Wounded</div>';
-        }
-
-        imageDisplay.innerHTML = `
-          <div class="canvas-display" style="background-image: url('${location.image}')">
-            ${overlayColor ? `<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: ${overlayColor}; pointer-events: none;"></div>` : ''}
-            <div class="location-name">${location.name}</div>
-            <div class="character-overlay">
-              <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}">
-            </div>
-            ${stateText}
-          </div>
-        `;
+      // Update canvas display in footer
+      const canvasDisplay = document.getElementById('canvasDisplay');
+      if (canvasDisplay) {
+        canvasDisplay.textContent = `Canvas preview: ${locationName}`;
       }
+
+      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
     }
 
     let statsLocked = true;
@@ -3343,34 +3243,6 @@
       if (hpPercent <= 50) return 'injured';  // Moderately injured
       if (hpPercent <= 75) return 'wounded';  // Lightly injured
       return 'default';
-    }
-
-    function consumeFood() {
-      if (!currentCharacter.food) return;
-
-      // Find rations in inventory
-      const rations = currentCharacter.inventory?.find(item => item.name.toLowerCase().includes('ration'));
-
-      if (rations && rations.quantity > 0) {
-        // Consume 1 ration
-        rations.quantity--;
-
-        // Restore food (satiety)
-        const foodRestored = 30;
-        currentCharacter.food.current = Math.min(currentCharacter.food.max, currentCharacter.food.current + foodRestored);
-
-        updateCharacterDisplay();
-        addBattleLog(`${currentCharacter.name} ate some rations and restored ${foodRestored} satiety.`);
-
-        if (rations.quantity === 0) {
-          // Remove from inventory
-          const index = currentCharacter.inventory.indexOf(rations);
-          if (index > -1) currentCharacter.inventory.splice(index, 1);
-          addBattleLog(`⚠️ Out of rations!`);
-        }
-      } else {
-        addBattleLog(`⚠️ ${currentCharacter.name} has no rations to eat!`);
-      }
     }
 
     function consumeItem(itemId) {
