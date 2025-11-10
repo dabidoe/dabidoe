@@ -2706,6 +2706,16 @@
           { id: 'evasion', name: 'Evasion', icon: '🤸', damage: null, description: 'Dodge area effects' },
           { id: 'thieves_tools', name: "Thieves' Tools", icon: '🔓', damage: null, description: 'Pick locks and disable traps' }
         ],
+        spells: {
+          0: [
+            { id: 'mage_hand', name: 'Mage Hand', icon: '✋', damage: null, description: 'Invisible spectral hand for manipulation', school: 'Conjuration', castingTime: '1 action', range: '30 feet', components: 'V, S', duration: '1 minute' },
+            { id: 'minor_illusion', name: 'Minor Illusion', icon: '👻', damage: null, description: 'Create sound or image illusion', school: 'Illusion', castingTime: '1 action', range: '30 feet', components: 'S, M', duration: '1 minute' }
+          ],
+          1: [
+            { id: 'disguise_self', name: 'Disguise Self', prepared: true, icon: '🎭', damage: null, description: 'Change your appearance', school: 'Illusion', castingTime: '1 action', range: 'Self', components: 'V, S', duration: '1 hour' },
+            { id: 'charm_person', name: 'Charm Person', prepared: true, icon: '💖', damage: null, description: 'Make humanoid friendly', school: 'Enchantment', castingTime: '1 action', range: '30 feet', components: 'V, S', duration: '1 hour', save: 'Wisdom' }
+          ]
+        },
         states: {
           default: { mood: 'sly', greeting: '*leaning casually* Well, well, what brings you to this part of town?' },
           battle: { mood: 'focused', greeting: 'Time to disappear... *fades into shadows*' },
@@ -2725,6 +2735,7 @@
     let allSpellsFromAPI = [];
     let filteredSpells = [];
     let currentLevelFilter = 'all';
+    let currentClassFilter = 'all';
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -3421,6 +3432,8 @@
       document.getElementById('spellPickerOverlay').classList.remove('show');
       // Reset filters
       document.getElementById('spellPickerSearch').value = '';
+      document.getElementById('spellClassFilter').value = 'all';
+      currentClassFilter = 'all';
       currentLevelFilter = 'all';
       document.querySelectorAll('.spell-picker-filter').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.level === 'all');
@@ -3546,7 +3559,8 @@
           components: spell.components.raw,
           duration: spell.duration,
           concentration: spell.duration.includes('Concentration'),
-          ritual: spell.ritual
+          ritual: spell.ritual,
+          classes: spell.classes || []
         }));
 
         filteredSpells = allSpellsFromAPI;
@@ -3622,18 +3636,25 @@
       filterPickerSpells();
     }
 
-    function filterPickerSpells() {
+    function filterByClass(classFilter) {
+      currentClassFilter = classFilter;
+      filterPickerSpells();
+    }
+
+        function filterPickerSpells() {
       const searchTerm = document.getElementById('spellPickerSearch').value.toLowerCase();
 
       filteredSpells = allSpellsFromAPI.filter(spell => {
         const matchesSearch = spell.name.toLowerCase().includes(searchTerm) ||
                             (spell.school?.name || '').toLowerCase().includes(searchTerm);
         const matchesLevel = currentLevelFilter === 'all' || spell.level === parseInt(currentLevelFilter);
+        const matchesClass = currentClassFilter === 'all' ||
+                            (spell.classes && spell.classes.some(c => c.toLowerCase() === currentClassFilter));
 
-        return matchesSearch && matchesLevel;
+        return matchesSearch && matchesLevel && matchesClass;
       });
 
-      renderPickerSpells(filteredSpells);
+            renderPickerSpells(filteredSpells);
     }
 
     function hasSpell(spellIndex) {
@@ -4946,6 +4967,20 @@
           <button class="spell-picker-filter" data-level="8" onclick="filterByLevel('8')">8th</button>
           <button class="spell-picker-filter" data-level="9" onclick="filterByLevel('9')">9th</button>
         </div>
+        <div style="padding: 10px 15px 0 15px;">
+          <select id="spellClassFilter" onchange="filterByClass(this.value)" style="width: 100%; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+            <option value="all">All Classes</option>
+            <option value="bard">Bard</option>
+            <option value="cleric">Cleric</option>
+            <option value="druid">Druid</option>
+            <option value="paladin">Paladin</option>
+            <option value="ranger">Ranger</option>
+            <option value="sorcerer">Sorcerer</option>
+            <option value="warlock">Warlock</option>
+            <option value="wizard">Wizard</option>
+          </select>
+        </div>
+
       </div>
 
       <div class="spell-picker-body" id="spellPickerBody">
