@@ -5558,7 +5558,78 @@
       const subclass = character.subclass;
 
       // Get subclass-themed spells if available
-      const subclassSpellList = subclassSpells[subclass] || null;
+      let subclassSpellList = subclassSpells[subclass] || null;
+
+      // Fallback: Use generic class-based spells if subclass not found
+      const classDefaultSpells = {
+        wizard: {
+          cantrips: ['fire_bolt', 'mage_hand'],
+          1: ['magic_missile', 'shield', 'detect_magic'],
+          2: ['misty_step', 'scorching_ray'],
+          3: ['fireball', 'counterspell'],
+          4: ['greater_invisibility', 'ice_storm'],
+          5: ['cone_of_cold', 'wall_of_force']
+        },
+        cleric: {
+          cantrips: ['sacred_flame', 'guidance', 'light'],
+          1: ['cure_wounds', 'bless', 'healing_word'],
+          2: ['prayer_of_healing', 'spiritual_weapon'],
+          3: ['mass_healing_word', 'spirit_guardians'],
+          4: ['death_ward', 'guardian_of_faith'],
+          5: ['mass_cure_wounds', 'flame_strike']
+        },
+        druid: {
+          cantrips: ['produce_flame', 'shillelagh'],
+          1: ['cure_wounds', 'entangle', 'goodberry'],
+          2: ['moonbeam', 'pass_without_trace'],
+          3: ['call_lightning', 'conjure_animals'],
+          4: ['ice_storm', 'polymorph'],
+          5: ['cone_of_cold', 'tree_stride']
+        },
+        sorcerer: {
+          cantrips: ['fire_bolt', 'mage_hand'],
+          1: ['magic_missile', 'shield'],
+          2: ['misty_step', 'scorching_ray'],
+          3: ['fireball', 'counterspell'],
+          4: ['greater_invisibility', 'ice_storm'],
+          5: ['cone_of_cold']
+        },
+        warlock: {
+          cantrips: ['eldritch_blast', 'mage_hand'],
+          1: ['hex', 'armor_of_agathys'],
+          2: ['misty_step', 'hold_person'],
+          3: ['counterspell', 'hunger_of_hadar'],
+          4: ['dimension_door', 'banishment'],
+          5: ['cone_of_cold', 'hold_monster']
+        },
+        bard: {
+          cantrips: ['vicious_mockery', 'mage_hand'],
+          1: ['cure_wounds', 'healing_word'],
+          2: ['misty_step', 'hold_person'],
+          3: ['counterspell', 'mass_healing_word'],
+          4: ['greater_invisibility', 'dimension_door'],
+          5: ['mass_cure_wounds', 'hold_monster']
+        },
+        paladin: {
+          1: ['cure_wounds', 'shield_of_faith'],
+          2: ['prayer_of_healing', 'aid'],
+          3: ['revivify', 'mass_healing_word'],
+          4: ['death_ward', 'aura_of_purity'],
+          5: ['mass_cure_wounds']
+        },
+        ranger: {
+          1: ['cure_wounds', 'hunters_mark'],
+          2: ['pass_without_trace', 'spike_growth'],
+          3: ['conjure_animals', 'lightning_arrow'],
+          4: ['conjure_woodland_beings', 'freedom_of_movement'],
+          5: ['swift_quiver', 'tree_stride']
+        }
+      };
+
+      // If no subclass spells, use class defaults
+      if (!subclassSpellList) {
+        subclassSpellList = classDefaultSpells[charClass] || null;
+      }
 
       // Add cantrips
       const cantripCount = spellcasters.includes(charClass) ? Math.min(4, 2 + Math.floor(level / 4)) : 0;
