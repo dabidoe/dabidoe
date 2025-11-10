@@ -5595,7 +5595,7 @@
         name: name,
         emoji: classEmojis[charClass] || '🎭',
         class: charClass.charAt(0).toUpperCase() + charClass.slice(1),
-        subclass: document.getElementById('newCharSubclass').value !== 'none' ? document.getElementById('newCharSubclass').value : 'Choose at level 3',
+        subclass: level >= 3 && document.getElementById('newCharSubclass').value !== 'none' ? document.getElementById('newCharSubclass').value : 'Choose at level 3',
         race: race.charAt(0).toUpperCase() + race.slice(1),
         alignment: 'Neutral Good',
         classType: classTypes[charClass] || 'melee',
@@ -5882,12 +5882,28 @@
 
       const subclasses = subclassOptions[selectedClass] || [];
 
-      let html = '<option value="none">Choose after level 3...</option>';
+      let html = '<option value="none">Choose subclass...</option>';
       subclasses.forEach(subclass => {
         html += `<option value="${subclass}">${subclass}</option>`;
       });
 
       subclassSelect.innerHTML = html;
+
+      // Also update visibility based on level
+      updateSubclassVisibility();
+    }
+
+    function updateSubclassVisibility() {
+      const levelInput = document.getElementById('newCharLevel');
+      const subclassWrapper = document.getElementById('subclassWrapper');
+      const level = parseInt(levelInput.value) || 1;
+
+      // Show subclass field only if level is 3 or higher
+      if (level >= 3) {
+        subclassWrapper.style.display = 'block';
+      } else {
+        subclassWrapper.style.display = 'none';
+      }
     }
 
     // Auto-populate spells based on class and level
@@ -6515,10 +6531,10 @@
             </select>
           </div>
           <!-- Subclass Dropdown -->
-          <div>
+          <div id="subclassWrapper" style="display: none;">
             <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 5px;">Subclass</label>
             <select id="newCharSubclass" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
-              <option value="none">Choose after level 3...</option>
+              <option value="none">Choose subclass...</option>
             </select>
           </div>
 
@@ -6526,7 +6542,7 @@
           <!-- Level Input -->
           <div>
             <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 5px;">Starting Level</label>
-            <input type="number" id="newCharLevel" value="1" min="1" max="20" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
+            <input type="number" id="newCharLevel" value="1" min="1" max="20" oninput="updateSubclassVisibility()" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
           </div>
 
           <!-- Create Button -->
