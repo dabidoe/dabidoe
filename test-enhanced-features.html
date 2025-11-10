@@ -842,76 +842,318 @@
     }
 
     .spell-level-header {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-secondary);
       text-transform: uppercase;
       margin-bottom: 10px;
       letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-weight: 600;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border-color);
     }
 
+    /* Minimal spell card for list view */
     .spell-card {
-      padding: 12px;
+      padding: 12px 15px;
       background: var(--background-color);
       border: 2px solid var(--border-color);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-bottom: 8px;
-      opacity: 0.5;
-    }
-
-    .spell-card.prepared {
-      opacity: 1;
-      border-color: var(--accent-color);
-    }
-
-    .spell-card:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-
-    .spell-header {
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 6px;
     }
 
-    .spell-icon {
-      font-size: 1.5rem;
+    .spell-card.prepared {
+      border-color: var(--accent-color);
+      background: rgba(74, 144, 226, 0.05);
     }
 
-    .spell-info {
+    .spell-card:hover {
+      transform: translateX(4px);
+      border-color: var(--accent-color);
+      box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+    }
+
+    .spell-card .spell-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .spell-card .spell-name {
+      flex: 1;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .spell-card .spell-check {
+      font-size: 1.1rem;
+      color: var(--accent-color);
+      flex-shrink: 0;
+    }
+
+    /* Spell slot progress bars */
+    .spell-slots-overview {
+      padding: 15px;
+      background: var(--surface-color);
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .slots-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .slots-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .prepared-count {
+      font-size: 0.85rem;
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .slot-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slot-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      min-width: 30px;
+      font-weight: 600;
+    }
+
+    .slot-bar {
+      flex: 1;
+      height: 18px;
+      background: var(--background-color);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border-color);
+    }
+
+    .slot-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-color), #357abd);
+      transition: width 0.3s ease;
+    }
+
+    .slot-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Spell detail modal */
+    .spell-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .spell-modal-overlay.show {
+      display: flex;
+    }
+
+    .spell-modal {
+      background: var(--surface-color);
+      border: 3px solid var(--accent-color);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .spell-modal-header {
+      padding: 20px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--background-color);
+      border-radius: 10px 10px 0 0;
+      position: relative;
+    }
+
+    .spell-modal-icon {
+      font-size: 2.5rem;
+    }
+
+    .spell-modal-title {
       flex: 1;
     }
 
-    .spell-name {
-      font-weight: 600;
-      font-size: 0.9rem;
+    .spell-modal-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
     }
 
-    .spell-damage {
-      font-size: 0.75rem;
+    .spell-modal-level {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .spell-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .spell-modal-close:hover {
+      border-color: var(--battle-color);
       color: var(--battle-color);
-      font-weight: 700;
+    }
+
+    .spell-modal-body {
+      padding: 20px;
+    }
+
+    .spell-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .spell-stat {
+      background: var(--background-color);
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .spell-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .spell-stat-value {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
     .spell-description {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      line-height: 1.3;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      font-size: 0.9rem;
     }
 
-    .prepared-indicator {
-      padding: 3px 8px;
+    .spell-modal-actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 15px;
+      border-top: 2px solid var(--border-color);
+    }
+
+    .spell-btn-cast {
+      flex: 2;
+      padding: 15px;
       background: var(--accent-color);
-      border-radius: 12px;
-      font-size: 0.7rem;
-      font-weight: 600;
+      border: none;
+      border-radius: 8px;
       color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .spell-btn-cast:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+
+    .spell-btn-cast:disabled {
+      background: var(--border-color);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spell-btn-prepare {
+      flex: 1;
+      padding: 15px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .spell-btn-prepare:hover {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+
+    .spell-btn-prepare.prepared {
+      border-color: var(--accent-color);
+      background: rgba(74, 144, 226, 0.1);
+      color: var(--accent-color);
     }
 
     /* Inventory */
@@ -1568,12 +1810,9 @@
               </button>
             </div>
 
-            <!-- Spell Slots -->
-            <div id="spellSlotsDisplay" style="margin-bottom: 20px; padding: 12px; background: var(--surface-color); border-radius: 8px; border: 2px solid var(--border-color);">
-              <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">Spell Slots</div>
-              <div id="spellSlotsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 8px;">
-                <!-- Will be populated dynamically -->
-              </div>
+            <!-- Spell Slots Overview -->
+            <div class="spell-slots-overview" id="spellSlotsDisplay">
+              <!-- Will be populated dynamically -->
             </div>
 
             <!-- Spells List -->
@@ -1989,14 +2228,17 @@
           { id: 'arrow_volley', name: 'Arrow Volley', icon: '🏹', damage: '3d8', description: 'Rain arrows on area' }
         ],
         spells: {
+          0: [
+            { id: 'fire_bolt', name: 'Fire Bolt', icon: '🔥', damage: '1d10', description: 'Hurl a mote of fire at a creature or object.', school: 'Evocation', castingTime: '1 action', range: '120 feet', components: 'V, S', duration: 'Instantaneous', attackRoll: true }
+          ],
           1: [
-            { id: 'hunters_mark', name: "Hunter's Mark", prepared: true, icon: '🎯', damage: '1d6', description: 'Mark a target for extra damage' },
-            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Heal an ally' },
-            { id: 'goodberry', name: 'Goodberry', prepared: false, icon: '🫐', damage: null, description: 'Create 10 berries that heal 1 HP each' }
+            { id: 'hunters_mark', name: "Hunter's Mark", prepared: true, icon: '🎯', damage: '1d6', description: 'Mark a target for extra damage. When you hit with a weapon attack, add 1d6 extra damage.', school: 'Divination', castingTime: '1 bonus action', range: '90 feet', components: 'V', duration: '1 hour', concentration: true },
+            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Touch a creature to restore hit points.', school: 'Evocation', castingTime: '1 action', range: 'Touch', components: 'V, S', duration: 'Instantaneous' },
+            { id: 'goodberry', name: 'Goodberry', prepared: false, icon: '🫐', damage: null, description: 'Create 10 berries that heal 1 HP each and provide nourishment.', school: 'Transmutation', castingTime: '1 action', range: 'Touch', components: 'V, S, M', duration: '24 hours' }
           ],
           2: [
-            { id: 'pass_without_trace', name: 'Pass Without Trace', prepared: true, icon: '👻', damage: null, description: '+10 to Stealth for your party' },
-            { id: 'spike_growth', name: 'Spike Growth', prepared: false, icon: '🌿', damage: '2d4', description: 'Thorny ground damages enemies' }
+            { id: 'pass_without_trace', name: 'Pass Without Trace', prepared: true, icon: '👻', damage: null, description: 'Creatures you choose within 30 feet gain +10 to Stealth checks.', school: 'Abjuration', castingTime: '1 action', range: '30 feet', components: 'V, S, M', duration: '1 hour', concentration: true },
+            { id: 'spike_growth', name: 'Spike Growth', prepared: false, icon: '🌿', damage: '2d4', description: 'Ground in a 20-foot radius becomes difficult terrain covered with spikes. Creatures take 2d4 damage per 5 feet moved.', school: 'Transmutation', castingTime: '1 action', range: '150 feet', components: 'V, S, M', duration: '10 minutes', concentration: true, save: 'Dexterity' }
           ]
         },
         states: {
@@ -2063,18 +2305,21 @@
           { id: 'aura_courage', name: 'Aura of Courage', icon: '💪', damage: null, description: 'Grant allies immunity to fear' }
         ],
         spells: {
+          0: [
+            { id: 'sacred_flame', name: 'Sacred Flame', icon: '🔥', damage: '1d8', description: 'Flame-like radiance descends on a creature.', school: 'Evocation', castingTime: '1 action', range: '60 feet', components: 'V, S', duration: 'Instantaneous', save: 'Dexterity' }
+          ],
           1: [
-            { id: 'bless', name: 'Bless', prepared: true, icon: '✨', damage: null, description: '+1d4 to attack rolls and saves' },
-            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Heal an ally' },
-            { id: 'shield_of_faith', name: 'Shield of Faith', prepared: true, icon: '🛡️', damage: null, description: '+2 AC to target' }
+            { id: 'bless', name: 'Bless', prepared: true, icon: '✨', damage: null, description: 'Up to 3 creatures add 1d4 to attack rolls and saving throws.', school: 'Enchantment', castingTime: '1 action', range: '30 feet', components: 'V, S, M', duration: '1 minute', concentration: true },
+            { id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Touch a creature to restore hit points.', school: 'Evocation', castingTime: '1 action', range: 'Touch', components: 'V, S', duration: 'Instantaneous' },
+            { id: 'shield_of_faith', name: 'Shield of Faith', prepared: true, icon: '🛡️', damage: null, description: 'A creature gains +2 to AC.', school: 'Abjuration', castingTime: '1 bonus action', range: '60 feet', components: 'V, S, M', duration: '10 minutes', concentration: true }
           ],
           2: [
-            { id: 'aid', name: 'Aid', prepared: true, icon: '💪', damage: null, description: '+5 max HP to 3 allies' },
-            { id: 'lesser_restoration', name: 'Lesser Restoration', prepared: false, icon: '🩹', damage: null, description: 'End disease or condition' }
+            { id: 'aid', name: 'Aid', prepared: true, icon: '💪', damage: null, description: 'Increase max HP of up to 3 creatures by 5.', school: 'Abjuration', castingTime: '1 action', range: '30 feet', components: 'V, S, M', duration: '8 hours' },
+            { id: 'lesser_restoration', name: 'Lesser Restoration', prepared: false, icon: '🩹', damage: null, description: 'End one disease or condition affecting a creature.', school: 'Abjuration', castingTime: '1 action', range: 'Touch', components: 'V, S', duration: 'Instantaneous' }
           ],
           3: [
-            { id: 'aura_of_vitality', name: 'Aura of Vitality', prepared: true, icon: '❤️‍🔥', damage: '2d6', description: 'Heal allies over time' },
-            { id: 'revivify', name: 'Revivify', prepared: false, icon: '⚰️', damage: null, description: 'Bring back the dead' }
+            { id: 'aura_of_vitality', name: 'Aura of Vitality', prepared: true, icon: '❤️‍🔥', damage: '2d6', description: 'Healing energy radiates from you. Use bonus action to heal a creature 2d6 HP.', school: 'Evocation', castingTime: '1 action', range: 'Self (30-foot radius)', components: 'V', duration: '1 minute', concentration: true },
+            { id: 'revivify', name: 'Revivify', prepared: false, icon: '⚰️', damage: null, description: 'Return a creature to life that died within the last minute.', school: 'Necromancy', castingTime: '1 action', range: 'Touch', components: 'V, S, M (diamonds worth 300gp)', duration: 'Instantaneous' }
           ]
         },
         states: {
@@ -2498,62 +2743,34 @@
 
     function updateSpellsTab() {
       const spellsContent = document.getElementById('spellsContent');
-      const spellSlotsGrid = document.getElementById('spellSlotsGrid');
       let html = '';
-      let slotsHtml = '';
 
       // Check if character has spells
       if (!currentCharacter.spells || Object.keys(currentCharacter.spells).length === 0) {
         spellsContent.innerHTML = '<div style="color: var(--text-secondary); padding: 20px; text-align: center;">No spells available for this character.</div>';
-        spellSlotsGrid.innerHTML = '<div style="color: var(--text-secondary); padding: 10px; text-align: center;">N/A</div>';
+        updateSpellSlotsDisplay();
         return;
       }
 
-      // Show spell slots (mock data - would come from character data)
-      const maxSpellLevel = Math.max(...Object.keys(currentCharacter.spells).map(l => parseInt(l)).filter(l => l > 0));
-      for (let level = 1; level <= maxSpellLevel; level++) {
-        const maxSlots = getSpellSlots(currentCharacter.level, currentCharacter.classType, level);
-        const currentSlots = maxSlots; // TODO: Track used slots
-        slotsHtml += `
-          <div style="padding: 8px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; text-align: center;">
-            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px;">Level ${level}</div>
-            <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${currentSlots}/${maxSlots}</div>
-          </div>
-        `;
-      }
-      spellSlotsGrid.innerHTML = slotsHtml;
+      // Update spell slots display
+      updateSpellSlotsDisplay();
 
-      // Show spells by level
-      html += '<div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-secondary);">Click a spell to toggle preparation. Prepared spells are available in battle.</div>';
-
+      // Show spells by level - MINIMAL CARD VIEW
       Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
         const levelName = level === '0' ? 'Cantrips' : `Level ${level}`;
         html += `<div class="spell-level-section">
           <div class="spell-level-header">${levelName}</div>`;
 
         currentCharacter.spells[level].forEach(spell => {
-          const isDefault = spell.isDefault || false;
           const isCantrip = level === '0';
+          const isPrepared = isCantrip || spell.prepared; // Cantrips are always "prepared"
           const isSelected = selectedCantrip && selectedCantrip.id === spell.id;
 
           html += `
-            <div class="spell-card ${spell.prepared ? 'prepared' : ''} ${isSelected ? 'selected' : ''}" style="position: relative; ${isSelected ? 'border: 2px solid var(--accent-color);' : ''}">
-              <div class="spell-header" onclick="${isCantrip ? `selectCantrip('${spell.id}', ${level})` : `toggleSpellPrepared('${spell.id}', ${level})`}">
-                <div class="spell-icon">${spell.icon}</div>
-                <div class="spell-info">
-                  <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''} ${isSelected ? '(Selected)' : ''}</div>
-                  ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
-                </div>
-                ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
-                ${isSelected ? '<div class="prepared-indicator" style="background: var(--accent-color);">Selected</div>' : ''}
-              </div>
-              <div class="spell-description">${spell.description}</div>
-              ${spell.prepared && !isCantrip ? `<button
-                onclick="event.stopPropagation(); setDefaultSpell('${spell.id}', ${level})"
-                style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
-              >
-                ${isDefault ? 'Default ✓' : 'Set Default'}
-              </button>` : ''}
+            <div class="spell-card ${isPrepared ? 'prepared' : ''}" onclick="openSpellDetail('${spell.id}', ${level})">
+              <span class="spell-icon">${spell.icon}</span>
+              <span class="spell-name">${spell.name}${isSelected ? ' (Selected)' : ''}</span>
+              ${isPrepared ? '<span class="spell-check">✓</span>' : ''}
             </div>
           `;
         });
@@ -2562,6 +2779,69 @@
       });
 
       spellsContent.innerHTML = html;
+    }
+
+    // Update spell slots display with progress bars
+    function updateSpellSlotsDisplay() {
+      const spellSlotsDisplay = document.getElementById('spellSlotsDisplay');
+
+      if (!currentCharacter.spells || Object.keys(currentCharacter.spells).length === 0) {
+        spellSlotsDisplay.innerHTML = '<div style="color: var(--text-secondary); padding: 15px; text-align: center;">No spell slots available</div>';
+        return;
+      }
+
+      // Initialize spell slots tracking if not present
+      if (!currentCharacter.spellSlots) {
+        currentCharacter.spellSlots = {};
+        const maxSpellLevel = Math.max(...Object.keys(currentCharacter.spells).map(l => parseInt(l)).filter(l => l > 0));
+        for (let level = 1; level <= maxSpellLevel; level++) {
+          const maxSlots = getSpellSlots(currentCharacter.level, currentCharacter.classType, level);
+          currentCharacter.spellSlots[level] = { current: maxSlots, max: maxSlots };
+        }
+      }
+
+      // Count prepared spells
+      let preparedCount = 0;
+      let maxPrepared = Math.floor(currentCharacter.level / 2) + Math.floor((currentCharacter.stats.wis - 10) / 2);
+      if (currentCharacter.classType === 'caster') {
+        maxPrepared = currentCharacter.level + Math.floor((currentCharacter.stats.int - 10) / 2);
+      }
+      maxPrepared = Math.max(1, maxPrepared);
+
+      Object.keys(currentCharacter.spells).forEach(level => {
+        if (level !== '0') {
+          preparedCount += currentCharacter.spells[level].filter(s => s.prepared).length;
+        }
+      });
+
+      let html = `
+        <div class="slots-header">
+          <span class="slots-title">Spell Slots</span>
+          <span class="prepared-count">Prep: ${preparedCount}/${maxPrepared}</span>
+        </div>
+        <div class="slots-grid">
+      `;
+
+      // Show spell slot progress bars
+      const spellLevels = Object.keys(currentCharacter.spellSlots).sort((a, b) => parseInt(a) - parseInt(b));
+      spellLevels.forEach(level => {
+        const slot = currentCharacter.spellSlots[level];
+        const percentage = (slot.current / slot.max) * 100;
+        const levelSuffix = level === '1' ? 'st' : level === '2' ? 'nd' : level === '3' ? 'rd' : 'th';
+
+        html += `
+          <div class="slot-row">
+            <span class="slot-label">${level}${levelSuffix}:</span>
+            <div class="slot-bar">
+              <div class="slot-fill" style="width: ${percentage}%"></div>
+              <div class="slot-text">${slot.current}/${slot.max}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      spellSlotsDisplay.innerHTML = html;
     }
 
     // Helper function to get spell slots by level and class type
@@ -2580,6 +2860,185 @@
 
       if (spellLevel > 5 || effectiveLevel < 1) return 0;
       return slotTable[spellLevel]?.[effectiveLevel - 1] || 0;
+    }
+
+    // Modal state
+    let currentModalSpell = null;
+    let currentModalSpellLevel = null;
+
+    // Open spell detail modal
+    function openSpellDetail(spellId, level) {
+      const spell = currentCharacter.spells[level]?.find(s => s.id === spellId);
+      if (!spell) return;
+
+      currentModalSpell = spell;
+      currentModalSpellLevel = level;
+
+      // Update modal content
+      document.getElementById('modalSpellIcon').textContent = spell.icon || '✨';
+      document.getElementById('modalSpellName').textContent = spell.name;
+
+      const isCantrip = level === '0';
+      const levelText = isCantrip ? 'Cantrip' : `Level ${level} Spell`;
+      const school = spell.school || 'Evocation';
+      document.getElementById('modalSpellLevel').textContent = `${levelText} • ${school}`;
+
+      // Build stats grid
+      const statsGrid = document.getElementById('modalSpellStats');
+      const castingTime = spell.castingTime || '1 action';
+      const range = spell.range || '60 feet';
+      const components = spell.components || 'V, S';
+      const duration = spell.duration || 'Instantaneous';
+      const concentration = spell.concentration ? ' (Concentration)' : '';
+
+      statsGrid.innerHTML = `
+        <div class="spell-stat">
+          <div class="spell-stat-label">Casting Time</div>
+          <div class="spell-stat-value">${castingTime}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Range</div>
+          <div class="spell-stat-value">${range}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Components</div>
+          <div class="spell-stat-value">${components}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Duration</div>
+          <div class="spell-stat-value">${duration}${concentration}</div>
+        </div>
+      `;
+
+      // Add damage/save info if applicable
+      if (spell.damage || spell.save) {
+        const damageHtml = spell.damage ? `
+          <div class="spell-stat">
+            <div class="spell-stat-label">Damage</div>
+            <div class="spell-stat-value" style="color: var(--battle-color);">${spell.damage}</div>
+          </div>
+        ` : '';
+
+        const saveHtml = spell.save ? `
+          <div class="spell-stat">
+            <div class="spell-stat-label">Save</div>
+            <div class="spell-stat-value">${spell.save} DC ${currentCharacter.computed?.spellSaveDC || 15}</div>
+          </div>
+        ` : '';
+
+        statsGrid.innerHTML += damageHtml + saveHtml;
+      }
+
+      // Description
+      document.getElementById('modalSpellDescription').textContent = spell.description || 'No description available.';
+
+      // Update buttons
+      const castBtn = document.getElementById('modalCastBtn');
+      const prepareBtn = document.getElementById('modalPrepareBtn');
+
+      // Cast button
+      if (isCantrip) {
+        castBtn.textContent = '✨ Cast Cantrip';
+        castBtn.disabled = false;
+      } else {
+        const slotsAvailable = currentCharacter.spellSlots?.[level]?.current > 0;
+        castBtn.textContent = `✨ Cast (${currentCharacter.spellSlots?.[level]?.current || 0} slots)`;
+        castBtn.disabled = !slotsAvailable || !spell.prepared;
+      }
+
+      // Prepare button
+      if (isCantrip) {
+        prepareBtn.style.display = 'none';
+      } else {
+        prepareBtn.style.display = 'block';
+        prepareBtn.textContent = spell.prepared ? '✓ Prepared' : 'Prepare';
+        prepareBtn.classList.toggle('prepared', spell.prepared);
+      }
+
+      // Show modal
+      document.getElementById('spellModalOverlay').classList.add('show');
+    }
+
+    function closeSpellModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('spellModalOverlay').classList.remove('show');
+      currentModalSpell = null;
+      currentModalSpellLevel = null;
+    }
+
+    function castSpellFromModal() {
+      if (!currentModalSpell) return;
+
+      const isCantrip = currentModalSpellLevel === '0';
+
+      // Check if can cast
+      if (!isCantrip) {
+        if (!currentModalSpell.prepared) {
+          addBattleLog('⚠️ Spell must be prepared to cast!');
+          return;
+        }
+        if (!currentCharacter.spellSlots?.[currentModalSpellLevel] || currentCharacter.spellSlots[currentModalSpellLevel].current <= 0) {
+          addBattleLog('⚠️ No spell slots remaining!');
+          return;
+        }
+        // Use spell slot
+        currentCharacter.spellSlots[currentModalSpellLevel].current--;
+        updateSpellSlotsDisplay();
+      }
+
+      // Cast the spell
+      const spell = currentModalSpell;
+      addBattleLog(`${spell.icon} ${currentCharacter.name} casts ${spell.name}!`);
+
+      if (spell.attackRoll) {
+        // Attack spell
+        const intMod = Math.floor((currentCharacter.stats.int - 10) / 2);
+        const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
+        const spellAttack = intMod + profBonus;
+        const roll = Math.floor(Math.random() * 20) + 1;
+        const total = roll + spellAttack;
+        addBattleLog(`🎯 Spell Attack: ${total} (1d20+${spellAttack})`);
+
+        if (roll !== 1 && spell.damage) {
+          setTimeout(() => {
+            const damageRoll = eval(spell.damage.replace('d', '*') + `+${intMod}`);
+            addBattleLog(`💥 Damage: ${damageRoll}`);
+          }, 500);
+        }
+      } else if (spell.save) {
+        // Save spell
+        const spellSaveDC = currentCharacter.computed?.spellSaveDC || (8 + 2 + Math.floor((currentCharacter.stats.int - 10) / 2));
+        addBattleLog(`🛡️ Target must make a ${spell.save} save (DC ${spellSaveDC})`);
+      } else {
+        // Utility spell
+        addBattleLog(`✨ ${spell.name} takes effect!`);
+      }
+
+      showDiceRoll(spell.name, spell.icon || '✨', '✨', '✨', 'Cast', 'success');
+
+      // Close modal
+      closeSpellModal();
+    }
+
+    function togglePrepareFromModal() {
+      if (!currentModalSpell || currentModalSpellLevel === '0') return;
+
+      const spell = currentModalSpell;
+      spell.prepared = !spell.prepared;
+
+      // Update modal button
+      const prepareBtn = document.getElementById('modalPrepareBtn');
+      prepareBtn.textContent = spell.prepared ? '✓ Prepared' : 'Prepare';
+      prepareBtn.classList.toggle('prepared', spell.prepared);
+
+      // Update cast button availability
+      const castBtn = document.getElementById('modalCastBtn');
+      const slotsAvailable = currentCharacter.spellSlots?.[currentModalSpellLevel]?.current > 0;
+      castBtn.disabled = !slotsAvailable || !spell.prepared;
+
+      // Update spell list
+      updateSpellsTab();
+      updateSpellSlotsDisplay();
     }
 
     // Spell picker modal for adding spells from D&D 5e API
@@ -3651,5 +4110,35 @@
       }
     }
   </script>
+
+  <!-- Spell Detail Modal -->
+  <div class="spell-modal-overlay" id="spellModalOverlay" onclick="closeSpellModal(event)">
+    <div class="spell-modal" onclick="event.stopPropagation()">
+      <div class="spell-modal-header">
+        <div class="spell-modal-icon" id="modalSpellIcon">✨</div>
+        <div class="spell-modal-title">
+          <div class="spell-modal-name" id="modalSpellName">Spell Name</div>
+          <div class="spell-modal-level" id="modalSpellLevel">Level 1 Evocation</div>
+        </div>
+        <button class="spell-modal-close" onclick="closeSpellModal()">✕</button>
+      </div>
+      <div class="spell-modal-body">
+        <div class="spell-stats-grid" id="modalSpellStats">
+          <!-- Stats will be populated dynamically -->
+        </div>
+        <div class="spell-description" id="modalSpellDescription">
+          Spell description will appear here...
+        </div>
+        <div class="spell-modal-actions">
+          <button class="spell-btn-cast" id="modalCastBtn" onclick="castSpellFromModal()">
+            ✨ Cast Spell
+          </button>
+          <button class="spell-btn-prepare" id="modalPrepareBtn" onclick="togglePrepareFromModal()">
+            Prepare
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
