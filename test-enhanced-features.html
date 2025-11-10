@@ -1795,17 +1795,7 @@
               </select>
             </div>
 
-            <div class="hp-display">
-              <strong>Hit Points</strong>
-              <div class="hp-bar">
-                <div class="hp-fill" id="hpFill" style="width: 85%"></div>
-                <div class="hp-text" id="hpText">58 / 68</div>
-              </div>
-              <div style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.85rem; color: var(--text-secondary);">
-                <span>Current: <span class="stat-readonly" id="hpCurrentEdit">58</span></span>
-                <span>Max: <span class="stat-readonly" id="hpMaxEdit">68</span></span>
-              </div>
-            </div>
+
 
             <div class="stats-grid">
               <div class="stat-block">
@@ -2310,7 +2300,7 @@
           <strong style="display: block; margin-bottom: 8px;">Custom Dice Roll</strong>
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <input type="number" id="numDice" value="1" min="1" max="10" style="width: 50px; padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
-            <select id="diceType" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
+            <select id="diceTypeSelect" style="padding: 8px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 4px;">
               <option value="4">d4</option>
               <option value="6">d6</option>
               <option value="8">d8</option>
@@ -2932,21 +2922,15 @@
         currentCharacter.abilities.forEach(ability => {
           const isDefault = ability.isDefault || false;
           html += `
-            <div class="ability-card" style="position: relative;">
+            <div class="ability-card" style="position: relative; cursor: pointer;" onclick="useAbility('${ability.id}')">
               <div class="ability-header">
                 <div class="ability-icon">${ability.icon}</div>
                 <div class="ability-info">
-                  <div class="ability-name">${ability.name} ${isDefault ? '(Default)' : ''}</div>
-                  ${ability.damage ? `<div class="ability-damage">${ability.damage}</div>` : ''}
+                  <div class="ability-name">${ability.name}</div>
+                  ${ability.damage ? `<div class="ability-damage">💥 ${ability.damage}</div>` : ''}
                 </div>
               </div>
               <div class="ability-description">${ability.description}</div>
-              <button
-                onclick="setDefaultAbility('${ability.id}')"
-                style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
-              >
-                ${isDefault ? 'Default ✓' : 'Set Default'}
-              </button>
             </div>
           `;
         });
@@ -2974,6 +2958,9 @@
 
       // Update spell slots display
       updateSpellSlotsDisplay();
+
+      // Debug: log spells
+      console.log('Rendering spells for', currentCharacter.name, currentCharacter.spells);
 
       // Show spells by level - MINIMAL CARD VIEW
       Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
@@ -3983,7 +3970,7 @@
 
     function rollCustomDice() {
       const numDice = parseInt(document.getElementById('numDice').value) || 1;
-      const diceType = parseInt(document.getElementById('diceType').value) || 20;
+      const diceType = parseInt(document.getElementById('diceTypeSelect').value) || 20;
       const modifier = parseInt(document.getElementById('diceModifier').value) || 0;
 
       let total = 0;
@@ -4006,6 +3993,57 @@
       }
     }
 
+
+    function useAbility(abilityId) {
+      const ability = currentCharacter.abilities.find(a => a.id === abilityId);
+      if (!ability) return;
+
+      // Parse damage string (e.g., "2d8+4" or "1d6")
+      let attackRoll = null;
+      let damageRolls = [];
+      let damageTotal = 0;
+
+      if (ability.damage) {
+        // Roll attack (d20 + modifier, assume +7 for now)
+        const attackD20 = Math.floor(Math.random() * 20) + 1;
+        const attackMod = 7;
+        attackRoll = attackD20 + attackMod;
+
+        // Parse damage (e.g., "2d8+4")
+        const damageMatch = ability.damage.match(/(\d+)d(\d+)([+-]\d+)?/);
+        if (damageMatch) {
+          const numDice = parseInt(damageMatch[1]);
+          const diceType = parseInt(damageMatch[2]);
+          const modifier = damageMatch[3] ? parseInt(damageMatch[3]) : 0;
+
+          for (let i = 0; i < numDice; i++) {
+            const roll = Math.floor(Math.random() * diceType) + 1;
+            damageRolls.push(roll);
+            damageTotal += roll;
+          }
+          damageTotal += modifier;
+
+          // Show dice overlay for attack
+          showDiceRoll(
+            ability.name,
+            'd20',
+            attackD20,
+            attackRoll,
+            `Attack: 1d20+${attackMod}`,
+            attackD20 === 20 ? 'success' : (attackD20 === 1 ? 'fail' : null)
+          );
+
+          // Add to battle log
+          const critText = attackD20 === 20 ? ' **CRITICAL HIT!**' : (attackD20 === 1 ? ' (Critical Miss)' : '');
+          const damageText = ` | Damage: ${damageTotal} (${ability.damage}) [${damageRolls.join(', ')}]`;
+          addBattleLog(`${ability.icon} ${ability.name}: Attack ${attackRoll}${critText}${damageText}`);
+        }
+      } else {
+        // Non-damage ability
+        addBattleLog(`${ability.icon} ${ability.name} - ${ability.description}`);
+      }
+    }
+
     function changeLocation() {
       const newLocation = document.getElementById('locationSelect').value;
       currentCharacter.location = newLocation;
@@ -4021,7 +4059,7 @@
       addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
     }
 
-    let statsLocked = true;
+    let statsLocked = false;
     let tempModifiers = [];
 
     function addTempModifier() {
