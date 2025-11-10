@@ -3174,11 +3174,20 @@
       // Update turn tracker
       document.getElementById('turnNumber').textContent = turnNumber;
 
-      // Auto-select first cantrip for battle mode
-      if (currentCharacter.spells && currentCharacter.spells['0'] && currentCharacter.spells['0'].length > 0) {
-        selectedCantrip = currentCharacter.spells['0'][0];
-        updateCantripButton();
+      // Auto-select first cantrip for battle mode (only for cantrip classes)
+      const cantripClasses = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
+      const charClass = currentCharacter.class.toLowerCase();
+
+      if (cantripClasses.includes(charClass)) {
+        if (currentCharacter.spells && currentCharacter.spells['0'] && currentCharacter.spells['0'].length > 0) {
+          selectedCantrip = currentCharacter.spells['0'][0];
+          updateCantripButton();
+        } else {
+          selectedCantrip = null;
+          updateCantripButton();
+        }
       } else {
+        // Non-cantrip class - hide button
         selectedCantrip = null;
         updateCantripButton();
       }
@@ -4429,6 +4438,19 @@
     function updateCantripButton() {
       const cantripBtn = document.querySelector('.action-btn[onclick="castCantrip()"]');
       if (!cantripBtn) return;
+
+      // Classes that get cantrips
+      const cantripClasses = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
+      const charClass = currentCharacter.class.toLowerCase();
+
+      // Hide button for classes without cantrips
+      if (!cantripClasses.includes(charClass)) {
+        cantripBtn.style.display = 'none';
+        return;
+      }
+
+      // Show button for cantrip classes
+      cantripBtn.style.display = '';
 
       if (selectedCantrip) {
         cantripBtn.textContent = `${selectedCantrip.icon || '✨'} ${selectedCantrip.name}`;
