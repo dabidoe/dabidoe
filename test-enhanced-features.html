@@ -1159,12 +1159,9 @@
         flex-direction: column;
       }
 
-      /* Mobile order: Images (1), Chat (2), Stats (3), Location (4), Satiety (5) */
-      .section-images { order: 1; }
-      .section-chat { order: 2; }
-      .section-stats { order: 3; }
-      .section-location { order: 4; }
-      .section-satiety { order: 5; }
+      /* Mobile order: Chat (1), Stats (2) */
+      .section-chat { order: 1; }
+      .section-stats { order: 2; }
     }
 
     @media (max-width: 768px) {
@@ -1203,32 +1200,32 @@
   <div class="test-container">
     <!-- Header with Hamburger -->
     <div class="test-header">
-      <button class="hamburger-btn" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <!-- Portrait Upper Left -->
+      <div class="header-portrait" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-color); flex-shrink: 0;">
+        <div id="headerPortrait" style="width: 100%; height: 100%; background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+          🏹
+        </div>
+      </div>
 
-      <div class="header-center">
+      <div class="header-center" style="flex: 1; margin-left: 20px;">
+        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 3px;">Character Foundry</div>
         <h2 style="font-size: 1.5rem; margin: 0; color: var(--text-primary);">
-          <span class="current-character-emoji" id="currentCharEmoji">🏹</span>
           <span id="currentCharName">Aelindra Moonwhisper</span>
         </h2>
         <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px;" id="characterDetails">
           <span id="charAlignment">Neutral Good</span> •
           Level <span id="charLevel">8</span>
           <span id="charRace">Half-Elf</span>
-          <span id="charClass">Ranger</span> •
-          <span id="charSubclass" style="font-style: italic;">Hunter</span>
-        </div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 3px;" id="charLocationDisplay">
-          📍 <span id="charLocation">Moonlit Forest</span>
+          <span id="charClass">Ranger</span>
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-weight: 600; font-size: 1.1rem;">Character Foundry</span>
-      </div>
+      <!-- Hamburger Upper Right -->
+      <button class="hamburger-btn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
 
     <!-- Character Menu -->
@@ -1245,25 +1242,6 @@
 
     <!-- Demo Layout -->
     <div class="demo-layout">
-      <!-- Images Section -->
-      <div class="section-images" data-order="1">
-        <div class="demo-section">
-          <div class="image-tabs-nav">
-            <button class="tab-button active" onclick="switchImageTab('portrait')">Portrait</button>
-            <button class="tab-button" onclick="switchImageTab('battle')">Battle</button>
-            <button class="tab-button" onclick="switchImageTab('canvas')">Canvas</button>
-          </div>
-
-          <div id="imageDisplay" class="image-display">
-            <div class="image-placeholder">
-              <div class="placeholder-emoji" id="characterEmoji">🏹</div>
-              <p>AI-Generated Portrait</p>
-              <small style="color: var(--text-secondary);" id="imageSubtitle">Standard portrait</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Stats/Skills/Inventory Tabbed Container -->
       <div class="section-stats" data-order="3">
         <div class="demo-section">
@@ -1277,6 +1255,22 @@
 
           <!-- Stats Tab -->
           <div id="statsTab">
+            <!-- Portrait Section -->
+            <div style="margin-bottom: 20px;">
+              <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 3px solid var(--accent-color); background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                <div id="statsPortrait">🏹</div>
+              </div>
+              <select id="portraitExpression" onchange="updatePortraitExpression()" style="width: 200px; margin: 10px auto 0; display: block; padding: 8px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
+                <option value="normal">Normal</option>
+                <option value="happy">Happy</option>
+                <option value="sad">Sad</option>
+                <option value="angry">Angry</option>
+                <option value="hurt">Hurt</option>
+                <option value="injured">Injured</option>
+                <option value="gravely-injured">Gravely Injured</option>
+              </select>
+            </div>
+
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
               <strong style="color: var(--text-primary);">Character Stats</strong>
               <button id="statsLockBtn" onclick="toggleStatsLock()" style="padding: 6px 12px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
@@ -1507,37 +1501,6 @@
         </div>
       </div>
 
-      <!-- Location Section -->
-      <div class="section-location" data-order="4">
-        <div class="demo-section">
-          <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">📍 Location</div>
-          <select id="locationSelect" onchange="changeLocation()" style="width: 100%; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; cursor: pointer;">
-            <option value="forest">Moonlit Forest</option>
-            <option value="tavern">The Drunken Dragon Tavern</option>
-            <option value="dungeon">Ancient Dungeon</option>
-            <option value="castle">Royal Castle</option>
-            <option value="town">Town Square</option>
-            <option value="mountains">Mountain Pass</option>
-            <option value="ruins">Ancient Ruins</option>
-            <option value="temple">Sacred Temple</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Satiety Section -->
-      <div class="section-satiety" data-order="5">
-        <div class="demo-section">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong>🍖 Satiety</strong>
-            <button onclick="consumeFood()" style="padding: 4px 12px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.8rem; cursor: pointer;">Eat</button>
-          </div>
-          <div class="hp-bar" style="margin-top: 0;">
-            <div id="foodFill" style="width: 70%; height: 100%; background: linear-gradient(90deg, #f39c12, #e67e22); border-radius: 15px; transition: all 0.3s ease;"></div>
-            <div id="foodText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: 0.9rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">70 / 100</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Chat Section -->
       <div class="section-chat" data-order="2">
         <div class="demo-section">
@@ -1620,8 +1583,9 @@
             </div>
 
             <div class="battle-actions">
-              <button class="action-btn" onclick="rollAttack()">⚔️ Attack</button>
-              <button class="action-btn" onclick="castDefaultSpell()">✨ Cast Spell</button>
+              <button class="action-btn" onclick="rollMeleeAttack()">⚔️ Melee Attack</button>
+              <button class="action-btn" onclick="rollRangedAttack()">🏹 Ranged Attack</button>
+              <button class="action-btn" onclick="castCantrip()">✨ Cantrip</button>
               <button class="action-btn" onclick="rollDice('Initiative', 'd20')">🎲 Initiative</button>
               <button class="action-btn" onclick="rollDice('Save', 'd20')">🛡️ Save</button>
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
@@ -1825,6 +1789,32 @@
             <button class="test-btn" onclick="heal()" style="margin: 0;">❤️ Heal</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Footer: Canvas & Location -->
+    <div style="margin-top: 20px; padding: 20px; background: var(--surface-color); border-radius: 12px; border: 2px solid var(--border-color);">
+      <!-- Canvas -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">🎨 Canvas</div>
+        <div id="canvasDisplay" style="width: 100%; height: 200px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+          Canvas preview (location background)
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">📍 Location</div>
+        <select id="locationSelect" onchange="changeLocation()" style="width: 100%; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; cursor: pointer;">
+          <option value="forest">Moonlit Forest</option>
+          <option value="tavern">The Drunken Dragon Tavern</option>
+          <option value="dungeon">Ancient Dungeon</option>
+          <option value="castle">Royal Castle</option>
+          <option value="town">Town Square</option>
+          <option value="mountains">Mountain Pass</option>
+          <option value="ruins">Ancient Ruins</option>
+          <option value="temple">Sacred Temple</option>
+        </select>
       </div>
     </div>
   </div>
@@ -2157,8 +2147,6 @@
     ];
 
     let currentCharacter = characters[0];
-    let currentImageTab = 'portrait';
-    // let currentPortraitType = 'standard'; // Removed - tabs now intelligently show appropriate images
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -2228,17 +2216,12 @@
     }
 
     function updateCharacterDisplay() {
-      // Update header
-      document.getElementById('currentCharEmoji').textContent = currentCharacter.emoji;
+      // Update header (portrait and name only - removed emoji display)
       document.getElementById('currentCharName').textContent = currentCharacter.name;
       document.getElementById('charAlignment').textContent = currentCharacter.alignment || 'Neutral';
       document.getElementById('charLevel').textContent = currentCharacter.level;
       document.getElementById('charRace').textContent = currentCharacter.race || 'Human';
       document.getElementById('charClass').textContent = currentCharacter.class;
-      document.getElementById('charSubclass').textContent = currentCharacter.subclass || '';
-      const locationName = locations.find(l => l.id === currentCharacter.location)?.name || currentCharacter.location;
-      document.getElementById('charLocation').textContent = locationName;
-      document.getElementById('characterEmoji').textContent = currentCharacter.emoji;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
 
       // Update stats
@@ -2257,13 +2240,6 @@
       document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
       document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
 
-      // Update Food
-      if (currentCharacter.food) {
-        const foodPercent = (currentCharacter.food.current / currentCharacter.food.max) * 100;
-        document.getElementById('foodFill').style.width = foodPercent + '%';
-        document.getElementById('foodText').textContent = `${currentCharacter.food.current} / ${currentCharacter.food.max}`;
-      }
-
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
 
@@ -2273,9 +2249,6 @@
 
       // Update location selector
       document.getElementById('locationSelect').value = currentCharacter.location;
-
-      // Update image display
-      updateImageDisplay();
 
       // Update abilities
       updateAbilities();
@@ -2422,18 +2395,22 @@
 
           currentCharacter.spells[level].forEach(spell => {
             const isDefault = spell.isDefault || false;
+            const isCantrip = level === '0';
+            const isSelected = selectedCantrip && selectedCantrip.id === spell.id;
+
             html += `
-              <div class="spell-card ${spell.prepared ? 'prepared' : ''}" style="position: relative;">
-                <div class="spell-header" onclick="toggleSpellPrepared('${spell.id}', ${level})">
+              <div class="spell-card ${spell.prepared ? 'prepared' : ''} ${isSelected ? 'selected' : ''}" style="position: relative; ${isSelected ? 'border: 2px solid var(--accent-color);' : ''}">
+                <div class="spell-header" onclick="${isCantrip ? `selectCantrip('${spell.id}', ${level})` : `toggleSpellPrepared('${spell.id}', ${level})`}">
                   <div class="spell-icon">${spell.icon}</div>
                   <div class="spell-info">
-                    <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''}</div>
+                    <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''} ${isSelected ? '(Selected)' : ''}</div>
                     ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
                   </div>
                   ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
+                  ${isSelected ? '<div class="prepared-indicator" style="background: var(--accent-color);">Selected</div>' : ''}
                 </div>
                 <div class="spell-description">${spell.description}</div>
-                ${spell.prepared ? `<button
+                ${spell.prepared && !isCantrip ? `<button
                   onclick="event.stopPropagation(); setDefaultSpell('${spell.id}', ${level})"
                   style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
                 >
@@ -2464,28 +2441,6 @@
           element.textContent = (total >= 0 ? '+' : '') + total;
         }
       });
-    }
-
-    function switchImageTab(tab) {
-      currentImageTab = tab;
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-
-      // Intelligently set subtitle based on tab
-      const subtitle = document.getElementById('imageSubtitle');
-      if (subtitle) {
-        if (tab === 'portrait') {
-          subtitle.textContent = 'Standard portrait';
-        } else if (tab === 'battle') {
-          subtitle.textContent = 'Battle portrait';
-        } else if (tab === 'canvas') {
-          subtitle.textContent = 'Scene image';
-        }
-      }
-
-      updateImageDisplay();
     }
 
     function switchChatMode(mode) {
@@ -2613,17 +2568,44 @@
     }
 
     function rollAttack() {
-      // Auto-switch to battle mode
-      if (currentChatMode !== 'battle') {
-        switchChatMode('battle');
-        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.mode-btn')[1].classList.add('active'); // Battle tab
-        document.getElementById('conversationMode').style.display = 'none';
-        document.getElementById('battleMode').style.display = 'block';
-        document.getElementById('skillsMode').style.display = 'none';
-      }
+      // Legacy function - redirect to melee attack
+      rollMeleeAttack();
+    }
 
-      rollDice('Attack', 'd20', Math.floor((currentCharacter.stats.dex - 10) / 2));
+    function rollMeleeAttack() {
+      const strMod = Math.floor((currentCharacter.stats.str - 10) / 2);
+      const roll = Math.floor(Math.random() * 20) + 1;
+      const total = roll + strMod;
+      const breakdown = `1d20${strMod >= 0 ? '+' : ''}${strMod}`;
+
+      showDiceRoll('Melee Attack', 'd20', roll, total, breakdown, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
+      addBattleLog(`⚔️ ${currentCharacter.name} rolled Melee Attack: ${total} (${breakdown})`);
+
+      // Roll damage if hit (not on nat 1)
+      if (roll !== 1) {
+        setTimeout(() => {
+          const damageRoll = Math.floor(Math.random() * 8) + 1 + strMod;
+          addBattleLog(`💥 Damage: ${damageRoll} (1d8${strMod >= 0 ? '+' : ''}${strMod})`);
+        }, 500);
+      }
+    }
+
+    function rollRangedAttack() {
+      const dexMod = Math.floor((currentCharacter.stats.dex - 10) / 2);
+      const roll = Math.floor(Math.random() * 20) + 1;
+      const total = roll + dexMod;
+      const breakdown = `1d20${dexMod >= 0 ? '+' : ''}${dexMod}`;
+
+      showDiceRoll('Ranged Attack', 'd20', roll, total, breakdown, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
+      addBattleLog(`🏹 ${currentCharacter.name} rolled Ranged Attack: ${total} (${breakdown})`);
+
+      // Roll damage if hit (not on nat 1)
+      if (roll !== 1) {
+        setTimeout(() => {
+          const damageRoll = Math.floor(Math.random() * 8) + 1 + dexMod;
+          addBattleLog(`💥 Damage: ${damageRoll} (1d8${dexMod >= 0 ? '+' : ''}${dexMod})`);
+        }, 500);
+      }
     }
 
     function rollDice(type, dice, modifier = 0) {
@@ -2681,12 +2663,20 @@
       const total = roll + modifier;
       const breakdown = `1d20${modifier >= 0 ? '+' : ''}${modifier}`;
 
+      // Get emoji from the clicked button if available
+      const skillEmojiMap = {
+        'Arcana': '✨', 'History': '📜', 'Investigation': '🔍', 'Nature': '🌿', 'Religion': '⛪',
+        'Animal Handling': '🐺', 'Insight': '💭', 'Medicine': '⚕️', 'Perception': '👁️', 'Survival': '🏕️',
+        'Deception': '🎭', 'Intimidation': '😠', 'Performance': '🎪', 'Persuasion': '🤝',
+        'Acrobatics': '🤸', 'Sleight of Hand': '👋', 'Stealth': '🥷',
+        'Athletics': '💪'
+      };
+      const displayEmoji = skillEmojiMap[skillName] || '🎲';
+
       showDiceRoll(skillName, 'd20', roll, total, breakdown, roll === 20 ? 'success' : (roll === 1 ? 'fail' : null));
 
-      // Add to battle log if in battle
-      if (currentChatMode === 'battle') {
-        addBattleLog(`${currentCharacter.name} rolled ${skillName}: ${total}`);
-      }
+      // Always add to battle log
+      addBattleLog(`${displayEmoji} ${currentCharacter.name} rolled ${skillName}: ${total} (${breakdown})`);
     }
 
     function rollRandomDice() {
@@ -2786,6 +2776,97 @@
       }
     }
 
+    let selectedCantrip = null;
+
+    function castCantrip() {
+      if (!selectedCantrip) {
+        addBattleLog('⚠️ No cantrip selected! Go to the Abilities tab and click on a cantrip to select it.');
+        return;
+      }
+
+      const spellName = selectedCantrip.name;
+      const spellIcon = selectedCantrip.icon || '✨';
+      const spellSaveDC = currentCharacter.computed?.spellSaveDC || (8 + 2 + Math.floor((currentCharacter.stats.wis - 10) / 2));
+
+      addBattleLog(`${spellIcon} ${currentCharacter.name} casts ${spellName}!`);
+
+      // Check if it's an attack spell or save spell
+      if (selectedCantrip.attackRoll) {
+        // Attack spell - roll to hit
+        const intMod = Math.floor((currentCharacter.stats.int - 10) / 2);
+        const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
+        const spellAttack = intMod + profBonus;
+        const roll = Math.floor(Math.random() * 20) + 1;
+        const total = roll + spellAttack;
+
+        addBattleLog(`🎯 Spell Attack: ${total} (1d20+${spellAttack})`);
+
+        if (roll !== 1) {
+          setTimeout(() => {
+            if (selectedCantrip.damage) {
+              const damageRoll = selectedCantrip.damage.match(/(\d+)d(\d+)/);
+              if (damageRoll) {
+                const count = parseInt(damageRoll[1]);
+                const sides = parseInt(damageRoll[2]);
+                let total = 0;
+                const rolls = [];
+
+                for (let i = 0; i < count; i++) {
+                  const r = Math.floor(Math.random() * sides) + 1;
+                  rolls.push(r);
+                  total += r;
+                }
+
+                addBattleLog(`💥 Spell Damage: ${total} (${rolls.join(' + ')})`);
+              }
+            }
+          }, 300);
+        }
+      } else {
+        // Save spell - show DC
+        addBattleLog(`🛡️ Target must make a saving throw (DC ${spellSaveDC})`);
+
+        if (selectedCantrip.damage) {
+          setTimeout(() => {
+            const damageRoll = selectedCantrip.damage.match(/(\d+)d(\d+)/);
+            if (damageRoll) {
+              const count = parseInt(damageRoll[1]);
+              const sides = parseInt(damageRoll[2]);
+              let total = 0;
+              const rolls = [];
+
+              for (let i = 0; i < count; i++) {
+                const r = Math.floor(Math.random() * sides) + 1;
+                rolls.push(r);
+                total += r;
+              }
+
+              addBattleLog(`💥 Spell Damage on failed save: ${total} (${rolls.join(' + ')})`);
+            }
+          }, 300);
+        }
+      }
+    }
+
+    function selectCantrip(spellId, level) {
+      // Find and set the selected cantrip
+      if (currentCharacter.spells && currentCharacter.spells[level]) {
+        const cantrip = currentCharacter.spells[level].find(s => s.id === spellId);
+        if (cantrip) {
+          selectedCantrip = cantrip;
+          addBattleLog(`✨ Selected cantrip: ${cantrip.name}`);
+          updateAbilitiesTab(); // Refresh the abilities tab to show selection
+        }
+      }
+    }
+
+    function updatePortraitExpression() {
+      const expression = document.getElementById('portraitExpression').value;
+      console.log('Portrait expression changed to:', expression);
+      // This would trigger an API call to generate new portrait with the expression
+      // For now, just log it
+    }
+
     function nextTurn() {
       turnNumber++;
       document.getElementById('turnNumber').textContent = turnNumber;
@@ -2838,73 +2919,15 @@
       const newLocation = document.getElementById('locationSelect').value;
       currentCharacter.location = newLocation;
 
-      // Update header location display
       const locationName = locations.find(l => l.id === newLocation)?.name || newLocation;
-      document.getElementById('charLocation').textContent = locationName;
 
-      updateImageDisplay();
-      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
-    }
-
-    function updateImageDisplay() {
-      const imageDisplay = document.getElementById('imageDisplay');
-      const hpState = getCharacterState();
-
-      if (currentImageTab === 'portrait' || currentImageTab === 'battle') {
-        // Intelligently show appropriate portrait based on tab
-        // Portrait tab = standard portrait, Battle tab = battle portrait (or standard if battle not available)
-        let filter = '';
-        let borderColor = 'var(--accent-color)';
-        let portraitStyle = '';
-
-        if (hpState === 'critical') {
-          filter = 'grayscale(50%) brightness(0.7) sepia(30%) hue-rotate(-10deg)';
-          borderColor = '#e74c3c';
-        } else if (hpState === 'injured') {
-          filter = 'brightness(0.8) sepia(20%) hue-rotate(-5deg)';
-          borderColor = '#e67e22';
-        } else if (hpState === 'wounded') {
-          filter = 'brightness(0.9)';
-          borderColor = '#f39c12';
-        }
-
-        // Add battle-specific styling for battle tab
-        if (currentImageTab === 'battle') {
-          borderColor = '#e74c3c';
-          portraitStyle = 'border: 3px solid ' + borderColor + '; box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);';
-        }
-
-        imageDisplay.innerHTML = `
-          <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}" class="portrait-image" style="filter: ${filter}; ${portraitStyle}">
-        `;
-      } else if (currentImageTab === 'canvas') {
-        // Show location background with character overlay
-        const location = locations.find(l => l.id === currentCharacter.location);
-        let overlayColor = '';
-        let stateText = '';
-
-        if (hpState === 'critical') {
-          overlayColor = 'rgba(231, 76, 60, 0.3)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(231, 76, 60, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">⚠️ Critically Injured</div>';
-        } else if (hpState === 'injured') {
-          overlayColor = 'rgba(230, 126, 34, 0.2)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(230, 126, 34, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🩹 Injured</div>';
-        } else if (hpState === 'wounded') {
-          overlayColor = 'rgba(243, 156, 18, 0.15)';
-          stateText = '<div style="position: absolute; bottom: 15px; left: 15px; padding: 6px 12px; background: rgba(243, 156, 18, 0.9); border-radius: 15px; font-size: 0.85rem; color: white; font-weight: 600;">🤕 Wounded</div>';
-        }
-
-        imageDisplay.innerHTML = `
-          <div class="canvas-display" style="background-image: url('${location.image}')">
-            ${overlayColor ? `<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: ${overlayColor}; pointer-events: none;"></div>` : ''}
-            <div class="location-name">${location.name}</div>
-            <div class="character-overlay">
-              <img src="${currentCharacter.portrait}" alt="${currentCharacter.name}">
-            </div>
-            ${stateText}
-          </div>
-        `;
+      // Update canvas display in footer
+      const canvasDisplay = document.getElementById('canvasDisplay');
+      if (canvasDisplay) {
+        canvasDisplay.textContent = `Canvas preview: ${locationName}`;
       }
+
+      addBattleLog(`${currentCharacter.name} moved to ${locationName}`);
     }
 
     let statsLocked = true;
@@ -3220,34 +3243,6 @@
       if (hpPercent <= 50) return 'injured';  // Moderately injured
       if (hpPercent <= 75) return 'wounded';  // Lightly injured
       return 'default';
-    }
-
-    function consumeFood() {
-      if (!currentCharacter.food) return;
-
-      // Find rations in inventory
-      const rations = currentCharacter.inventory?.find(item => item.name.toLowerCase().includes('ration'));
-
-      if (rations && rations.quantity > 0) {
-        // Consume 1 ration
-        rations.quantity--;
-
-        // Restore food (satiety)
-        const foodRestored = 30;
-        currentCharacter.food.current = Math.min(currentCharacter.food.max, currentCharacter.food.current + foodRestored);
-
-        updateCharacterDisplay();
-        addBattleLog(`${currentCharacter.name} ate some rations and restored ${foodRestored} satiety.`);
-
-        if (rations.quantity === 0) {
-          // Remove from inventory
-          const index = currentCharacter.inventory.indexOf(rations);
-          if (index > -1) currentCharacter.inventory.splice(index, 1);
-          addBattleLog(`⚠️ Out of rations!`);
-        }
-      } else {
-        addBattleLog(`⚠️ ${currentCharacter.name} has no rations to eat!`);
-      }
     }
 
     function consumeItem(itemId) {
