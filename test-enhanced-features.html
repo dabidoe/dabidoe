@@ -3240,27 +3240,55 @@
 
     async function fetchSpellsFromAPI() {
       const body = document.getElementById('spellPickerBody');
-      body.innerHTML = '<div class="spell-picker-loading">🔮 Loading spells from D&D 5e API...</div>';
+      body.innerHTML = '<div class="spell-picker-loading">🔮 Loading spells from local database...</div>';
 
       try {
-        // Fetch spell list
-        const response = await fetch('https://www.dnd5eapi.co/api/spells');
-        const data = await response.json();
+        // Fetch spell list from local file
+        const response = await fetch('spells-srd.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const spells = await response.json();
 
-        // Fetch details for each spell (in batches to avoid rate limiting)
-        const spellPromises = data.results.map(spell =>
-          fetch(`https://www.dnd5eapi.co${spell.url}`).then(r => r.json())
-        );
+        // Map to our format (SRD format is different from D&D 5e API)
+        allSpellsFromAPI = spells.map(spell => ({
+          index: spell.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
+          name: spell.name,
+          level: spell.level === 'cantrip' ? 0 : parseInt(spell.level),
+          school: { name: spell.school.charAt(0).toUpperCase() + spell.school.slice(1) },
+          desc: [spell.description],
+          casting_time: spell.casting_time,
+          range: spell.range,
+          components: spell.components.raw || 'V, S',
+          duration: spell.duration,
+          concentration: spell.duration.toLowerCase().includes('concentration'),
+          // Try to extract damage from description
+          damage: extractDamageFromDescription(spell.description),
+          dc: extractSaveFromDescription(spell.description)
+        }));
 
-        allSpellsFromAPI = await Promise.all(spellPromises);
-
-        addBattleLog(`📚 Loaded ${allSpellsFromAPI.length} spells from D&D 5e API!`);
+        addBattleLog(`📚 Loaded ${allSpellsFromAPI.length} spells from local database!`);
         renderPickerSpells(allSpellsFromAPI);
       } catch (error) {
-        console.error('Error fetching spells:', error);
-        body.innerHTML = '<div class="spell-picker-empty">⚠️ Failed to load spells from API. Please try again.</div>';
-        addBattleLog('⚠️ Failed to load spells from D&D 5e API');
+        console.error('Error loading spells:', error);
+        body.innerHTML = '<div class="spell-picker-empty">⚠️ Failed to load spells. Make sure spells-srd.json is in the same directory.</div>';
+        addBattleLog('⚠️ Failed to load spell database');
       }
+    }
+
+    function extractDamageFromDescription(description) {
+      // Simple regex to extract damage dice (e.g., "1d6", "2d8")
+      const damageMatch = description.match(/(\d+d\d+(?:\s*\+\s*\d+)?)/);
+      return damageMatch ? damageMatch[1] : null;
+    }
+
+    function extractSaveFromDescription(description) {
+      // Extract save type (Dexterity, Constitution, etc.)
+      const saveMatch = description.match(/(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+saving\s+throw/i);
+      if (saveMatch) {
+        return { dc_type: { name: saveMatch[1] } };
+      }
+      return null;
     }
 
     function renderPickerSpells(spells) {
