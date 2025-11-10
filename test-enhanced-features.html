@@ -2399,10 +2399,9 @@
         </select>
       </div>
 
-      <!-- Canvas -->
+      <!-- Location Background -->
       <div style="margin-bottom: 20px;">
-        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">Canvas</div>
-        <div id="canvasDisplay" style="width: 100%; height: 200px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+        <div id="canvasDisplay" onclick="toggleCanvasFullsize()" style="width: 100%; max-width: 400px; aspect-ratio: 1; margin: 0 auto; background: var(--background-color); border: 3px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: transform 0.2s; overflow: hidden;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
           Canvas preview (location background)
         </div>
       </div>
@@ -2428,6 +2427,13 @@
   <div id="portraitFullsizeOverlay" onclick="togglePortraitFullsize()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center; cursor: pointer;">
     <div style="width: 90vmin; height: 90vmin; max-width: 600px; max-height: 600px; border-radius: 20px; overflow: hidden; border: 5px solid var(--accent-color); background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 20rem;">
       <div id="fullsizePortrait">🏹</div>
+    </div>
+  </div>
+
+  <!-- Canvas Fullsize Overlay -->
+  <div id="canvasFullsizeOverlay" onclick="toggleCanvasFullsize()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center; cursor: pointer;">
+    <div id="fullsizeCanvas" style="width: 90vmin; height: 90vmin; max-width: 800px; max-height: 800px; border-radius: 20px; overflow: hidden; border: 5px solid var(--border-color); background: var(--background-color); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 1.2rem;">
+      Canvas preview (location background)
     </div>
   </div>
 
@@ -4642,6 +4648,24 @@
       if (overlay.style.display === 'none' || overlay.style.display === '') {
         // Show fullsize
         fullsizePortrait.textContent = footerPortrait.textContent;
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+      } else {
+        // Hide fullsize
+        overlay.style.display = 'none';
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+    }
+
+    function toggleCanvasFullsize() {
+      const overlay = document.getElementById('canvasFullsizeOverlay');
+      const fullsizeCanvas = document.getElementById('fullsizeCanvas');
+      const canvasDisplay = document.getElementById('canvasDisplay');
+
+      if (overlay.style.display === 'none' || overlay.style.display === '') {
+        // Show fullsize - copy background and content
+        fullsizeCanvas.style.background = canvasDisplay.style.background || getComputedStyle(canvasDisplay).background;
+        fullsizeCanvas.textContent = canvasDisplay.textContent;
         overlay.style.display = 'flex';
         document.body.style.overflow = 'hidden'; // Prevent scrolling
       } else {
