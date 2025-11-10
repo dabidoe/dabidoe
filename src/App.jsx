@@ -10,7 +10,7 @@ import CharacterPreview, { CharacterSheet } from './components/CharacterPreview'
 import './App.css'
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)  // Skip loading screen for now
 
   const handleLoadComplete = () => {
     setLoading(false)
