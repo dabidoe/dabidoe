@@ -2783,6 +2783,11 @@
       console.log('Generated HTML length:', html.length);
       console.log('First 200 chars:', html.substring(0, 200));
       list.innerHTML = html;
+
+      // Debug: Check if innerHTML was actually set
+      console.log('After setting innerHTML, list.innerHTML length:', list.innerHTML.length);
+      console.log('list element:', list);
+      console.log('list children count:', list.children.length);
       console.log('Character menu populated successfully');
       console.log('=================================');
     }
@@ -2920,6 +2925,8 @@
 
     function updateAbilities() {
       const abilitiesGrid = document.getElementById('abilitiesGrid');
+      if (!abilitiesGrid) return; // Element doesn't exist in current view
+
       let html = '';
 
       // Show attacks first (melee/ranged)
@@ -3536,7 +3543,8 @@
           concentration: spell.duration.toLowerCase().includes('concentration'),
           // Try to extract damage from description
           damage: extractDamageFromDescription(spell.description),
-          dc: extractSaveFromDescription(spell.description)
+          dc: extractSaveFromDescription(spell.description),
+          classes: spell.classes || []
         }));
 
         addBattleLog(`📚 Loaded ${allSpellsFromAPI.length} spells from local database!`);
@@ -3649,7 +3657,8 @@
                             (spell.school?.name || '').toLowerCase().includes(searchTerm);
         const matchesLevel = currentLevelFilter === 'all' || spell.level === parseInt(currentLevelFilter);
         const matchesClass = currentClassFilter === 'all' ||
-                            (spell.classes && spell.classes.some(c => c.toLowerCase() === currentClassFilter));
+                            (spell.classes && Array.isArray(spell.classes) &&
+                             spell.classes.some(c => typeof c === 'string' && c.toLowerCase() === currentClassFilter));
 
         return matchesSearch && matchesLevel && matchesClass;
       });
