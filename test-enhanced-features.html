@@ -2703,13 +2703,23 @@
     let turnNumber = 1;
 
     // Initialize
+    console.log('=== INITIALIZING PAGE ===');
+    console.log('Total characters:', characters.length);
+    console.log('Current character:', currentCharacter.name);
+    console.log('Current character has spells:', !!currentCharacter.spells);
     updateCharacterDisplay();
     populateCharacterMenu();
     updateSpellsTab();
     updateAbilitiesTab();
+    console.log('=== INITIALIZATION COMPLETE ===');
 
     function populateCharacterMenu() {
       const list = document.getElementById('characterList');
+      console.log('Populating character menu with', characters.length, 'characters');
+      if (!list) {
+        console.error('characterList element not found!');
+        return;
+      }
       list.innerHTML = characters.map((char, index) => `
         <div class="character-item ${index === 0 ? 'active' : ''}" onclick="selectCharacterFromMenu(${index})">
           <div class="character-item-header">
@@ -2748,6 +2758,8 @@
         return;
       }
 
+      console.log('Switching to character:', characters[index].name);
+
       // Update current character
       currentCharacter = characters[index];
       currentState = 'default';
@@ -2756,6 +2768,12 @@
       // Update all displays
       updateCharacterDisplay();
       updateMessages();
+
+      // IMPORTANT: Update spells and abilities tabs
+      updateSpellsTab();
+      updateAbilitiesTab();
+
+      console.log('Character switched successfully');
 
       // Update menu active state
       document.querySelectorAll('.character-item').forEach((item, i) => {
@@ -2985,7 +3003,12 @@
       updateSpellSlotsDisplay();
 
       // Debug: log spells
-      console.log('Rendering spells for', currentCharacter.name, currentCharacter.spells);
+      console.log('=== SPELL DEBUG ===');
+      console.log('Character:', currentCharacter.name);
+      console.log('Has spells object:', !!currentCharacter.spells);
+      console.log('Spell keys:', Object.keys(currentCharacter.spells || {}));
+      console.log('Spells:', currentCharacter.spells);
+      console.log('===================');
 
       // Show spells by level - MINIMAL CARD VIEW
       Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
