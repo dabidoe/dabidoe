@@ -50,8 +50,8 @@
     }
 
     .hamburger-btn {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       background: var(--background-color);
       border: 2px solid var(--border-color);
       border-radius: 8px;
@@ -60,7 +60,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       transition: all 0.2s ease;
     }
 
@@ -70,8 +70,8 @@
     }
 
     .hamburger-btn span {
-      width: 25px;
-      height: 3px;
+      width: 20px;
+      height: 2.5px;
       background: var(--text-primary);
       border-radius: 2px;
       transition: all 0.2s ease;
@@ -89,6 +89,62 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    /* Header HP Bar */
+    .header-hp-bar {
+      width: 120px;
+      margin-top: 8px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      height: 24px;
+    }
+
+    .header-hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+      transition: width 0.3s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .header-hp-fill.high {
+      background: linear-gradient(90deg, #27ae60 0%, #229954 100%);
+    }
+
+    .header-hp-fill.medium {
+      background: linear-gradient(90deg, #f39c12 0%, #d68910 100%);
+    }
+
+    .header-hp-text {
+      position: relative;
+      z-index: 2;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 24px;
+      color: var(--text-primary);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+    }
+
+    .header-hp-text:hover {
+      color: var(--accent-color);
+    }
+
+    .header-ac {
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .header-ac:hover {
+      color: var(--accent-color);
     }
 
     .header-content h1 {
@@ -1200,11 +1256,22 @@
   <div class="test-container">
     <!-- Header with Hamburger -->
     <div class="test-header">
-      <!-- Portrait Upper Left -->
-      <div class="header-portrait" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-color); flex-shrink: 0;">
-        <div id="headerPortrait" style="width: 100%; height: 100%; background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
-          🏹
+      <!-- Portrait Upper Left with HP Bar -->
+      <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
+        <div class="header-portrait" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-color);">
+          <div id="headerPortrait" style="width: 100%; height: 100%; background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+            🏹
+          </div>
         </div>
+
+        <!-- HP Bar beneath portrait -->
+        <div class="header-hp-bar">
+          <div id="headerHpFill" class="header-hp-fill high" style="width: 100%;"></div>
+          <div id="headerHpText" class="header-hp-text stat-readonly" data-stat="hpCurrent" onclick="!statsLocked && editHeaderHP()">85/85</div>
+        </div>
+
+        <!-- AC beneath HP bar -->
+        <div id="headerAc" class="header-ac stat-readonly" data-stat="ac" onclick="!statsLocked && editStat('ac', this)">AC 16</div>
       </div>
 
       <div class="header-center" style="flex: 1; margin-left: 20px;">
@@ -2215,13 +2282,17 @@
     }
 
     function updateCharacterDisplay() {
-      // Update header (portrait and name only - removed emoji display)
+      // Update header (portrait and name)
       document.getElementById('currentCharName').textContent = currentCharacter.name;
       document.getElementById('charAlignment').textContent = currentCharacter.alignment || 'Neutral';
       document.getElementById('charLevel').textContent = currentCharacter.level;
       document.getElementById('charRace').textContent = currentCharacter.race || 'Human';
       document.getElementById('charClass').textContent = currentCharacter.class;
       document.getElementById('characterNameHeader').textContent = currentCharacter.name;
+
+      // Update portraits
+      document.getElementById('headerPortrait').textContent = currentCharacter.emoji;
+      document.getElementById('statsPortrait').textContent = currentCharacter.emoji;
 
       // Update stats
       const stats = currentCharacter.stats;
@@ -2239,8 +2310,23 @@
       document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
       document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
 
+      // Update Header HP Bar
+      const headerHpFill = document.getElementById('headerHpFill');
+      const headerHpText = document.getElementById('headerHpText');
+      headerHpFill.style.width = hpPercent + '%';
+      headerHpText.textContent = `${currentCharacter.hp.current}/${currentCharacter.hp.max}`;
+
+      // Update HP bar color based on percentage
+      headerHpFill.classList.remove('high', 'medium');
+      if (hpPercent > 60) {
+        headerHpFill.classList.add('high');
+      } else if (hpPercent > 25) {
+        headerHpFill.classList.add('medium');
+      }
+
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
+      document.getElementById('headerAc').textContent = `AC ${currentCharacter.ac}`;
 
       // Update Initiative
       const dexMod = Math.floor((stats.dex - 10) / 2);
@@ -3057,6 +3143,52 @@
           element.textContent = currentValue;
           element.style.display = '';
           input.remove();
+        }
+      };
+
+      element.textContent = '';
+      element.appendChild(input);
+      input.focus();
+      input.select();
+    }
+
+    function editHeaderHP() {
+      if (statsLocked) return;
+
+      const element = document.getElementById('headerHpText');
+      const currentText = element.textContent; // e.g., "85/85"
+      const [currentHP, maxHP] = currentText.split('/').map(v => parseInt(v.trim()));
+
+      // Create input for current HP
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.value = currentHP;
+      input.style.width = '50px';
+      input.style.padding = '2px';
+      input.style.background = 'var(--background-color)';
+      input.style.color = 'var(--text-primary)';
+      input.style.border = '2px solid var(--accent-color)';
+      input.style.borderRadius = '4px';
+      input.style.textAlign = 'center';
+      input.style.fontSize = '0.75rem';
+      input.style.fontWeight = '700';
+
+      input.onblur = function() {
+        const newValue = parseInt(input.value);
+        if (!isNaN(newValue) && newValue >= 0) {
+          currentCharacter.hp.current = Math.min(newValue, currentCharacter.hp.max);
+          updateCharacterDisplay();
+        } else {
+          element.textContent = currentText;
+        }
+      };
+
+      input.onkeydown = function(e) {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          element.textContent = currentText;
+          updateCharacterDisplay();
         }
       };
 
