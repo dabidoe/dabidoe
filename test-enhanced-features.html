@@ -1156,6 +1156,160 @@
       color: var(--accent-color);
     }
 
+    /* Spell Picker Modal */
+    .spell-picker-modal {
+      background: var(--surface-color);
+      border: 3px solid var(--accent-color);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spell-picker-header {
+      padding: 20px;
+      border-bottom: 2px solid var(--border-color);
+      background: var(--background-color);
+      border-radius: 10px 10px 0 0;
+      position: relative;
+    }
+
+    .spell-picker-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 15px;
+    }
+
+    .spell-picker-search {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .spell-picker-search input {
+      flex: 1;
+      padding: 10px 15px;
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .spell-picker-search input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .spell-picker-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .spell-picker-filter {
+      padding: 6px 12px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .spell-picker-filter:hover,
+    .spell-picker-filter.active {
+      border-color: var(--accent-color);
+      background: rgba(74, 144, 226, 0.1);
+      color: var(--accent-color);
+    }
+
+    .spell-picker-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .spell-picker-loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spell-picker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .spell-picker-item {
+      padding: 12px 15px;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .spell-picker-item:hover {
+      border-color: var(--accent-color);
+      transform: translateX(4px);
+    }
+
+    .spell-picker-item-info {
+      flex: 1;
+    }
+
+    .spell-picker-item-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .spell-picker-item-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .spell-picker-item-add {
+      padding: 6px 12px;
+      background: var(--accent-color);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .spell-picker-item-add:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    .spell-picker-item-add:disabled {
+      background: var(--border-color);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spell-picker-empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
     /* Inventory */
     .inventory-category {
       margin-bottom: 20px;
@@ -3041,17 +3195,221 @@
       updateSpellSlotsDisplay();
     }
 
-    // Spell picker modal for adding spells from D&D 5e API
-    function openSpellPicker() {
-      // TODO: Implement spell picker modal with D&D 5e API integration
-      // This will:
-      // 1. Create a modal overlay
-      // 2. Fetch spells from https://www.dnd5eapi.co/api/spells
-      // 3. Display searchable/filterable spell list
-      // 4. Allow user to select and add spells to character
+    // Spell picker state
+    let allSpellsFromAPI = [];
+    let filteredSpells = [];
+    let currentLevelFilter = 'all';
 
-      addBattleLog('🔮 Spell picker coming soon! Will integrate with D&D 5e API...');
-      console.log('Opening spell picker - D&D 5e API integration pending');
+    // Spell picker modal for adding spells from D&D 5e API
+    async function openSpellPicker() {
+      // Show modal
+      document.getElementById('spellPickerOverlay').classList.add('show');
+
+      // Fetch spells if not already loaded
+      if (allSpellsFromAPI.length === 0) {
+        await fetchSpellsFromAPI();
+      } else {
+        // Re-render with existing data
+        renderPickerSpells(allSpellsFromAPI);
+      }
+    }
+
+    function closeSpellPicker(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('spellPickerOverlay').classList.remove('show');
+      // Reset filters
+      document.getElementById('spellPickerSearch').value = '';
+      currentLevelFilter = 'all';
+      document.querySelectorAll('.spell-picker-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.level === 'all');
+      });
+    }
+
+    async function fetchSpellsFromAPI() {
+      const body = document.getElementById('spellPickerBody');
+      body.innerHTML = '<div class="spell-picker-loading">🔮 Loading spells from D&D 5e API...</div>';
+
+      try {
+        // Fetch spell list
+        const response = await fetch('https://www.dnd5eapi.co/api/spells');
+        const data = await response.json();
+
+        // Fetch details for each spell (in batches to avoid rate limiting)
+        const spellPromises = data.results.map(spell =>
+          fetch(`https://www.dnd5eapi.co${spell.url}`).then(r => r.json())
+        );
+
+        allSpellsFromAPI = await Promise.all(spellPromises);
+
+        addBattleLog(`📚 Loaded ${allSpellsFromAPI.length} spells from D&D 5e API!`);
+        renderPickerSpells(allSpellsFromAPI);
+      } catch (error) {
+        console.error('Error fetching spells:', error);
+        body.innerHTML = '<div class="spell-picker-empty">⚠️ Failed to load spells from API. Please try again.</div>';
+        addBattleLog('⚠️ Failed to load spells from D&D 5e API');
+      }
+    }
+
+    function renderPickerSpells(spells) {
+      const body = document.getElementById('spellPickerBody');
+
+      if (spells.length === 0) {
+        body.innerHTML = '<div class="spell-picker-empty">No spells found matching your search.</div>';
+        return;
+      }
+
+      let html = '<div class="spell-picker-list">';
+
+      spells.forEach(spell => {
+        const levelText = spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`;
+        const school = spell.school?.name || 'Unknown';
+        const alreadyHas = hasSpell(spell.index);
+
+        html += `
+          <div class="spell-picker-item">
+            <div class="spell-picker-item-info">
+              <div class="spell-picker-item-name">${spell.name}</div>
+              <div class="spell-picker-item-meta">${levelText} • ${school}</div>
+            </div>
+            <button class="spell-picker-item-add"
+                    onclick="addSpellToCharacter('${spell.index}')"
+                    ${alreadyHas ? 'disabled' : ''}>
+              ${alreadyHas ? '✓ Added' : '+ Add'}
+            </button>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      body.innerHTML = html;
+    }
+
+    function filterByLevel(level) {
+      currentLevelFilter = level;
+
+      // Update active button
+      document.querySelectorAll('.spell-picker-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.level === level);
+      });
+
+      filterPickerSpells();
+    }
+
+    function filterPickerSpells() {
+      const searchTerm = document.getElementById('spellPickerSearch').value.toLowerCase();
+
+      filteredSpells = allSpellsFromAPI.filter(spell => {
+        const matchesSearch = spell.name.toLowerCase().includes(searchTerm) ||
+                            (spell.school?.name || '').toLowerCase().includes(searchTerm);
+        const matchesLevel = currentLevelFilter === 'all' || spell.level === parseInt(currentLevelFilter);
+
+        return matchesSearch && matchesLevel;
+      });
+
+      renderPickerSpells(filteredSpells);
+    }
+
+    function hasSpell(spellIndex) {
+      // Check if character already has this spell
+      if (!currentCharacter.spells) return false;
+
+      for (const level in currentCharacter.spells) {
+        if (currentCharacter.spells[level].some(s => s.id === spellIndex)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function addSpellToCharacter(spellIndex) {
+      const apiSpell = allSpellsFromAPI.find(s => s.index === spellIndex);
+      if (!apiSpell) return;
+
+      // Check if already has spell
+      if (hasSpell(spellIndex)) {
+        addBattleLog(`⚠️ ${currentCharacter.name} already knows ${apiSpell.name}!`);
+        return;
+      }
+
+      // Map API spell to our format
+      const spell = mapAPISpellToCharacterSpell(apiSpell);
+      const level = apiSpell.level.toString();
+
+      // Initialize spell level array if needed
+      if (!currentCharacter.spells[level]) {
+        currentCharacter.spells[level] = [];
+      }
+
+      // Add spell to character
+      currentCharacter.spells[level].push(spell);
+
+      // Update UI
+      addBattleLog(`📖 ${currentCharacter.name} learned ${spell.name}!`);
+      updateSpellsTab();
+
+      // Re-render picker to update button states
+      filterPickerSpells();
+    }
+
+    function mapAPISpellToCharacterSpell(apiSpell) {
+      // Map D&D 5e API spell format to our character spell format
+      const spell = {
+        id: apiSpell.index,
+        name: apiSpell.name,
+        icon: getSpellIcon(apiSpell.school?.name, apiSpell.name),
+        description: (apiSpell.desc || []).join(' '),
+        school: apiSpell.school?.name || 'Evocation',
+        castingTime: apiSpell.casting_time || '1 action',
+        range: apiSpell.range || 'Self',
+        components: (apiSpell.components || []).join(', '),
+        duration: apiSpell.duration || 'Instantaneous',
+        concentration: apiSpell.concentration || false,
+        prepared: false
+      };
+
+      // Add damage if applicable
+      if (apiSpell.damage?.damage_at_character_level || apiSpell.damage?.damage_at_slot_level) {
+        const damageData = apiSpell.damage.damage_at_character_level || apiSpell.damage.damage_at_slot_level;
+        const firstLevel = Object.keys(damageData)[0];
+        spell.damage = damageData[firstLevel];
+      }
+
+      // Determine if it's an attack roll or save
+      if (apiSpell.attack_type === 'ranged' || apiSpell.attack_type === 'melee') {
+        spell.attackRoll = true;
+      } else if (apiSpell.dc?.dc_type?.name) {
+        spell.save = apiSpell.dc.dc_type.name;
+      }
+
+      return spell;
+    }
+
+    function getSpellIcon(school, name) {
+      // Map spell schools to appropriate icons
+      const schoolIcons = {
+        'Abjuration': '🛡️',
+        'Conjuration': '🌀',
+        'Divination': '🔮',
+        'Enchantment': '✨',
+        'Evocation': '🔥',
+        'Illusion': '👁️',
+        'Necromancy': '💀',
+        'Transmutation': '🔄'
+      };
+
+      // Special cases based on spell name
+      const nameLower = name.toLowerCase();
+      if (nameLower.includes('fire') || nameLower.includes('flame')) return '🔥';
+      if (nameLower.includes('ice') || nameLower.includes('frost') || nameLower.includes('cold')) return '❄️';
+      if (nameLower.includes('light') || nameLower.includes('sacred')) return '✨';
+      if (nameLower.includes('heal') || nameLower.includes('cure')) return '❤️';
+      if (nameLower.includes('shield') || nameLower.includes('armor')) return '🛡️';
+      if (nameLower.includes('lightning') || nameLower.includes('thunder')) return '⚡';
+      if (nameLower.includes('poison')) return '☠️';
+      if (nameLower.includes('magic missile')) return '💫';
+      if (nameLower.includes('arrow') || nameLower.includes('bolt')) return '🏹';
+
+      return schoolIcons[school] || '✨';
     }
 
     function updateSkills() {
@@ -4136,6 +4494,36 @@
           <button class="spell-btn-prepare" id="modalPrepareBtn" onclick="togglePrepareFromModal()">
             Prepare
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spell Picker Modal -->
+  <div class="spell-modal-overlay" id="spellPickerOverlay" onclick="closeSpellPicker(event)">
+    <div class="spell-picker-modal" onclick="event.stopPropagation()">
+      <div class="spell-picker-header">
+        <div class="spell-picker-title">📚 Add Spell from D&D 5e SRD</div>
+        <button class="spell-modal-close" onclick="closeSpellPicker()" style="position: absolute; top: 15px; right: 15px;">✕</button>
+
+        <div class="spell-picker-search">
+          <input type="text" id="spellPickerSearch" placeholder="Search spells..." oninput="filterPickerSpells()">
+        </div>
+
+        <div class="spell-picker-filters">
+          <button class="spell-picker-filter active" data-level="all" onclick="filterByLevel('all')">All Levels</button>
+          <button class="spell-picker-filter" data-level="0" onclick="filterByLevel('0')">Cantrips</button>
+          <button class="spell-picker-filter" data-level="1" onclick="filterByLevel('1')">1st</button>
+          <button class="spell-picker-filter" data-level="2" onclick="filterByLevel('2')">2nd</button>
+          <button class="spell-picker-filter" data-level="3" onclick="filterByLevel('3')">3rd</button>
+          <button class="spell-picker-filter" data-level="4" onclick="filterByLevel('4')">4th</button>
+          <button class="spell-picker-filter" data-level="5" onclick="filterByLevel('5')">5th</button>
+        </div>
+      </div>
+
+      <div class="spell-picker-body" id="spellPickerBody">
+        <div class="spell-picker-loading">
+          🔮 Loading spells from D&D 5e API...
         </div>
       </div>
     </div>
