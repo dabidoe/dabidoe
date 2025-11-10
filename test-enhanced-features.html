@@ -1820,33 +1820,33 @@
 
 
             <div class="stats-grid">
-              <div class="stat-block">
-                <div class="stat-name">STR</div>
+              <div class="stat-block" onclick="rollSavingThrow('str')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">STR 🎲</div>
                 <div class="stat-value stat-readonly" id="strValue" data-stat="str">12</div>
                 <div class="stat-modifier stat-readonly" id="strMod">+1</div>
               </div>
-              <div class="stat-block">
-                <div class="stat-name">DEX</div>
+              <div class="stat-block" onclick="rollSavingThrow('dex')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">DEX 🎲</div>
                 <div class="stat-value stat-readonly" id="dexValue" data-stat="dex">18</div>
                 <div class="stat-modifier stat-readonly" id="dexMod">+4</div>
               </div>
-              <div class="stat-block">
-                <div class="stat-name">CON</div>
+              <div class="stat-block" onclick="rollSavingThrow('con')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">CON 🎲</div>
                 <div class="stat-value stat-readonly" id="conValue" data-stat="con">14</div>
                 <div class="stat-modifier stat-readonly" id="conMod">+2</div>
               </div>
-              <div class="stat-block">
-                <div class="stat-name">INT</div>
+              <div class="stat-block" onclick="rollSavingThrow('int')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">INT 🎲</div>
                 <div class="stat-value stat-readonly" id="intValue" data-stat="int">13</div>
                 <div class="stat-modifier stat-readonly" id="intMod">+1</div>
               </div>
-              <div class="stat-block">
-                <div class="stat-name">WIS</div>
+              <div class="stat-block" onclick="rollSavingThrow('wis')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">WIS 🎲</div>
                 <div class="stat-value stat-readonly" id="wisValue" data-stat="wis">16</div>
                 <div class="stat-modifier stat-readonly" id="wisMod">+3</div>
               </div>
-              <div class="stat-block">
-                <div class="stat-name">CHA</div>
+              <div class="stat-block" onclick="rollSavingThrow('cha')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="stat-name">CHA 🎲</div>
                 <div class="stat-value stat-readonly" id="chaValue" data-stat="cha">10</div>
                 <div class="stat-modifier stat-readonly" id="chaMod">+0</div>
               </div>
@@ -2160,7 +2160,7 @@
               <button class="action-btn" onclick="rollRangedAttack()">🏹 Ranged Attack</button>
               <button class="action-btn" onclick="castCantrip()">✨ Cantrip</button>
               <button class="action-btn" onclick="rollDice('Initiative', 'd20')">🎲 Initiative</button>
-              <button class="action-btn" onclick="rollDice('Save', 'd20')">🛡️ Save</button>
+              
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
               <button class="action-btn" onclick="quickAction('dodge')">💨 Dodge</button>
 
@@ -5087,7 +5087,7 @@
         name: name,
         emoji: classEmojis[charClass] || '🎭',
         class: charClass.charAt(0).toUpperCase() + charClass.slice(1),
-        subclass: 'Choose subclass at level 3',
+        subclass: document.getElementById('newCharSubclass').value !== 'none' ? document.getElementById('newCharSubclass').value : 'Choose at level 3',
         race: race.charAt(0).toUpperCase() + race.slice(1),
         alignment: 'Neutral Good',
         classType: classTypes[charClass] || 'melee',
@@ -5127,6 +5127,11 @@
       };
 
       // Add to characters array
+      
+      // Auto-populate spells and abilities based on class and level
+      autoPopulateSpells(newChar);
+      autoPopulateAbilities(newChar);
+
       characters.push(newChar);
 
       // Switch to new character
@@ -5310,6 +5315,164 @@
       alert(`✨ ${name} added successfully!`);
     }
 
+
+    // Saving Throw Roll Function
+    function rollSavingThrow(stat) {
+      const statNames = {
+        str: 'Strength',
+        dex: 'Dexterity',
+        con: 'Constitution',
+        int: 'Intelligence',
+        wis: 'Wisdom',
+        cha: 'Charisma'
+      };
+
+      const statValue = currentCharacter.stats[stat];
+      const modifier = Math.floor((statValue - 10) / 2);
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const total = d20 + modifier;
+
+      const statName = statNames[stat];
+      const modifierText = modifier >= 0 ? `+${modifier}` : modifier;
+
+      let result = `🎲 ${statName} Save: ${total}`;
+      result += ` (d20: ${d20} ${modifierText})`;
+
+      if (d20 === 20) {
+        result += ' **CRITICAL SUCCESS!**';
+      } else if (d20 === 1) {
+        result += ' (Critical Failure)';
+      }
+
+      addBattleLog(result);
+
+      // Show dice roll animation
+      showDiceRoll(`${statName} Save`, 'd20', d20, total, modifier);
+    }
+
+
+    // Subclass options by class
+    const subclassOptions = {
+      barbarian: ['Path of the Berserker', 'Path of the Totem Warrior', 'Path of the Zealot'],
+      bard: ['College of Lore', 'College of Valor', 'College of Glamour'],
+      cleric: ['Life Domain', 'Light Domain', 'War Domain', 'Trickery Domain'],
+      druid: ['Circle of the Land', 'Circle of the Moon', 'Circle of Dreams'],
+      fighter: ['Champion', 'Battle Master', 'Eldritch Knight'],
+      monk: ['Way of the Open Hand', 'Way of Shadow', 'Way of the Four Elements'],
+      paladin: ['Oath of Devotion', 'Oath of Vengeance', 'Oath of the Ancients'],
+      ranger: ['Hunter', 'Beast Master', 'Gloom Stalker'],
+      rogue: ['Thief', 'Assassin', 'Arcane Trickster'],
+      sorcerer: ['Draconic Bloodline', 'Wild Magic', 'Divine Soul'],
+      warlock: ['The Fiend', 'The Archfey', 'The Great Old One'],
+      wizard: ['School of Evocation', 'School of Abjuration', 'School of Divination']
+    };
+
+    function updateSubclassOptions() {
+      const classSelect = document.getElementById('newCharClass');
+      const subclassSelect = document.getElementById('newCharSubclass');
+      const selectedClass = classSelect.value;
+
+      const subclasses = subclassOptions[selectedClass] || [];
+
+      let html = '<option value="none">Choose after level 3...</option>';
+      subclasses.forEach(subclass => {
+        html += `<option value="${subclass}">${subclass}</option>`;
+      });
+
+      subclassSelect.innerHTML = html;
+    }
+
+    // Auto-populate spells based on class and level
+    function autoPopulateSpells(character) {
+      const spellcasters = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
+      const halfcasters = ['paladin', 'ranger'];
+      const charClass = character.class.toLowerCase();
+
+      if (!spellcasters.includes(charClass) && !halfcasters.includes(charClass)) {
+        return; // No spells for non-casters
+      }
+
+      // Initialize spells object
+      character.spells = {};
+
+      const level = character.level;
+
+      // Add cantrips
+      const cantripCount = spellcasters.includes(charClass) ? Math.min(4, 2 + Math.floor(level / 4)) : 0;
+      if (cantripCount > 0 && abilityDatabase[charClass]) {
+        character.spells['0'] = [];
+        // Add basic cantrips
+        if (charClass === 'wizard' || charClass === 'sorcerer') {
+          character.spells['0'].push({ id: 'fire_bolt', name: 'Fire Bolt', icon: '🔥', damage: '1d10', description: 'Hurl a mote of fire', school: 'Evocation', castingTime: '1 action', range: '120 feet', components: 'V, S', duration: 'Instantaneous', attackRoll: true });
+          character.spells['0'].push({ id: 'mage_hand', name: 'Mage Hand', icon: '✋', damage: null, description: 'Spectral floating hand', school: 'Conjuration', castingTime: '1 action', range: '30 feet', components: 'V, S', duration: '1 minute' });
+        } else if (charClass === 'cleric') {
+          character.spells['0'].push({ id: 'sacred_flame', name: 'Sacred Flame', icon: '✨', damage: '1d8', description: 'Flame-like radiance', school: 'Evocation', castingTime: '1 action', range: '60 feet', components: 'V, S', duration: 'Instantaneous', save: 'Dexterity' });
+          character.spells['0'].push({ id: 'guidance', name: 'Guidance', icon: '🙏', damage: null, description: 'Add d4 to ability check', school: 'Divination', castingTime: '1 action', range: 'Touch', components: 'V, S', duration: '1 minute', concentration: true });
+        }
+      }
+
+      // Add leveled spells based on class
+      const maxSpellLevel = halfcasters.includes(charClass) ? Math.min(5, Math.ceil(level / 4)) : Math.min(9, Math.ceil(level / 2));
+
+      for (let spellLevel = 1; spellLevel <= maxSpellLevel; spellLevel++) {
+        character.spells[spellLevel.toString()] = [];
+
+        // Add 2-3 spells per level
+        const spellsToAdd = 2;
+
+        // Class-specific spell examples
+        if (spellLevel === 1) {
+          if (charClass === 'wizard') {
+            character.spells['1'].push({ id: 'magic_missile', name: 'Magic Missile', prepared: true, icon: '✨', damage: '3d4+3', description: 'Unerring magical darts', school: 'Evocation', castingTime: '1 action', range: '120 feet', components: 'V, S', duration: 'Instantaneous' });
+            character.spells['1'].push({ id: 'shield', name: 'Shield', prepared: true, icon: '🛡️', damage: null, description: '+5 AC until next turn', school: 'Abjuration', castingTime: '1 reaction', range: 'Self', components: 'V, S', duration: '1 round' });
+          } else if (charClass === 'cleric') {
+            character.spells['1'].push({ id: 'cure_wounds', name: 'Cure Wounds', prepared: true, icon: '❤️', damage: '1d8+3', description: 'Heal hit points', school: 'Evocation', castingTime: '1 action', range: 'Touch', components: 'V, S', duration: 'Instantaneous' });
+            character.spells['1'].push({ id: 'bless', name: 'Bless', prepared: true, icon: '✨', damage: null, description: 'Add d4 to attacks/saves', school: 'Enchantment', castingTime: '1 action', range: '30 feet', components: 'V, S, M', duration: '1 minute', concentration: true });
+          }
+        }
+      }
+    }
+
+    // Auto-populate abilities based on class, subclass, and level
+    function autoPopulateAbilities(character) {
+      const charClass = character.class.toLowerCase();
+
+      // Initialize abilities array
+      if (!character.abilities) {
+        character.abilities = [];
+      }
+
+      // Get abilities from database for this class
+      const classAbilities = abilityDatabase[charClass] || [];
+
+      // Add core abilities based on level
+      const level = character.level;
+
+      classAbilities.forEach(ability => {
+        // Simple level gating (in a real implementation, this would be more sophisticated)
+        character.abilities.push({
+          id: ability.id,
+          name: ability.name,
+          icon: ability.icon,
+          damage: ability.damage,
+          description: ability.description
+        });
+      });
+
+      // Add Extra Attack for fighters/paladins/rangers at level 5+
+      if (level >= 5 && ['fighter', 'paladin', 'ranger'].includes(charClass)) {
+        if (!character.abilities.some(a => a.id === 'extra_attack')) {
+          character.abilities.push({
+            id: 'extra_attack',
+            name: 'Extra Attack',
+            icon: '⚔️',
+            damage: null,
+            description: 'Attack twice when you take the Attack action'
+          });
+        }
+      }
+    }
+
   </script>
 
   <!-- Spell Detail Modal -->
@@ -5414,7 +5577,7 @@
           <!-- Class Dropdown -->
           <div>
             <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 5px;">Class</label>
-            <select id="newCharClass" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
+            <select id="newCharClass" onchange="updateSubclassOptions()" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
               <option value="barbarian">Barbarian</option>
               <option value="bard">Bard</option>
               <option value="cleric">Cleric</option>
@@ -5445,6 +5608,14 @@
               <option value="tiefling">Tiefling</option>
             </select>
           </div>
+          <!-- Subclass Dropdown -->
+          <div>
+            <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 5px;">Subclass</label>
+            <select id="newCharSubclass" style="width: 100%; padding: 10px; background: var(--background-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem;">
+              <option value="none">Choose after level 3...</option>
+            </select>
+          </div>
+
 
           <!-- Level Input -->
           <div>
