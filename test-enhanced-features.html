@@ -2903,6 +2903,10 @@
 
     function updateSpellsTab() {
       const spellsContent = document.getElementById('spellsContent');
+
+      // Check if element exists (tab might not be active)
+      if (!spellsContent) return;
+
       let html = '';
 
       // Check if character has spells
@@ -2944,6 +2948,9 @@
     // Update spell slots display with progress bars
     function updateSpellSlotsDisplay() {
       const spellSlotsDisplay = document.getElementById('spellSlotsDisplay');
+
+      // Check if element exists (tab might not be active)
+      if (!spellSlotsDisplay) return;
 
       if (!currentCharacter.spells || Object.keys(currentCharacter.spells).length === 0) {
         spellSlotsDisplay.innerHTML = '<div style="color: var(--text-secondary); padding: 15px; text-align: center;">No spell slots available</div>';
