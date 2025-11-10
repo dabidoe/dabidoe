@@ -1247,10 +1247,10 @@
         <div class="demo-section">
           <!-- Tabs -->
           <div class="stat-tabs" style="display: flex; gap: 5px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color);">
-            <button class="stat-tab-btn active" onclick="switchStatTab('stats')" id="statsTabBtn">📊 Stats</button>
-            <button class="stat-tab-btn" onclick="switchStatTab('skills')" id="skillsTabBtn">🎯 Skills</button>
-            <button class="stat-tab-btn" onclick="switchStatTab('abilities')" id="abilitiesTabBtn">⚡ Abilities</button>
-            <button class="stat-tab-btn" onclick="switchStatTab('inventory')" id="inventoryTabBtn">🎒 Inventory</button>
+            <button class="stat-tab-btn active" onclick="switchStatTab('stats')" id="statsTabBtn">Stats</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('skills')" id="skillsTabBtn">Skills</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('abilities')" id="abilitiesTabBtn">Abilities</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('inventory')" id="inventoryTabBtn">Inventory</button>
           </div>
 
           <!-- Stats Tab -->
@@ -1269,14 +1269,6 @@
                 <option value="injured">Injured</option>
                 <option value="gravely-injured">Gravely Injured</option>
               </select>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <strong style="color: var(--text-primary);">Character Stats</strong>
-              <button id="statsLockBtn" onclick="toggleStatsLock()" style="padding: 6px 12px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <span id="lockIcon">🔒</span>
-                <span id="lockText">Unlock Edit</span>
-              </button>
             </div>
 
             <div class="hp-display">
@@ -1356,6 +1348,13 @@
               <div id="tempModifiersList" style="margin-top: 10px;">
                 <!-- Temporary modifiers will appear here -->
               </div>
+            </div>
+
+            <!-- Edit Button (lower right corner) -->
+            <div style="text-align: right; margin-top: 15px;">
+              <button id="statsLockBtn" onclick="toggleStatsLock()" style="padding: 6px 12px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; cursor: pointer;">
+                <span id="lockText">Edit</span>
+              </button>
             </div>
           </div>
 
@@ -1506,8 +1505,8 @@
         <div class="demo-section">
           <!-- Mode Selector (above chat) -->
           <div class="chat-modes" style="margin-bottom: 15px;">
-            <button class="mode-btn active" onclick="switchChatMode('conversation')">💭 Mood</button>
-            <button class="mode-btn" onclick="switchChatMode('battle')">⚔️ Battle</button>
+            <button class="mode-btn active" onclick="switchChatMode('conversation')">Chat</button>
+            <button class="mode-btn" onclick="switchChatMode('battle')">Battle</button>
           </div>
 
           <!-- Conversation Mode -->
@@ -1538,7 +1537,7 @@
             <!-- State Selector (below chat) -->
             <div style="padding-top: 15px; border-top: 1px solid var(--border-color);">
               <div class="state-selector">
-                <label style="color: var(--text-secondary); font-weight: 600;">State:</label>
+                <label style="color: var(--text-secondary); font-weight: 600;">Mood:</label>
                 <select id="characterState" onchange="changeCharacterState()">
                   <option value="default">Default (Calm)</option>
                   <option value="battle">Battle (Focused)</option>
@@ -2981,13 +2980,11 @@
 
     function toggleStatsLock() {
       statsLocked = !statsLocked;
-      const lockIcon = document.getElementById('lockIcon');
       const lockText = document.getElementById('lockText');
       const allStats = document.querySelectorAll('.stat-readonly');
 
       if (statsLocked) {
-        lockIcon.textContent = '🔒';
-        lockText.textContent = 'Unlock Edit';
+        lockText.textContent = 'Edit';
 
         // Remove onclick handlers and titles
         allStats.forEach(el => {
@@ -2996,8 +2993,7 @@
           el.style.cursor = 'default';
         });
       } else {
-        lockIcon.textContent = '🔓';
-        lockText.textContent = 'Lock Edit';
+        lockText.textContent = 'Lock';
 
         // Add onclick handlers and titles
         allStats.forEach(el => {
@@ -3165,35 +3161,6 @@
 
       let html = '';
 
-      // Attuned Items Section (max 3 slots)
-      const attunedItems = currentCharacter.inventory.filter(item => item.attuned);
-      html += `<div style="margin-bottom: 25px; padding: 15px; background: rgba(74, 144, 226, 0.1); border: 2px solid var(--accent-color); border-radius: 8px;">
-        <div style="font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;">✨ Attuned Items (${attunedItems.length}/3)</div>
-        <div style="display: grid; gap: 8px;">`;
-
-      for (let i = 0; i < 3; i++) {
-        const item = attunedItems[i];
-        if (item) {
-          html += `
-            <div class="inventory-item equipped">
-              <div class="inventory-item-info">
-                <div class="inventory-item-name">✨ ${item.name}</div>
-                <div class="inventory-item-type">${item.type}</div>
-              </div>
-              <div class="equipped-badge">Attuned</div>
-            </div>
-          `;
-        } else {
-          html += `
-            <div style="padding: 15px; background: rgba(255,255,255,0.05); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
-              Empty Attunement Slot
-            </div>
-          `;
-        }
-      }
-
-      html += '</div></div>';
-
       // Group inventory by type with custom order
       const grouped = {};
       currentCharacter.inventory.forEach(item => {
@@ -3230,6 +3197,35 @@
 
         html += '</div>';
       });
+
+      // Attuned Magical Items Section (max 3 slots) - at bottom
+      const attunedItems = currentCharacter.inventory.filter(item => item.attuned);
+      html += `<div style="margin-top: 25px; padding: 15px; background: rgba(74, 144, 226, 0.1); border: 2px solid var(--accent-color); border-radius: 8px;">
+        <div style="font-size: 0.9rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;">Attuned Magical Items (${attunedItems.length}/3)</div>
+        <div style="display: grid; gap: 8px;">`;
+
+      for (let i = 0; i < 3; i++) {
+        const item = attunedItems[i];
+        if (item) {
+          html += `
+            <div class="inventory-item equipped">
+              <div class="inventory-item-info">
+                <div class="inventory-item-name">✨ ${item.name}</div>
+                <div class="inventory-item-type">${item.type}</div>
+              </div>
+              <div class="equipped-badge">Attuned</div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="padding: 15px; background: rgba(255,255,255,0.05); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+              Empty Attunement Slot
+            </div>
+          `;
+        }
+      }
+
+      html += '</div></div>';
 
       inventoryGrid.innerHTML = html;
     }
