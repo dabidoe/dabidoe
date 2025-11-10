@@ -2921,6 +2921,15 @@
 
       // Update turn tracker
       document.getElementById('turnNumber').textContent = turnNumber;
+
+      // Auto-select first cantrip for battle mode
+      if (currentCharacter.spells && currentCharacter.spells['0'] && currentCharacter.spells['0'].length > 0) {
+        selectedCantrip = currentCharacter.spells['0'][0];
+        updateCantripButton();
+      } else {
+        selectedCantrip = null;
+        updateCantripButton();
+      }
     }
 
     function updateAbilities() {
@@ -3271,7 +3280,7 @@
 
       // Cast button
       if (isCantrip) {
-        castBtn.textContent = '✨ Cast Cantrip';
+        castBtn.textContent = '✨ Cast (∞ Unlimited)';
         castBtn.disabled = false;
       } else {
         const slotsAvailable = currentCharacter.spellSlots?.[level]?.current > 0;
@@ -4148,7 +4157,28 @@
 
 
 
-    function castCantrip() {
+    function updateCantripButton() {
+      const cantripBtn = document.querySelector('.action-btn[onclick="castCantrip()"]');
+      if (!cantripBtn) return;
+
+      if (selectedCantrip) {
+        cantripBtn.textContent = `${selectedCantrip.icon || '✨'} ${selectedCantrip.name}`;
+      } else {
+        cantripBtn.textContent = '✨ Cantrip';
+      }
+    }
+    function selectCantripForBattle(spellId) {
+      const cantrip = currentCharacter.spells['0']?.find(s => s.id === spellId);
+      if (cantrip) {
+        selectedCantrip = cantrip;
+        updateCantripButton();
+        addBattleLog(`✨ Equipped ${cantrip.name} for battle!`);
+        updateSpellsTab(); // Refresh to show selection
+      }
+    }
+
+
+        function castCantrip() {
       if (!selectedCantrip) {
         addBattleLog('⚠️ No cantrip selected! Go to the Abilities tab and click on a cantrip to select it.');
         return;
