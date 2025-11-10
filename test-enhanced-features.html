@@ -5638,6 +5638,46 @@
       }
     }
 
+    // Auto-populate abilities based on class, subclass, and level
+    function autoPopulateAbilities(character) {
+      const charClass = character.class.toLowerCase();
+
+      // Initialize abilities array
+      if (!character.abilities) {
+        character.abilities = [];
+      }
+
+      // Get abilities from database for this class
+      const classAbilities = abilityDatabase[charClass] || [];
+
+      // Add core abilities based on level
+      const level = character.level;
+
+      classAbilities.forEach(ability => {
+        // Simple level gating (in a real implementation, this would be more sophisticated)
+        character.abilities.push({
+          id: ability.id,
+          name: ability.name,
+          icon: ability.icon,
+          damage: ability.damage,
+          description: ability.description
+        });
+      });
+
+      // Add Extra Attack for fighters/paladins/rangers at level 5+
+      if (level >= 5 && ['fighter', 'paladin', 'ranger'].includes(charClass)) {
+        if (!character.abilities.some(a => a.id === 'extra_attack')) {
+          character.abilities.push({
+            id: 'extra_attack',
+            name: 'Extra Attack',
+            icon: '⚔️',
+            damage: null,
+            description: 'Attack twice when you take the Attack action'
+          });
+        }
+      }
+    }
+
 
     // Delete spell function (for known casters)
     function deleteSpell(spellId, level) {
