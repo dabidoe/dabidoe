@@ -2698,6 +2698,7 @@
     ];
 
     let currentCharacter = characters[0];
+    let selectedCantrip = null;
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -2808,12 +2809,17 @@
         document.getElementById(stat + 'Mod').textContent = (modifier >= 0 ? '+' : '') + modifier;
       });
 
-      // Update HP
+      // Update HP (stats tab - may not exist if removed)
       const hpPercent = (currentCharacter.hp.current / currentCharacter.hp.max) * 100;
-      document.getElementById('hpFill').style.width = hpPercent + '%';
-      document.getElementById('hpText').textContent = `${currentCharacter.hp.current} / ${currentCharacter.hp.max}`;
-      document.getElementById('hpCurrentEdit').textContent = currentCharacter.hp.current;
-      document.getElementById('hpMaxEdit').textContent = currentCharacter.hp.max;
+      const hpFillEl = document.getElementById('hpFill');
+      const hpTextEl = document.getElementById('hpText');
+      const hpCurrentEditEl = document.getElementById('hpCurrentEdit');
+      const hpMaxEditEl = document.getElementById('hpMaxEdit');
+
+      if (hpFillEl) hpFillEl.style.width = hpPercent + '%';
+      if (hpTextEl) hpTextEl.textContent = `${currentCharacter.hp.current} / ${currentCharacter.hp.max}`;
+      if (hpCurrentEditEl) hpCurrentEditEl.textContent = currentCharacter.hp.current;
+      if (hpMaxEditEl) hpMaxEditEl.textContent = currentCharacter.hp.max;
 
       // Update Header HP Bar
       const headerHpFill = document.getElementById('headerHpFill');
@@ -3902,7 +3908,7 @@
       }
     }
 
-    let selectedCantrip = null;
+
 
     function castCantrip() {
       if (!selectedCantrip) {
