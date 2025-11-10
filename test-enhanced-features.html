@@ -2021,8 +2021,8 @@
           <div id="abilitiesTab" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;">
               <div style="font-size: 0.9rem; color: var(--text-secondary);">Class Abilities & Features</div>
-              <button onclick="autoAddMoreAbilities()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
-                🔄 Auto-Add More
+              <button onclick="updateAbilities()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
+                🔄 Update
               </button>
             </div>
             <div style="margin-bottom: 15px;">
@@ -2046,8 +2046,8 @@
               <button onclick="openSpellPicker()" style="padding: 6px 12px; background: var(--accent-color); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
                 + Add Spell
               </button>
-              <button onclick="autoAddMoreSpells()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin-left: 8px;">
-                🔄 Auto-Add More
+              <button onclick="updateSpells()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600; margin-left: 8px;">
+                🔄 Update
               </button>
             </div>
 
@@ -2069,6 +2069,12 @@
 
           <!-- Inventory Tab -->
           <div id="inventoryTab" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;">
+              <div style="font-size: 0.9rem; color: var(--text-secondary);">Equipment & Items</div>
+              <button onclick="updateInventory_autoAdd()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
+                🔄 Update
+              </button>
+            </div>
             <div id="inventoryGrid">
               <!-- Will be populated dynamically -->
             </div>
@@ -3191,6 +3197,9 @@
         selectedCantrip = null;
         updateCantripButton();
       }
+
+      // Update tab visibility based on class
+      updateTabVisibility();
     }
 
     function updateAbilities() {
@@ -4133,6 +4142,27 @@
       }
     }
 
+    // Hide/show Spells tab based on character class
+    function updateTabVisibility() {
+      const spellsTabBtn = document.getElementById('spellsTabBtn');
+      if (!spellsTabBtn) return;
+
+      // Classes that don't have spells
+      const nonCasters = ['barbarian', 'fighter', 'monk', 'rogue'];
+      const charClass = currentCharacter.class.toLowerCase();
+
+      if (nonCasters.includes(charClass)) {
+        spellsTabBtn.style.display = 'none';
+        // If currently on spells tab, switch to stats
+        if (document.getElementById('spellsTab').style.display === 'block') {
+          switchStatTab('stats');
+          document.querySelector('.stat-tab-btn[onclick*="stats"]').classList.add('active');
+        }
+      } else {
+        spellsTabBtn.style.display = '';
+      }
+    }
+
     function changeCharacterState() {
       currentState = document.getElementById('characterState').value;
       updateMessages();
@@ -5039,6 +5069,166 @@
       inventoryGrid.innerHTML = html;
     }
 
+    // Auto-add class-appropriate items to inventory
+    function updateInventory_autoAdd() {
+      if (!currentCharacter.inventory) {
+        currentCharacter.inventory = [];
+      }
+
+      const charClass = currentCharacter.class.toLowerCase();
+      const level = currentCharacter.level;
+
+      // Get current item IDs to avoid duplicates
+      const currentItemIds = currentCharacter.inventory.map(item => item.id);
+
+      // Class-appropriate item database
+      const classItems = {
+        barbarian: [
+          { id: 'greataxe', name: 'Greataxe', type: 'weapon', equipped: false },
+          { id: 'handaxe', name: 'Handaxe (x2)', type: 'weapon', equipped: false, quantity: 2 },
+          { id: 'hide_armor', name: 'Hide Armor', type: 'armor', equipped: false },
+          { id: 'explorers_pack', name: "Explorer's Pack", type: 'gear', equipped: false },
+          { id: 'javelin', name: 'Javelin (x4)', type: 'weapon', equipped: false, quantity: 4 }
+        ],
+        fighter: [
+          { id: 'longsword', name: 'Longsword', type: 'weapon', equipped: false },
+          { id: 'shield', name: 'Shield', type: 'armor', equipped: false },
+          { id: 'chain_mail', name: 'Chain Mail', type: 'armor', equipped: false },
+          { id: 'crossbow_light', name: 'Light Crossbow', type: 'weapon', equipped: false },
+          { id: 'crossbow_bolts', name: 'Crossbow Bolts (x20)', type: 'ammunition', equipped: false, quantity: 20 }
+        ],
+        monk: [
+          { id: 'shortsword', name: 'Shortsword', type: 'weapon', equipped: false },
+          { id: 'dart', name: 'Dart (x10)', type: 'weapon', equipped: false, quantity: 10 },
+          { id: 'explorers_pack', name: "Explorer's Pack", type: 'gear', equipped: false }
+        ],
+        rogue: [
+          { id: 'rapier', name: 'Rapier', type: 'weapon', equipped: false },
+          { id: 'shortbow', name: 'Shortbow', type: 'weapon', equipped: false },
+          { id: 'arrows', name: 'Arrows (x20)', type: 'ammunition', equipped: false, quantity: 20 },
+          { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: false },
+          { id: 'thieves_tools', name: "Thieves' Tools", type: 'gear', equipped: false },
+          { id: 'burglars_pack', name: "Burglar's Pack", type: 'gear', equipped: false }
+        ],
+        paladin: [
+          { id: 'longsword', name: 'Longsword', type: 'weapon', equipped: false },
+          { id: 'shield', name: 'Shield', type: 'armor', equipped: false },
+          { id: 'chain_mail', name: 'Chain Mail', type: 'armor', equipped: false },
+          { id: 'javelin', name: 'Javelin (x5)', type: 'weapon', equipped: false, quantity: 5 },
+          { id: 'holy_symbol', name: 'Holy Symbol', type: 'gear', equipped: false },
+          { id: 'priests_pack', name: "Priest's Pack", type: 'gear', equipped: false }
+        ],
+        ranger: [
+          { id: 'longbow', name: 'Longbow', type: 'weapon', equipped: false },
+          { id: 'arrows', name: 'Arrows (x20)', type: 'ammunition', equipped: false, quantity: 20 },
+          { id: 'shortsword', name: 'Shortsword (x2)', type: 'weapon', equipped: false, quantity: 2 },
+          { id: 'scale_mail', name: 'Scale Mail', type: 'armor', equipped: false },
+          { id: 'explorers_pack', name: "Explorer's Pack", type: 'gear', equipped: false }
+        ],
+        bard: [
+          { id: 'rapier', name: 'Rapier', type: 'weapon', equipped: false },
+          { id: 'lute', name: 'Lute', type: 'gear', equipped: false },
+          { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: false },
+          { id: 'dagger', name: 'Dagger', type: 'weapon', equipped: false },
+          { id: 'entertainers_pack', name: "Entertainer's Pack", type: 'gear', equipped: false }
+        ],
+        cleric: [
+          { id: 'mace', name: 'Mace', type: 'weapon', equipped: false },
+          { id: 'shield', name: 'Shield', type: 'armor', equipped: false },
+          { id: 'scale_mail', name: 'Scale Mail', type: 'armor', equipped: false },
+          { id: 'holy_symbol', name: 'Holy Symbol', type: 'gear', equipped: false },
+          { id: 'priests_pack', name: "Priest's Pack", type: 'gear', equipped: false }
+        ],
+        druid: [
+          { id: 'scimitar', name: 'Scimitar', type: 'weapon', equipped: false },
+          { id: 'shield', name: 'Wooden Shield', type: 'armor', equipped: false },
+          { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: false },
+          { id: 'druidic_focus', name: 'Druidic Focus', type: 'gear', equipped: false },
+          { id: 'explorers_pack', name: "Explorer's Pack", type: 'gear', equipped: false }
+        ],
+        sorcerer: [
+          { id: 'light_crossbow', name: 'Light Crossbow', type: 'weapon', equipped: false },
+          { id: 'crossbow_bolts', name: 'Crossbow Bolts (x20)', type: 'ammunition', equipped: false, quantity: 20 },
+          { id: 'arcane_focus', name: 'Arcane Focus', type: 'gear', equipped: false },
+          { id: 'dagger', name: 'Dagger (x2)', type: 'weapon', equipped: false, quantity: 2 },
+          { id: 'explorers_pack', name: "Explorer's Pack", type: 'gear', equipped: false }
+        ],
+        warlock: [
+          { id: 'light_crossbow', name: 'Light Crossbow', type: 'weapon', equipped: false },
+          { id: 'crossbow_bolts', name: 'Crossbow Bolts (x20)', type: 'ammunition', equipped: false, quantity: 20 },
+          { id: 'arcane_focus', name: 'Arcane Focus', type: 'gear', equipped: false },
+          { id: 'leather_armor', name: 'Leather Armor', type: 'armor', equipped: false },
+          { id: 'dagger', name: 'Dagger (x2)', type: 'weapon', equipped: false, quantity: 2 }
+        ],
+        wizard: [
+          { id: 'quarterstaff', name: 'Quarterstaff', type: 'weapon', equipped: false },
+          { id: 'arcane_focus', name: 'Arcane Focus', type: 'gear', equipped: false },
+          { id: 'spellbook', name: 'Spellbook', type: 'gear', equipped: false },
+          { id: 'scholars_pack', name: "Scholar's Pack", type: 'gear', equipped: false },
+          { id: 'component_pouch', name: 'Component Pouch', type: 'gear', equipped: false }
+        ]
+      };
+
+      // Common items all classes can use
+      const commonItems = [
+        { id: 'healing_potion', name: 'Potion of Healing', type: 'consumable', quantity: 3 },
+        { id: 'greater_healing_potion', name: 'Potion of Greater Healing', type: 'consumable', quantity: 1 },
+        { id: 'rope', name: 'Rope (50ft)', type: 'gear', equipped: false },
+        { id: 'rations', name: 'Rations (10 days)', type: 'consumable', quantity: 10 },
+        { id: 'torch', name: 'Torch (x10)', type: 'gear', equipped: false, quantity: 10 },
+        { id: 'bedroll', name: 'Bedroll', type: 'gear', equipped: false },
+        { id: 'tinderbox', name: 'Tinderbox', type: 'gear', equipped: false }
+      ];
+
+      // High level items (level 10+)
+      const highLevelItems = [
+        { id: 'potion_superior_healing', name: 'Potion of Superior Healing', type: 'consumable', quantity: 2 },
+        { id: 'antitoxin', name: 'Antitoxin', type: 'consumable', quantity: 2 },
+        { id: 'climbers_kit', name: "Climber's Kit", type: 'gear', equipped: false }
+      ];
+
+      let itemsAdded = 0;
+
+      // Add class-specific items
+      const classItemList = classItems[charClass] || [];
+      classItemList.forEach(item => {
+        if (!currentItemIds.includes(item.id)) {
+          currentCharacter.inventory.push(item);
+          currentItemIds.push(item.id);
+          itemsAdded++;
+        }
+      });
+
+      // Add 3-4 common items
+      const commonToAdd = commonItems.slice(0, 4);
+      commonToAdd.forEach(item => {
+        if (!currentItemIds.includes(item.id)) {
+          currentCharacter.inventory.push(item);
+          currentItemIds.push(item.id);
+          itemsAdded++;
+        }
+      });
+
+      // Add high level items if level 10+
+      if (level >= 10) {
+        highLevelItems.forEach(item => {
+          if (!currentItemIds.includes(item.id)) {
+            currentCharacter.inventory.push(item);
+            currentItemIds.push(item.id);
+            itemsAdded++;
+          }
+        });
+      }
+
+      if (itemsAdded > 0) {
+        updateInventory();
+        addBattleLog(`🎒 ${currentCharacter.name} acquired ${itemsAdded} new item${itemsAdded > 1 ? 's' : ''}!`);
+        alert(`✨ Added ${itemsAdded} new item${itemsAdded > 1 ? 's' : ''} to inventory!`);
+      } else {
+        alert('🎒 No new items available! You already have all available items, or customize your inventory manually.');
+      }
+    }
+
     // Auto-update canvas based on HP percentage
     function getCharacterState() {
       const hpPercent = (currentCharacter.hp.current / currentCharacter.hp.max) * 100;
@@ -5845,7 +6035,7 @@
     }
 
     // Auto-add more spells from the database
-    function autoAddMoreSpells() {
+    function updateSpells() {
       const spellcasters = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
       const halfcasters = ['paladin', 'ranger'];
       const charClass = currentCharacter.class.toLowerCase();
@@ -5931,7 +6121,7 @@
     }
 
     // Auto-add more abilities from expanded database
-    function autoAddMoreAbilities() {
+    function updateAbilities() {
       if (!currentCharacter.abilities) {
         currentCharacter.abilities = [];
       }
