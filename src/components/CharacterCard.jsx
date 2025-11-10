@@ -144,6 +144,11 @@ function CharacterCard() {
       timestamp: new Date()
     }
     setMessages(prev => [...prev, newMessage])
+
+    // Update the mood display when a character message with a mood is added
+    if (type === 'character' && messageMood) {
+      setMood(messageMood)
+    }
   }
 
   const handleSendMessage = async (e) => {
@@ -256,6 +261,7 @@ function CharacterCard() {
               mode={interactionMode}
               onMessage={addMessage}
               abilities={character.abilities}
+              onAbilityUse={handleAbilityClick}
             />
           </div>
 
