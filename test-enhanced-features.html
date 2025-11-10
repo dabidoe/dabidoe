@@ -3252,55 +3252,97 @@
     function castSpellFromModal() {
       if (!currentModalSpell) return;
 
-      const isCantrip = currentModalSpellLevel === '0';
+      const spell = currentModalSpell;
+      const level = currentModalSpellLevel;
+      const isCantrip = level === '0';
 
-      // Check if can cast
+      // Cantrips don't need spell slots
       if (!isCantrip) {
-        if (!currentModalSpell.prepared) {
-          addBattleLog('⚠️ Spell must be prepared to cast!');
+        // Check if spell slot available
+        if (!currentCharacter.spellSlots?.[level] || currentCharacter.spellSlots[level].current <= 0) {
+          alert(`No ${level}${getOrdinalSuffix(level)} level spell slots available!`);
           return;
         }
-        if (!currentCharacter.spellSlots?.[currentModalSpellLevel] || currentCharacter.spellSlots[currentModalSpellLevel].current <= 0) {
-          addBattleLog('⚠️ No spell slots remaining!');
+
+        // Check if spell is prepared
+        if (!spell.prepared) {
+          alert(`${spell.name} is not prepared!`);
           return;
         }
+
         // Use spell slot
-        currentCharacter.spellSlots[currentModalSpellLevel].current--;
+        currentCharacter.spellSlots[level].current--;
         updateSpellSlotsDisplay();
       }
 
-      // Cast the spell
-      const spell = currentModalSpell;
-      addBattleLog(`${spell.icon} ${currentCharacter.name} casts ${spell.name}!`);
+      // Roll spell (if applicable)
+      let resultText = `✨ ${spell.name}`;
 
-      if (spell.attackRoll) {
+      if (spell.attackRoll || spell.damage) {
         // Attack spell
-        const intMod = Math.floor((currentCharacter.stats.int - 10) / 2);
-        const profBonus = 2 + Math.floor((currentCharacter.level - 1) / 4);
-        const spellAttack = intMod + profBonus;
-        const roll = Math.floor(Math.random() * 20) + 1;
-        const total = roll + spellAttack;
-        addBattleLog(`🎯 Spell Attack: ${total} (1d20+${spellAttack})`);
+        if (spell.attackRoll) {
+          const d20 = Math.floor(Math.random() * 20) + 1;
+          const spellAttackBonus = currentCharacter.computed?.spellAttackBonus || 7;
+          const total = d20 + spellAttackBonus;
+          const isCrit = d20 === 20;
+          const isFail = d20 === 1;
 
-        if (roll !== 1 && spell.damage) {
-          setTimeout(() => {
-            const damageRoll = eval(spell.damage.replace('d', '*') + `+${intMod}`);
-            addBattleLog(`💥 Damage: ${damageRoll}`);
-          }, 500);
+          resultText += ` | Attack: ${total} (d20: ${d20}+${spellAttackBonus})`;
+          if (isCrit) resultText += ' **CRITICAL HIT!**';
+          if (isFail) resultText += ' (Critical Miss)';
+        }
+
+        // Damage
+        if (spell.damage) {
+          const damageMatch = spell.damage.match(/(\d+)d(\d+)([+-]\d+)?/);
+          if (damageMatch) {
+            const numDice = parseInt(damageMatch[1]);
+            const diceType = parseInt(damageMatch[2]);
+            const modifier = damageMatch[3] ? parseInt(damageMatch[3]) : 0;
+
+            let damageTotal = 0;
+            let rolls = [];
+            for (let i = 0; i < numDice; i++) {
+              const roll = Math.floor(Math.random() * diceType) + 1;
+              rolls.push(roll);
+              damageTotal += roll;
+            }
+            damageTotal += modifier;
+
+            resultText += ` | Damage: ${damageTotal} (${spell.damage}) [${rolls.join(', ')}]`;
+          }
         }
       } else if (spell.save) {
         // Save spell
-        const spellSaveDC = currentCharacter.computed?.spellSaveDC || (8 + 2 + Math.floor((currentCharacter.stats.int - 10) / 2));
-        addBattleLog(`🛡️ Target must make a ${spell.save} save (DC ${spellSaveDC})`);
-      } else {
-        // Utility spell
-        addBattleLog(`✨ ${spell.name} takes effect!`);
+        const saveDC = currentCharacter.computed?.spellSaveDC || 15;
+        resultText += ` | ${spell.save} DC ${saveDC}`;
       }
 
-      showDiceRoll(spell.name, spell.icon || '✨', '✨', '✨', 'Cast', 'success');
+      // Add to battle log
+      addBattleLog(`${spell.icon || '✨'} ${resultText}`);
+
+      // Show in modal feedback
+      if (!isCantrip) {
+        alert(`Cast ${spell.name}! (${currentCharacter.spellSlots[level].current} ${level}${getOrdinalSuffix(level)} level slots remaining)`);
+      } else {
+        alert(`Cast ${spell.name}!`);
+      }
+
+      // Update displays
+      updateSpellsTab();
+      updateSpellSlotsDisplay();
 
       // Close modal
       closeSpellModal();
+    }
+
+    function getOrdinalSuffix(num) {
+      const j = num % 10;
+      const k = num % 100;
+      if (j == 1 && k != 11) return 'st';
+      if (j == 2 && k != 12) return 'nd';
+      if (j == 3 && k != 13) return 'rd';
+      return 'th';
     }
 
     function togglePrepareFromModal() {
@@ -4751,6 +4793,10 @@
           <button class="spell-picker-filter" data-level="3" onclick="filterByLevel('3')">3rd</button>
           <button class="spell-picker-filter" data-level="4" onclick="filterByLevel('4')">4th</button>
           <button class="spell-picker-filter" data-level="5" onclick="filterByLevel('5')">5th</button>
+          <button class="spell-picker-filter" data-level="6" onclick="filterByLevel('6')">6th</button>
+          <button class="spell-picker-filter" data-level="7" onclick="filterByLevel('7')">7th</button>
+          <button class="spell-picker-filter" data-level="8" onclick="filterByLevel('8')">8th</button>
+          <button class="spell-picker-filter" data-level="9" onclick="filterByLevel('9')">9th</button>
         </div>
       </div>
 
