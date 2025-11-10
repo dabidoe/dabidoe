@@ -2021,7 +2021,7 @@
           <div id="abilitiesTab" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;">
               <div style="font-size: 0.9rem; color: var(--text-secondary);">Class Abilities & Features</div>
-              <button onclick="updateAbilities()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
+              <button onclick="addMoreAbilities()" style="padding: 6px 12px; background: var(--secondary-color, #6c757d); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
                 🔄 Update
               </button>
             </div>
@@ -6235,7 +6235,7 @@
     }
 
     // Auto-add more abilities from expanded database
-    function updateAbilities() {
+    function addMoreAbilities() {
       if (!currentCharacter.abilities) {
         currentCharacter.abilities = [];
       }
