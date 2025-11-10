@@ -3105,6 +3105,19 @@
         <div class="slots-grid">
       `;
 
+      // Show cantrip row if character has cantrips
+      if (currentCharacter.spells['0'] && currentCharacter.spells['0'].length > 0) {
+        html += `
+          <div class="slot-row">
+            <span class="slot-label">Cantrips:</span>
+            <div class="slot-bar">
+              <div class="slot-fill" style="width: 100%; background: linear-gradient(90deg, var(--accent-color), var(--accent-color-bright));"></div>
+              <div class="slot-text">∞ Unlimited</div>
+            </div>
+          </div>
+        `;
+      }
+
       // Show spell slot progress bars
       const spellLevels = Object.keys(currentCharacter.spellSlots).sort((a, b) => parseInt(a) - parseInt(b));
       spellLevels.forEach(level => {
@@ -3292,7 +3305,7 @@
           if (isFail) resultText += ' (Critical Miss)';
         }
 
-        // Damage
+        // Damage (always show if spell has damage, even without attack roll)
         if (spell.damage) {
           const damageMatch = spell.damage.match(/(\d+)d(\d+)([+-]\d+)?/);
           if (damageMatch) {
@@ -3394,6 +3407,76 @@
         btn.classList.toggle('active', btn.dataset.level === 'all');
       });
     }
+    // Open spell detail from picker (for spells not in character list yet)
+    function openSpellPickerDetail(spellIndex) {
+      const spell = allSpellsFromAPI.find(s => s.index === spellIndex);
+      if (!spell) return;
+
+      // Map to character spell format for modal
+      const mappedSpell = mapAPISpellToCharacterSpell(spell);
+      currentModalSpell = mappedSpell;
+      currentModalSpellLevel = spell.level.toString();
+
+      // Update modal content
+      document.getElementById('modalSpellIcon').textContent = mappedSpell.icon || '✨';
+      document.getElementById('modalSpellName').textContent = mappedSpell.name;
+
+      const isCantrip = spell.level === 0;
+      const levelText = isCantrip ? 'Cantrip' : `Level ${spell.level} Spell`;
+      const school = mappedSpell.school || 'Evocation';
+      document.getElementById('modalSpellLevel').textContent = `${levelText} • ${school}`;
+
+      // Build stats grid
+      const statsGrid = document.getElementById('modalSpellStats');
+      statsGrid.innerHTML = `
+        <div class="spell-stat">
+          <div class="spell-stat-label">Casting Time</div>
+          <div class="spell-stat-value">${mappedSpell.castingTime}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Range</div>
+          <div class="spell-stat-value">${mappedSpell.range}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Components</div>
+          <div class="spell-stat-value">${mappedSpell.components}</div>
+        </div>
+        <div class="spell-stat">
+          <div class="spell-stat-label">Duration</div>
+          <div class="spell-stat-value">${mappedSpell.duration}${mappedSpell.concentration ? ' (Concentration)' : ''}</div>
+        </div>
+      `;
+
+      // Add damage/save info if applicable
+      if (mappedSpell.damage || mappedSpell.save) {
+        const damageHtml = mappedSpell.damage ? `
+          <div class="spell-stat">
+            <div class="spell-stat-label">Damage</div>
+            <div class="spell-stat-value" style="color: var(--battle-color);">${mappedSpell.damage}</div>
+          </div>
+        ` : '';
+
+        const saveHtml = mappedSpell.save ? `
+          <div class="spell-stat">
+            <div class="spell-stat-label">Save</div>
+            <div class="spell-stat-value">${mappedSpell.save} DC ${currentCharacter.computed?.spellSaveDC || 15}</div>
+          </div>
+        ` : '';
+
+        statsGrid.innerHTML += damageHtml + saveHtml;
+      }
+
+      // Description
+      document.getElementById('modalSpellDescription').textContent = mappedSpell.description || 'No description available.';
+
+      // Hide cast/prepare buttons since spell is not in character list yet
+      document.getElementById('modalCastBtn').style.display = 'none';
+      document.getElementById('modalPrepareBtn').style.display = 'none';
+
+      // Show modal
+      document.getElementById('spellModalOverlay').classList.add('show');
+    }
+
 
     async function fetchSpellsFromAPI() {
       const body = document.getElementById('spellPickerBody');
@@ -3464,13 +3547,13 @@
         const alreadyHas = hasSpell(spell.index);
 
         html += `
-          <div class="spell-picker-item">
+          <div class="spell-picker-item" style="cursor: pointer;" onclick="openSpellPickerDetail('${spell.index}')">
             <div class="spell-picker-item-info">
               <div class="spell-picker-item-name">${spell.name}</div>
               <div class="spell-picker-item-meta">${levelText} • ${school}</div>
             </div>
             <button class="spell-picker-item-add"
-                    onclick="addSpellToCharacter('${spell.index}')"
+                    onclick="event.stopPropagation(); addSpellToCharacter('${spell.index}')"
                     ${alreadyHas ? 'disabled' : ''}>
               ${alreadyHas ? '✓ Added' : '+ Add'}
             </button>
@@ -3576,6 +3659,25 @@
           const firstLevel = Object.keys(damageData)[0];
           spell.damage = damageData[firstLevel];
         }
+      }
+
+      // Detect if spell requires attack roll
+      // Check description for attack keywords or if it's explicitly marked
+      const needsAttackRoll = apiSpell.attack_roll ||
+                             (apiSpell.desc && apiSpell.desc.some(d =>
+                               d.includes('ranged spell attack') ||
+                               d.includes('melee spell attack') ||
+                               d.includes('spell attack')
+                             ));
+
+      // If spell has damage and description suggests attack, mark it
+      if (spell.damage && needsAttackRoll) {
+        spell.attackRoll = true;
+      }
+
+      // Add save requirement if present
+      if (apiSpell.dc) {
+        spell.save = apiSpell.dc.dc_type?.name || 'DEX';
       }
 
       // Determine if it's an attack roll or save
