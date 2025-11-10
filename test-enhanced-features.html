@@ -2699,6 +2699,13 @@
 
     let currentCharacter = characters[0];
     let selectedCantrip = null;
+    // Spell modal state
+    let currentModalSpell = null;
+    let currentModalSpellLevel = null;
+    // Spell picker state
+    let allSpellsFromAPI = [];
+    let filteredSpells = [];
+    let currentLevelFilter = 'all';
     let currentChatMode = 'conversation';
     let currentState = 'default';
     let turnNumber = 1;
@@ -2716,12 +2723,18 @@
 
     function populateCharacterMenu() {
       const list = document.getElementById('characterList');
-      console.log('Populating character menu with', characters.length, 'characters');
+      console.log('=== POPULATING CHARACTER MENU ===');
+      console.log('Characters array length:', characters.length);
+      console.log('Characters:', characters.map(c => c.name));
+
       if (!list) {
-        console.error('characterList element not found!');
+        console.error('ERROR: characterList element not found!');
         return;
       }
-      list.innerHTML = characters.map((char, index) => `
+
+      console.log('characterList element found');
+
+      const html = characters.map((char, index) => `
         <div class="character-item ${index === 0 ? 'active' : ''}" onclick="selectCharacterFromMenu(${index})">
           <div class="character-item-header">
             <div class="character-item-emoji">${char.emoji}</div>
@@ -2736,6 +2749,12 @@
           </div>
         </div>
       `).join('');
+
+      console.log('Generated HTML length:', html.length);
+      console.log('First 200 chars:', html.substring(0, 200));
+      list.innerHTML = html;
+      console.log('Character menu populated successfully');
+      console.log('=================================');
     }
 
     function toggleMenu() {
@@ -3127,8 +3146,8 @@
     }
 
     // Modal state
-    let currentModalSpell = null;
-    let currentModalSpellLevel = null;
+
+
 
     // Open spell detail modal
     function openSpellDetail(spellId, level) {
@@ -3305,10 +3324,9 @@
       updateSpellSlotsDisplay();
     }
 
-    // Spell picker state
-    let allSpellsFromAPI = [];
-    let filteredSpells = [];
-    let currentLevelFilter = 'all';
+
+
+
 
     // Spell picker modal for adding spells from D&D 5e API
     async function openSpellPicker() {
