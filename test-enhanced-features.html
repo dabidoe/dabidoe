@@ -1733,8 +1733,8 @@
     <div class="test-header">
       <!-- Portrait Upper Left with HP Bar -->
       <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
-        <div class="header-portrait" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-color);">
-          <div id="headerPortrait" style="width: 100%; height: 100%; background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+        <div class="header-portrait" style="width: 160px; height: 160px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-color);">
+          <div id="headerPortrait" style="width: 100%; height: 100%; background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 4.5rem;">
             🏹
           </div>
         </div>
@@ -1801,24 +1801,6 @@
 
           <!-- Stats Tab -->
           <div id="statsTab">
-            <!-- Portrait Section -->
-            <div style="margin-bottom: 20px;">
-              <div style="width: 200px; height: 200px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 3px solid var(--accent-color); background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
-                <div id="statsPortrait">🏹</div>
-              </div>
-              <select id="portraitExpression" onchange="updatePortraitExpression()" style="width: 200px; margin: 10px auto 0; display: block; padding: 8px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
-                <option value="normal">Normal</option>
-                <option value="happy">Happy</option>
-                <option value="sad">Sad</option>
-                <option value="angry">Angry</option>
-                <option value="hurt">Hurt</option>
-                <option value="injured">Injured</option>
-                <option value="gravely-injured">Gravely Injured</option>
-              </select>
-            </div>
-
-
-
             <div class="stats-grid">
               <div class="stat-block" onclick="rollSavingThrow('str')" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                 <div class="stat-name">STR 🎲</div>
@@ -2406,6 +2388,23 @@
             🌙 Long Rest
           </button>
         </div>
+      </div>
+
+      <!-- Character Portrait -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">🎭 Character Portrait</div>
+        <div style="width: 240px; height: 240px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 3px solid var(--accent-color); background: var(--background-color); display: flex; align-items: center; justify-content: center; font-size: 6rem;">
+          <div id="footerPortrait">🏹</div>
+        </div>
+        <select id="portraitExpression" onchange="updatePortraitExpression()" style="width: 240px; margin: 10px auto 0; display: block; padding: 10px; background: var(--surface-color); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; cursor: pointer;">
+          <option value="normal">Normal</option>
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="angry">Angry</option>
+          <option value="hurt">Hurt</option>
+          <option value="injured">Injured</option>
+          <option value="gravely-injured">Gravely Injured</option>
+        </select>
       </div>
 
       <!-- Location -->
@@ -3123,7 +3122,7 @@
 
       // Update portraits
       document.getElementById('headerPortrait').textContent = currentCharacter.emoji;
-      document.getElementById('statsPortrait').textContent = currentCharacter.emoji;
+      document.getElementById('footerPortrait').textContent = currentCharacter.emoji;
 
       // Update stats
       const stats = currentCharacter.stats;
