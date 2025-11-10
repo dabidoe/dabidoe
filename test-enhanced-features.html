@@ -2085,6 +2085,18 @@
 
           <!-- Battle Mode -->
           <div id="battleMode" style="display: none;">
+            <!-- HP Editor for Battle Mode -->
+            <div style="background: var(--surface-color); border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <strong style="color: var(--text-primary);">Hit Points</strong>
+                <button onclick="editBattleHP()" style="padding: 6px 12px; background: var(--accent-color); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">✏️ Edit HP</button>
+              </div>
+              <div class="hp-bar" style="height: 30px; margin-bottom: 10px;">
+                <div class="hp-fill" id="battleHpFill" style="width: 85%"></div>
+                <div class="hp-text" id="battleHpText" style="line-height: 30px;">58 / 68</div>
+              </div>
+            </div>
+
             <div class="turn-tracker">
               <div class="turn-info">
                 <div>
@@ -2123,7 +2135,7 @@
               <button class="action-btn" onclick="rollDice('Save', 'd20')">🛡️ Save</button>
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
               <button class="action-btn" onclick="quickAction('dodge')">💨 Dodge</button>
-              <button class="action-btn" onclick="quickAction('help')">🤝 Help</button>
+
             </div>
           </div>
 
@@ -2798,6 +2810,19 @@
       } else if (hpPercent > 25) {
         headerHpFill.classList.add('medium');
       }
+
+      // Update Battle HP Bar
+      const battleHpFill = document.getElementById('battleHpFill');
+      const battleHpText = document.getElementById('battleHpText');
+      if (battleHpFill && battleHpText) {
+        battleHpFill.style.width = hpPercent + '%';
+        battleHpFill.classList.remove('high', 'medium', 'low');
+        if (hpPercent > 66) battleHpFill.classList.add('high');
+        else if (hpPercent > 33) battleHpFill.classList.add('medium');
+        else battleHpFill.classList.add('low');
+        battleHpText.textContent = `${currentCharacter.hp.current} / ${currentCharacter.hp.max}`;
+      }
+
 
       // Update AC
       document.getElementById('acValue').textContent = currentCharacter.ac;
@@ -4042,6 +4067,26 @@
         // Non-damage ability
         addBattleLog(`${ability.icon} ${ability.name} - ${ability.description}`);
       }
+    }
+
+
+    function editBattleHP() {
+      const current = currentCharacter.hp.current;
+      const max = currentCharacter.hp.max;
+
+      const newCurrent = prompt(`Edit Current HP (max: ${max}):`, current);
+      if (newCurrent === null) return; // Cancelled
+
+      const newCurrentNum = parseInt(newCurrent);
+      if (isNaN(newCurrentNum) || newCurrentNum < 0) {
+        alert('Please enter a valid number');
+        return;
+      }
+
+      // Update HP
+      currentCharacter.hp.current = Math.min(newCurrentNum, max);
+      updateCharacterDisplay();
+      addBattleLog(`${currentCharacter.name}'s HP updated to ${currentCharacter.hp.current}/${max}`);
     }
 
     function changeLocation() {
