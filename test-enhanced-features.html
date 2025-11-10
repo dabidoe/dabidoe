@@ -2145,23 +2145,6 @@
               </div>
             </div>
 
-            <div class="turn-tracker">
-              <div class="turn-info">
-                <div>
-                  <strong style="color: var(--text-secondary); font-size: 0.85rem;">Turn</strong>
-                  <div class="turn-number" id="turnNumber">1</div>
-                </div>
-                <div style="border-left: 2px solid var(--border-color); padding-left: 15px; margin-left: 15px;">
-                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Current</div>
-                  <div style="font-weight: 600; color: var(--text-primary);" id="currentTurn">Your Turn</div>
-                </div>
-              </div>
-              <div class="turn-controls" style="display: flex; gap: 8px;">
-                <button onclick="rollInitiative()" style="flex: 1;">🎲 Initiative</button>
-                <button onclick="nextTurn()" style="flex: 1;">Next Turn ➤</button>
-              </div>
-            </div>
-
             <!-- Battle Log -->
             <div style="margin-bottom: 15px;">
               <strong style="color: var(--text-primary);">Battle Log</strong>
@@ -2184,6 +2167,23 @@
               <button class="action-btn" onclick="quickAction('dash')">🏃 Dash</button>
               <button class="action-btn" onclick="quickAction('dodge')">💨 Dodge</button>
 
+            </div>
+
+            <div class="turn-tracker">
+              <div class="turn-info">
+                <div>
+                  <strong style="color: var(--text-secondary); font-size: 0.85rem;">Turn</strong>
+                  <div class="turn-number" id="turnNumber">1</div>
+                </div>
+                <div style="border-left: 2px solid var(--border-color); padding-left: 15px; margin-left: 15px;">
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Current</div>
+                  <div style="font-weight: 600; color: var(--text-primary);" id="currentTurn">Your Turn</div>
+                </div>
+              </div>
+              <div class="turn-controls" style="display: flex; gap: 8px;">
+                <button onclick="rollInitiative()" style="flex: 1;">🎲 Initiative</button>
+                <button onclick="nextTurn()" style="flex: 1;">Next Turn ➤</button>
+              </div>
             </div>
           </div>
 
@@ -6149,8 +6149,13 @@
       const spellcasters = ['bard', 'cleric', 'druid', 'sorcerer', 'warlock', 'wizard'];
       const halfcasters = ['paladin', 'ranger'];
       const charClass = currentCharacter.class.toLowerCase();
+      const subclass = currentCharacter.subclass || '';
 
-      if (!spellcasters.includes(charClass) && !halfcasters.includes(charClass)) {
+      // 1/3 casters (Fighter Eldritch Knight, Rogue Arcane Trickster)
+      const thirdCasterSubclasses = ['Eldritch Knight', 'Arcane Trickster'];
+      const isThirdCaster = thirdCasterSubclasses.includes(subclass);
+
+      if (!spellcasters.includes(charClass) && !halfcasters.includes(charClass) && !isThirdCaster) {
         alert('⚠️ This character is not a spellcaster!');
         return;
       }
@@ -6223,7 +6228,6 @@
 
       if (spellsAdded > 0) {
         updateSpellsTab();
-        addBattleLog(`📚 ${currentCharacter.name} learned ${spellsAdded} new spell${spellsAdded > 1 ? 's' : ''}!`);
         alert(`✨ Added ${spellsAdded} new spell${spellsAdded > 1 ? 's' : ''} to your spellbook!`);
       } else {
         alert('📖 No new spells available! You already know all available spells for your level, or use the Spell Picker to add custom spells.');
@@ -6369,7 +6373,6 @@
 
       if (abilitiesAdded > 0) {
         updateAbilitiesTab();
-        addBattleLog(`⚔️ ${currentCharacter.name} learned ${abilitiesAdded} new ${abilitiesAdded > 1 ? 'abilities' : 'ability'}!`);
         alert(`✨ Added ${abilitiesAdded} new ${abilitiesAdded > 1 ? 'abilities' : 'ability'}!`);
       } else {
         alert('⚔️ No new abilities available! You already know all available abilities for your class, or use the Ability Picker to add custom abilities.');
