@@ -35,7 +35,7 @@ const SKILLS = [
   { name: 'Survival', emoji: '🏕️', ability: 'WIS' }
 ]
 
-function CharacterModes({ character, mode, onMessage, abilities = [] }) {
+function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse }) {
   const [selectedDialogue, setSelectedDialogue] = useState(null)
 
   // Calculate skill modifier
@@ -202,10 +202,10 @@ function CharacterModes({ character, mode, onMessage, abilities = [] }) {
               <AbilityCard
                 key={ability.abilityId}
                 ability={ability}
-                onUse={(ab) => {
-                  // Handle ability use
+                onUse={onAbilityUse || ((ab) => {
+                  // Handle ability use (fallback if no handler provided)
                   onMessage(`Used: ${ab.details?.name || ab.name}`, 'character', 'Focused')
-                }}
+                })}
                 character={character}
                 mode="battle"
               />
@@ -284,6 +284,7 @@ CharacterModes.propTypes = {
   mode: PropTypes.oneOf(['conversation', 'battle', 'skills']).isRequired,
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
+  onAbilityUse: PropTypes.func,
 }
 
 export default CharacterModes
