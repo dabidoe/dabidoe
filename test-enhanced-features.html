@@ -1317,6 +1317,7 @@
             <button class="stat-tab-btn active" onclick="switchStatTab('stats')" id="statsTabBtn">Stats</button>
             <button class="stat-tab-btn" onclick="switchStatTab('skills')" id="skillsTabBtn">Skills</button>
             <button class="stat-tab-btn" onclick="switchStatTab('abilities')" id="abilitiesTabBtn">Abilities</button>
+            <button class="stat-tab-btn" onclick="switchStatTab('spells')" id="spellsTabBtn">Spells</button>
             <button class="stat-tab-btn" onclick="switchStatTab('inventory')" id="inventoryTabBtn">Inventory</button>
           </div>
 
@@ -1551,10 +1552,33 @@
           <!-- Abilities Tab -->
           <div id="abilitiesTab" style="display: none;">
             <div style="margin-bottom: 15px;">
-              <strong style="color: var(--text-primary);">Combat Abilities & Spells</strong>
+              <strong style="color: var(--text-primary);">Combat Abilities</strong>
             </div>
             <div id="abilitiesContent">
-              <!-- Will be populated dynamically with abilities and spells -->
+              <!-- Will be populated dynamically with abilities only -->
+            </div>
+          </div>
+
+          <!-- Spells Tab -->
+          <div id="spellsTab" style="display: none;">
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+              <strong style="color: var(--text-primary);">Spells</strong>
+              <button onclick="openSpellPicker()" style="padding: 6px 12px; background: var(--accent-color); border: none; border-radius: 6px; color: white; font-size: 0.85rem; cursor: pointer; font-weight: 600;">
+                + Add Spell
+              </button>
+            </div>
+
+            <!-- Spell Slots -->
+            <div id="spellSlotsDisplay" style="margin-bottom: 20px; padding: 12px; background: var(--surface-color); border-radius: 8px; border: 2px solid var(--border-color);">
+              <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">Spell Slots</div>
+              <div id="spellSlotsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 8px;">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Spells List -->
+            <div id="spellsContent">
+              <!-- Will be populated dynamically with spells -->
             </div>
           </div>
 
@@ -2442,9 +2466,8 @@
       const abilitiesContent = document.getElementById('abilitiesContent');
       let html = '';
 
-      // Show abilities (for all classes)
+      // Show abilities only
       if (currentCharacter.abilities && currentCharacter.abilities.length > 0) {
-        html += '<div style="margin-bottom: 20px;"><strong style="color: var(--text-primary);">⚔️ Abilities</strong></div>';
         currentCharacter.abilities.forEach(ability => {
           const isDefault = ability.isDefault || false;
           html += `
@@ -2466,50 +2489,110 @@
             </div>
           `;
         });
-      }
-
-      // Show spells (for casters and halfcasters)
-      if (currentCharacter.spells && (currentCharacter.classType === 'caster' || currentCharacter.classType === 'halfcaster')) {
-        html += '<div style="margin: 20px 0;"><strong style="color: var(--text-primary);">✨ Spells</strong></div>';
-        html += '<div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-secondary);">Click a spell to toggle preparation. Prepared spells are available in battle.</div>';
-
-        Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
-          const levelName = level === '0' ? 'Cantrips' : `Level ${level}`;
-          html += `<div class="spell-level-section">
-            <div class="spell-level-header">${levelName}</div>`;
-
-          currentCharacter.spells[level].forEach(spell => {
-            const isDefault = spell.isDefault || false;
-            const isCantrip = level === '0';
-            const isSelected = selectedCantrip && selectedCantrip.id === spell.id;
-
-            html += `
-              <div class="spell-card ${spell.prepared ? 'prepared' : ''} ${isSelected ? 'selected' : ''}" style="position: relative; ${isSelected ? 'border: 2px solid var(--accent-color);' : ''}">
-                <div class="spell-header" onclick="${isCantrip ? `selectCantrip('${spell.id}', ${level})` : `toggleSpellPrepared('${spell.id}', ${level})`}">
-                  <div class="spell-icon">${spell.icon}</div>
-                  <div class="spell-info">
-                    <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''} ${isSelected ? '(Selected)' : ''}</div>
-                    ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
-                  </div>
-                  ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
-                  ${isSelected ? '<div class="prepared-indicator" style="background: var(--accent-color);">Selected</div>' : ''}
-                </div>
-                <div class="spell-description">${spell.description}</div>
-                ${spell.prepared && !isCantrip ? `<button
-                  onclick="event.stopPropagation(); setDefaultSpell('${spell.id}', ${level})"
-                  style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
-                >
-                  ${isDefault ? 'Default ✓' : 'Set Default'}
-                </button>` : ''}
-              </div>
-            `;
-          });
-
-          html += '</div>';
-        });
+      } else {
+        html = '<div style="color: var(--text-secondary); padding: 20px; text-align: center;">No abilities available.</div>';
       }
 
       abilitiesContent.innerHTML = html;
+    }
+
+    function updateSpellsTab() {
+      const spellsContent = document.getElementById('spellsContent');
+      const spellSlotsGrid = document.getElementById('spellSlotsGrid');
+      let html = '';
+      let slotsHtml = '';
+
+      // Check if character has spells
+      if (!currentCharacter.spells || Object.keys(currentCharacter.spells).length === 0) {
+        spellsContent.innerHTML = '<div style="color: var(--text-secondary); padding: 20px; text-align: center;">No spells available for this character.</div>';
+        spellSlotsGrid.innerHTML = '<div style="color: var(--text-secondary); padding: 10px; text-align: center;">N/A</div>';
+        return;
+      }
+
+      // Show spell slots (mock data - would come from character data)
+      const maxSpellLevel = Math.max(...Object.keys(currentCharacter.spells).map(l => parseInt(l)).filter(l => l > 0));
+      for (let level = 1; level <= maxSpellLevel; level++) {
+        const maxSlots = getSpellSlots(currentCharacter.level, currentCharacter.classType, level);
+        const currentSlots = maxSlots; // TODO: Track used slots
+        slotsHtml += `
+          <div style="padding: 8px; background: var(--background-color); border: 2px solid var(--border-color); border-radius: 6px; text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px;">Level ${level}</div>
+            <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${currentSlots}/${maxSlots}</div>
+          </div>
+        `;
+      }
+      spellSlotsGrid.innerHTML = slotsHtml;
+
+      // Show spells by level
+      html += '<div style="margin-bottom: 10px; font-size: 0.85rem; color: var(--text-secondary);">Click a spell to toggle preparation. Prepared spells are available in battle.</div>';
+
+      Object.keys(currentCharacter.spells).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
+        const levelName = level === '0' ? 'Cantrips' : `Level ${level}`;
+        html += `<div class="spell-level-section">
+          <div class="spell-level-header">${levelName}</div>`;
+
+        currentCharacter.spells[level].forEach(spell => {
+          const isDefault = spell.isDefault || false;
+          const isCantrip = level === '0';
+          const isSelected = selectedCantrip && selectedCantrip.id === spell.id;
+
+          html += `
+            <div class="spell-card ${spell.prepared ? 'prepared' : ''} ${isSelected ? 'selected' : ''}" style="position: relative; ${isSelected ? 'border: 2px solid var(--accent-color);' : ''}">
+              <div class="spell-header" onclick="${isCantrip ? `selectCantrip('${spell.id}', ${level})` : `toggleSpellPrepared('${spell.id}', ${level})`}">
+                <div class="spell-icon">${spell.icon}</div>
+                <div class="spell-info">
+                  <div class="spell-name">${spell.name} ${isDefault ? '(Default)' : ''} ${isSelected ? '(Selected)' : ''}</div>
+                  ${spell.damage ? `<div class="spell-damage">${spell.damage}</div>` : ''}
+                </div>
+                ${spell.prepared ? '<div class="prepared-indicator">Prepared</div>' : ''}
+                ${isSelected ? '<div class="prepared-indicator" style="background: var(--accent-color);">Selected</div>' : ''}
+              </div>
+              <div class="spell-description">${spell.description}</div>
+              ${spell.prepared && !isCantrip ? `<button
+                onclick="event.stopPropagation(); setDefaultSpell('${spell.id}', ${level})"
+                style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; background: var(--accent-color); border: none; border-radius: 4px; color: white; font-size: 0.7rem; cursor: pointer;"
+              >
+                ${isDefault ? 'Default ✓' : 'Set Default'}
+              </button>` : ''}
+            </div>
+          `;
+        });
+
+        html += '</div>';
+      });
+
+      spellsContent.innerHTML = html;
+    }
+
+    // Helper function to get spell slots by level and class type
+    function getSpellSlots(characterLevel, classType, spellLevel) {
+      // Simplified spell slot calculation (D&D 5e)
+      const halfcasterLevel = Math.floor(characterLevel / 2);
+      const effectiveLevel = classType === 'halfcaster' ? halfcasterLevel : characterLevel;
+
+      const slotTable = {
+        1: [2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+        2: [0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        3: [0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        4: [0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        5: [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3]
+      };
+
+      if (spellLevel > 5 || effectiveLevel < 1) return 0;
+      return slotTable[spellLevel]?.[effectiveLevel - 1] || 0;
+    }
+
+    // Spell picker modal for adding spells from D&D 5e API
+    function openSpellPicker() {
+      // TODO: Implement spell picker modal with D&D 5e API integration
+      // This will:
+      // 1. Create a modal overlay
+      // 2. Fetch spells from https://www.dnd5eapi.co/api/spells
+      // 3. Display searchable/filterable spell list
+      // 4. Allow user to select and add spells to character
+
+      addBattleLog('🔮 Spell picker coming soon! Will integrate with D&D 5e API...');
+      console.log('Opening spell picker - D&D 5e API integration pending');
     }
 
     function updateSkills() {
@@ -2551,6 +2634,7 @@
       document.getElementById('statsTab').style.display = tab === 'stats' ? 'block' : 'none';
       document.getElementById('skillsTab').style.display = tab === 'skills' ? 'block' : 'none';
       document.getElementById('abilitiesTab').style.display = tab === 'abilities' ? 'block' : 'none';
+      document.getElementById('spellsTab').style.display = tab === 'spells' ? 'block' : 'none';
       document.getElementById('inventoryTab').style.display = tab === 'inventory' ? 'block' : 'none';
 
       // Update content when switching tabs
@@ -2558,6 +2642,8 @@
         updateInventory();
       } else if (tab === 'abilities') {
         updateAbilitiesTab();
+      } else if (tab === 'spells') {
+        updateSpellsTab();
       }
     }
 
