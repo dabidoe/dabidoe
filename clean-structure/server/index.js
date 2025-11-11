@@ -8,8 +8,10 @@ import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
-import RunwareService from './services/runware.js';
-import characterRoutes from './routes/characters.js';
+import RunwareService from './src/services/runware.js';
+import MongoDBService from './src/services/mongodb.js';
+import characterRoutes from './src/routes/characters.js';
+import libraryRoutes from './src/routes/library.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,14 +26,19 @@ app.use(cors({
   credentials: true
 }));
 
-// Initialize Runware service
+// Initialize services
 const runwareService = new RunwareService(process.env.RUNWARE_API_KEY);
+const mongodbService = new MongoDBService(process.env.MONGODB_URI);
 
-// Make runware service available to routes
+// Make services available to routes
 app.locals.runware = runwareService;
+app.locals.services = {
+  mongodb: mongodbService
+};
 
 // API Routes
 app.use('/api/characters', characterRoutes);
+app.use('/api/library', libraryRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -39,7 +46,8 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     services: {
-      runware: runwareService ? 'connected' : 'disconnected'
+      runware: runwareService ? 'connected' : 'disconnected',
+      mongodb: mongodbService?.db ? 'connected' : 'disconnected'
     }
   });
 });
@@ -247,6 +255,10 @@ async function handlePortraitGeneration(ws, message) {
 // Initialize server
 async function startServer() {
   try {
+    // Connect to MongoDB
+    await mongodbService.connect();
+    await mongodbService.createIndexes();
+
     // Initialize Runware connection
     await runwareService.initialize();
 
@@ -257,6 +269,7 @@ async function startServer() {
       console.log('═══════════════════════════════════════════════════');
       console.log(`📡 HTTP Server: http://localhost:${PORT}`);
       console.log(`🔌 WebSocket: ws://localhost:${PORT}/ws`);
+      console.log(`💾 MongoDB: Connected`);
       console.log(`🎨 Runware.ai: Connected`);
       console.log('═══════════════════════════════════════════════════');
     });
@@ -269,6 +282,7 @@ async function startServer() {
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
+  await mongodbService.disconnect();
   await runwareService.disconnect();
   server.close(() => {
     console.log('Server closed');
@@ -278,6 +292,7 @@ process.on('SIGTERM', async () => {
 
 process.on('SIGINT', async () => {
   console.log('\nSIGINT received, shutting down gracefully...');
+  await mongodbService.disconnect();
   await runwareService.disconnect();
   server.close(() => {
     console.log('Server closed');
