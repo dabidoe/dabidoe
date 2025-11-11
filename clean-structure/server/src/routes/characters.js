@@ -1019,6 +1019,403 @@ Generate a brief, peaceful 1-2 sentence description of waking refreshed and read
   }
 });
 
+/**
+ * POST /api/characters/:id/inventory/add
+ * Add item to inventory
+ */
+router.post('/:id/inventory/add', async (req, res) => {
+  try {
+    const { item } = req.body;
+
+    if (!item || !item.name) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Item data is required' }
+      });
+    }
+
+    const mongodb = req.app.locals.services.mongodb;
+    if (!mongodb) {
+      return res.status(503).json({
+        success: false,
+        error: { message: 'Database not available' }
+      });
+    }
+
+    const character = await mongodb.getCharacter(req.params.id);
+    if (!character) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Character not found' }
+      });
+    }
+
+    // Add unique ID if not present
+    if (!item.id) {
+      item.id = `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    const inventory = character.inventory || [];
+    inventory.push(item);
+
+    const updatedCharacter = await mongodb.updateCharacter(req.params.id, { inventory });
+
+    res.json({
+      success: true,
+      data: {
+        item,
+        inventory: updatedCharacter.inventory
+      }
+    });
+  } catch (error) {
+    console.error('Add item error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to add item' }
+    });
+  }
+});
+
+/**
+ * DELETE /api/characters/:id/inventory/:itemId
+ * Remove item from inventory
+ */
+router.delete('/:id/inventory/:itemId', async (req, res) => {
+  try {
+    const mongodb = req.app.locals.services.mongodb;
+    if (!mongodb) {
+      return res.status(503).json({
+        success: false,
+        error: { message: 'Database not available' }
+      });
+    }
+
+    const character = await mongodb.getCharacter(req.params.id);
+    if (!character) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Character not found' }
+      });
+    }
+
+    const inventory = character.inventory || [];
+    const updatedInventory = inventory.filter(item => item.id !== req.params.itemId);
+
+    if (updatedInventory.length === inventory.length) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Item not found' }
+      });
+    }
+
+    const updatedCharacter = await mongodb.updateCharacter(req.params.id, { inventory: updatedInventory });
+
+    res.json({
+      success: true,
+      data: {
+        inventory: updatedCharacter.inventory
+      }
+    });
+  } catch (error) {
+    console.error('Remove item error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to remove item' }
+    });
+  }
+});
+
+/**
+ * POST /api/characters/:id/inventory/:itemId/equip
+ * Equip an item
+ */
+router.post('/:id/inventory/:itemId/equip', async (req, res) => {
+  try {
+    const mongodb = req.app.locals.services.mongodb;
+    if (!mongodb) {
+      return res.status(503).json({
+        success: false,
+        error: { message: 'Database not available' }
+      });
+    }
+
+    const character = await mongodb.getCharacter(req.params.id);
+    if (!character) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Character not found' }
+      });
+    }
+
+    const inventory = character.inventory || [];
+    const item = inventory.find(i => i.id === req.params.itemId);
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Item not found' }
+      });
+    }
+
+    // Check if item can be equipped
+    if (!item.slot) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'This item cannot be equipped' }
+      });
+    }
+
+    // Unequip conflicting items
+    const updatedInventory = inventory.map(i => {
+      // If this is the item being equipped, mark it as equipped
+      if (i.id === item.id) {
+        return { ...i, equipped: true };
+      }
+
+      // Unequip items in the same slot
+      if (i.equipped && i.slot === item.slot) {
+        // Special handling for rings
+        if (item.slot === 'ring') {
+          // Don't unequip if we have 2 ring slots available
+          const equippedRings = inventory.filter(x => x.equipped && x.slot === 'ring');
+          if (equippedRings.length < 2) {
+            return i; // Keep equipped
+          }
+        }
+        return { ...i, equipped: false };
+      }
+
+      // Two-handed weapons unequip off-hand
+      if (item.weapon?.properties?.includes('two-handed') && i.equipped && i.slot === 'offHand') {
+        return { ...i, equipped: false };
+      }
+
+      // Equipping shield/off-hand weapon unequips two-handed weapon
+      if ((item.slot === 'offHand' || (item.weapon && item.slot === 'mainHand')) &&
+          i.equipped && i.weapon?.properties?.includes('two-handed')) {
+        return { ...i, equipped: false };
+      }
+
+      return i;
+    });
+
+    // Recalculate AC
+    const newAC = calculateAC(character, updatedInventory);
+
+    const updatedCharacter = await mongodb.updateCharacter(req.params.id, {
+      inventory: updatedInventory,
+      ac: newAC
+    });
+
+    res.json({
+      success: true,
+      data: {
+        item: updatedInventory.find(i => i.id === item.id),
+        inventory: updatedCharacter.inventory,
+        ac: newAC
+      }
+    });
+  } catch (error) {
+    console.error('Equip item error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to equip item' }
+    });
+  }
+});
+
+/**
+ * POST /api/characters/:id/inventory/:itemId/unequip
+ * Unequip an item
+ */
+router.post('/:id/inventory/:itemId/unequip', async (req, res) => {
+  try {
+    const mongodb = req.app.locals.services.mongodb;
+    if (!mongodb) {
+      return res.status(503).json({
+        success: false,
+        error: { message: 'Database not available' }
+      });
+    }
+
+    const character = await mongodb.getCharacter(req.params.id);
+    if (!character) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Character not found' }
+      });
+    }
+
+    const inventory = character.inventory || [];
+    const updatedInventory = inventory.map(item => {
+      if (item.id === req.params.itemId) {
+        return { ...item, equipped: false };
+      }
+      return item;
+    });
+
+    // Recalculate AC
+    const newAC = calculateAC(character, updatedInventory);
+
+    const updatedCharacter = await mongodb.updateCharacter(req.params.id, {
+      inventory: updatedInventory,
+      ac: newAC
+    });
+
+    res.json({
+      success: true,
+      data: {
+        inventory: updatedCharacter.inventory,
+        ac: newAC
+      }
+    });
+  } catch (error) {
+    console.error('Unequip item error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to unequip item' }
+    });
+  }
+});
+
+/**
+ * POST /api/characters/:id/inventory/:itemId/use
+ * Use a consumable item
+ */
+router.post('/:id/inventory/:itemId/use', async (req, res) => {
+  try {
+    const { mongodb, gemini } = req.app.locals.services;
+    const character = mongodb ? await mongodb.getCharacter(req.params.id) : null;
+
+    if (!character) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Character not found' }
+      });
+    }
+
+    const inventory = character.inventory || [];
+    const item = inventory.find(i => i.id === req.params.itemId);
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Item not found' }
+      });
+    }
+
+    if (item.category !== 'potion' && item.category !== 'scroll') {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'This item cannot be used' }
+      });
+    }
+
+    // Consume item
+    let updatedInventory;
+    if (item.quantity > 1) {
+      updatedInventory = inventory.map(i =>
+        i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i
+      );
+    } else {
+      updatedInventory = inventory.filter(i => i.id !== item.id);
+    }
+
+    // Apply effect (e.g., healing potion)
+    let effectResult = {};
+    if (item.consumable?.effect) {
+      const healMatch = item.consumable.effect.match(/heal (\d+d\d+\+?\d*)/i);
+      if (healMatch) {
+        const healRoll = rollDiceFormula(healMatch[1]);
+        const hp = character.hp || { current: 0, max: 0 };
+        hp.current = Math.min(hp.max, hp.current + healRoll.total);
+        effectResult.healing = healRoll.total;
+        await mongodb.updateCharacter(req.params.id, { hp });
+      }
+    }
+
+    // Generate AI narrative
+    let narrative = `${character.name} uses ${item.name}.`;
+    if (gemini) {
+      try {
+        const prompt = `${character.name} uses a ${item.name}.
+${item.description}
+${effectResult.healing ? `They heal ${effectResult.healing} hit points.` : ''}
+Generate a brief, flavorful 1-sentence description of using this item.`;
+
+        const aiResponse = await gemini.model.generateContent(prompt);
+        narrative = aiResponse.response.text().trim();
+      } catch (error) {
+        console.error('Narrative generation failed:', error);
+      }
+    }
+
+    const updatedCharacter = await mongodb.updateCharacter(req.params.id, { inventory: updatedInventory });
+
+    res.json({
+      success: true,
+      data: {
+        item: item.name,
+        effect: effectResult,
+        inventory: updatedCharacter.inventory,
+        narrative
+      }
+    });
+  } catch (error) {
+    console.error('Use item error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to use item' }
+    });
+  }
+});
+
+// Helper: Calculate AC from equipped items
+function calculateAC(character, inventory) {
+  let baseAC = 10;
+  const dexMod = Math.floor(((character.stats?.dex || 10) - 10) / 2);
+  let maxDexBonus = null;
+  let bonuses = 0;
+
+  // Get equipped items
+  const equippedBody = inventory.find(i => i.equipped && i.slot === 'body');
+  const equippedOffHand = inventory.find(i => i.equipped && i.slot === 'offHand');
+  const equippedRings = inventory.filter(i => i.equipped && i.slot === 'ring');
+  const equippedNeck = inventory.find(i => i.equipped && i.slot === 'neck');
+
+  // Armor (body)
+  if (equippedBody?.armor) {
+    baseAC = equippedBody.armor.ac;
+    maxDexBonus = equippedBody.armor.maxDexBonus;
+    if (equippedBody.magic?.bonus) {
+      bonuses += equippedBody.magic.bonus;
+    }
+  }
+
+  // Shield (offHand)
+  if (equippedOffHand?.shield) {
+    bonuses += equippedOffHand.shield.acBonus;
+    if (equippedOffHand.magic?.bonus) {
+      bonuses += equippedOffHand.magic.bonus;
+    }
+  }
+
+  // Apply DEX modifier (respecting armor max)
+  let finalDexMod = dexMod;
+  if (maxDexBonus !== null && maxDexBonus !== undefined) {
+    finalDexMod = Math.min(dexMod, maxDexBonus);
+  }
+
+  // Ring/Amulet AC bonuses
+  [...equippedRings, equippedNeck].forEach(item => {
+    if (item?.customProperties?.bonuses?.ac) {
+      bonuses += item.customProperties.bonuses.ac;
+    }
+  });
+
+  return Math.floor(baseAC + finalDexMod + bonuses);
+}
+
 // Helper: Format skill name
 function formatSkillName(skillName) {
   return skillName
