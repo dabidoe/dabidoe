@@ -1,0 +1,314 @@
+[
+  {
+    "id": "longsword",
+    "name": "Longsword",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 3,
+    "value": 15,
+    "description": "A versatile one-handed sword",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "slashing",
+      "properties": ["versatile"],
+      "versatileDamage": "1d10",
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "shortsword",
+    "name": "Shortsword",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 10,
+    "description": "A light, finesse blade",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "piercing",
+      "properties": ["finesse", "light"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "greatsword",
+    "name": "Greatsword",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 6,
+    "value": 50,
+    "description": "A massive two-handed blade",
+    "weapon": {
+      "damage": "2d6",
+      "damageType": "slashing",
+      "properties": ["two-handed", "heavy"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "dagger",
+    "name": "Dagger",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 1,
+    "value": 2,
+    "description": "A small, throwable blade",
+    "weapon": {
+      "damage": "1d4",
+      "damageType": "piercing",
+      "properties": ["finesse", "light", "thrown"],
+      "range": "20/60 ft"
+    }
+  },
+  {
+    "id": "longbow",
+    "name": "Longbow",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 50,
+    "description": "A powerful ranged weapon",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "piercing",
+      "properties": ["ammunition", "two-handed", "heavy"],
+      "range": "150/600 ft"
+    }
+  },
+  {
+    "id": "shortbow",
+    "name": "Shortbow",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 25,
+    "description": "A versatile ranged weapon",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "piercing",
+      "properties": ["ammunition", "two-handed"],
+      "range": "80/320 ft"
+    }
+  },
+  {
+    "id": "leather-armor",
+    "name": "Leather Armor",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 10,
+    "value": 10,
+    "description": "Flexible light armor",
+    "armor": {
+      "ac": 11,
+      "type": "light",
+      "maxDexBonus": null,
+      "stealthDisadvantage": false
+    }
+  },
+  {
+    "id": "chain-mail",
+    "name": "Chain Mail",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 55,
+    "value": 75,
+    "description": "Heavy interlocking metal rings",
+    "armor": {
+      "ac": 16,
+      "type": "heavy",
+      "maxDexBonus": 0,
+      "stealthDisadvantage": true,
+      "strengthRequired": 13
+    }
+  },
+  {
+    "id": "shield",
+    "name": "Shield",
+    "category": "shield",
+    "rarity": "common",
+    "slot": "offHand",
+    "weight": 6,
+    "value": 10,
+    "description": "A basic wooden shield",
+    "shield": {
+      "acBonus": 2
+    }
+  },
+  {
+    "id": "potion-healing",
+    "name": "Potion of Healing",
+    "category": "potion",
+    "rarity": "common",
+    "weight": 0.5,
+    "value": 50,
+    "quantity": 1,
+    "description": "A magical elixir that restores health",
+    "consumable": {
+      "effect": "Heal 2d4+2",
+      "duration": "Instant"
+    }
+  },
+  {
+    "id": "potion-greater-healing",
+    "name": "Potion of Greater Healing",
+    "category": "potion",
+    "rarity": "uncommon",
+    "weight": 0.5,
+    "value": 150,
+    "quantity": 1,
+    "description": "A powerful healing potion",
+    "consumable": {
+      "effect": "Heal 4d4+4",
+      "duration": "Instant"
+    }
+  },
+  {
+    "id": "longsword-plus-1",
+    "name": "Longsword +1",
+    "category": "weapon",
+    "rarity": "uncommon",
+    "slot": "mainHand",
+    "weight": 3,
+    "value": 500,
+    "requiresAttunement": false,
+    "description": "A magically enhanced longsword",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "slashing",
+      "properties": ["versatile"],
+      "versatileDamage": "1d10",
+      "range": "5 ft",
+      "attackBonus": 1
+    },
+    "magic": {
+      "bonus": 1
+    }
+  },
+  {
+    "id": "ring-protection",
+    "name": "Ring of Protection",
+    "category": "ring",
+    "rarity": "rare",
+    "slot": "ring",
+    "weight": 0,
+    "value": 3500,
+    "requiresAttunement": true,
+    "description": "A ring that grants magical protection",
+    "customProperties": {
+      "bonuses": {
+        "ac": 1
+      }
+    },
+    "magic": {
+      "effects": [
+        {
+          "name": "+1 AC",
+          "description": "You gain a +1 bonus to AC while wearing this ring"
+        },
+        {
+          "name": "+1 to Saving Throws",
+          "description": "You gain a +1 bonus to all saving throws while wearing this ring"
+        }
+      ]
+    }
+  },
+  {
+    "id": "cloak-protection",
+    "name": "Cloak of Protection",
+    "category": "gear",
+    "rarity": "uncommon",
+    "slot": "back",
+    "weight": 1,
+    "value": 350,
+    "requiresAttunement": true,
+    "description": "A magical cloak that wards off harm",
+    "customProperties": {
+      "bonuses": {
+        "ac": 1
+      }
+    },
+    "magic": {
+      "effects": [
+        {
+          "name": "+1 AC and Saves",
+          "description": "You gain a +1 bonus to AC and saving throws while wearing this cloak"
+        }
+      ]
+    }
+  },
+  {
+    "id": "bag-holding",
+    "name": "Bag of Holding",
+    "category": "gear",
+    "rarity": "uncommon",
+    "weight": 15,
+    "value": 4000,
+    "description": "This bag has an interior space considerably larger than its outside dimensions",
+    "magic": {
+      "effects": [
+        {
+          "name": "Extra Dimensional Storage",
+          "description": "The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet"
+        }
+      ]
+    }
+  },
+  {
+    "id": "rope-hemp",
+    "name": "Hempen Rope (50 feet)",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 10,
+    "value": 1,
+    "quantity": 1,
+    "description": "Strong rope for climbing and binding"
+  },
+  {
+    "id": "torch",
+    "name": "Torch",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 1,
+    "value": 0.01,
+    "quantity": 10,
+    "description": "Provides bright light in a 20-foot radius for 1 hour"
+  },
+  {
+    "id": "rations",
+    "name": "Rations (1 day)",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 2,
+    "value": 0.5,
+    "quantity": 10,
+    "description": "Dried food for travel"
+  },
+  {
+    "id": "bedroll",
+    "name": "Bedroll",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 7,
+    "value": 1,
+    "quantity": 1,
+    "description": "A simple sleeping roll"
+  },
+  {
+    "id": "backpack",
+    "name": "Backpack",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 5,
+    "value": 2,
+    "quantity": 1,
+    "description": "A leather pack for carrying gear"
+  }
+]

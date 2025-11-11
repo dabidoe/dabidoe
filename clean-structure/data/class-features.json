@@ -1,0 +1,221 @@
+{
+  "fighter": [
+    {
+      "level": 1,
+      "id": "second-wind",
+      "name": "Second Wind",
+      "shortDescription": "Regain hit points as a bonus action",
+      "description": "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.",
+      "actionType": "bonus",
+      "category": "defensive",
+      "uses": {
+        "max": 1,
+        "per": "short rest"
+      }
+    },
+    {
+      "level": 1,
+      "id": "fighting-style-dueling",
+      "name": "Fighting Style: Dueling",
+      "shortDescription": "+2 damage when wielding one weapon",
+      "description": "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 2,
+      "id": "action-surge",
+      "name": "Action Surge",
+      "shortDescription": "Take an additional action on your turn",
+      "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action. Once you use this feature, you must finish a short or long rest before you can use it again.",
+      "actionType": "action",
+      "category": "combat",
+      "uses": {
+        "max": 1,
+        "per": "short rest"
+      }
+    }
+  ],
+  "barbarian": [
+    {
+      "level": 1,
+      "id": "rage",
+      "name": "Rage",
+      "shortDescription": "Enter a battle fury for bonus damage and resistance",
+      "description": "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and saving throws, +2 damage to melee attacks, and resistance to physical damage.",
+      "actionType": "bonus",
+      "category": "combat",
+      "uses": {
+        "max": 2,
+        "per": "long rest"
+      },
+      "effects": [
+        "Advantage on STR checks and saves",
+        "+2 melee damage",
+        "Resistance to bludgeoning, piercing, slashing"
+      ]
+    },
+    {
+      "level": 1,
+      "id": "unarmored-defense",
+      "name": "Unarmored Defense",
+      "shortDescription": "AC = 10 + DEX + CON when not wearing armor",
+      "description": "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.",
+      "actionType": "passive",
+      "category": "defensive"
+    }
+  ],
+  "rogue": [
+    {
+      "level": 1,
+      "id": "sneak-attack",
+      "name": "Sneak Attack",
+      "shortDescription": "Deal extra damage when you have advantage",
+      "description": "Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon.",
+      "actionType": "passive",
+      "category": "combat",
+      "damage": {
+        "formula": "1d6",
+        "type": "weapon"
+      }
+    },
+    {
+      "level": 2,
+      "id": "cunning-action",
+      "name": "Cunning Action",
+      "shortDescription": "Dash, Disengage, or Hide as a bonus action",
+      "description": "Your quick thinking and agility allow you to move and act quickly. You can take a bonus action on each of your turns in combat. This action can be used only to take the Dash, Disengage, or Hide action.",
+      "actionType": "bonus",
+      "category": "utility"
+    }
+  ],
+  "wizard": [
+    {
+      "level": 1,
+      "id": "arcane-recovery",
+      "name": "Arcane Recovery",
+      "shortDescription": "Recover spell slots during short rest",
+      "description": "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up).",
+      "actionType": "action",
+      "category": "utility",
+      "uses": {
+        "max": 1,
+        "per": "long rest"
+      }
+    }
+  ],
+  "cleric": [
+    {
+      "level": 1,
+      "id": "channel-divinity-turn-undead",
+      "name": "Channel Divinity: Turn Undead",
+      "shortDescription": "Force undead creatures to flee",
+      "description": "As an action, you present your holy symbol and speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage.",
+      "actionType": "action",
+      "category": "combat",
+      "uses": {
+        "max": 1,
+        "per": "short rest"
+      },
+      "saveDC": {
+        "ability": "wis"
+      },
+      "range": "30 feet"
+    }
+  ],
+  "paladin": [
+    {
+      "level": 1,
+      "id": "lay-on-hands",
+      "name": "Lay on Hands",
+      "shortDescription": "Heal yourself or others with divine power",
+      "description": "Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you take a long rest. With that pool, you can restore a total number of hit points equal to your paladin level × 5.",
+      "actionType": "action",
+      "category": "defensive",
+      "uses": {
+        "max": 5,
+        "per": "long rest"
+      }
+    },
+    {
+      "level": 2,
+      "id": "divine-smite",
+      "name": "Divine Smite",
+      "shortDescription": "Expend spell slot to deal extra radiant damage",
+      "description": "When you hit a creature with a melee weapon attack, you can expend one spell slot to deal radiant damage to the target, in addition to the weapon's damage. The extra damage is 2d8 for a 1st-level spell slot, plus 1d8 for each spell level higher than 1st.",
+      "actionType": "reaction",
+      "category": "combat",
+      "damage": {
+        "formula": "2d8",
+        "type": "radiant"
+      }
+    }
+  ],
+  "ranger": [
+    {
+      "level": 1,
+      "id": "favored-enemy",
+      "name": "Favored Enemy",
+      "shortDescription": "Advantage on tracking and knowledge of specific creature types",
+      "description": "You have significant experience studying, tracking, hunting, and even talking to a certain type of enemy. Choose a type of favored enemy. You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.",
+      "actionType": "passive",
+      "category": "utility"
+    }
+  ],
+  "monk": [
+    {
+      "level": 1,
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "shortDescription": "Use DEX for unarmed strikes, deal 1d4 damage",
+      "description": "Your practice of martial arts gives you mastery of combat styles that use unarmed strikes and monk weapons. You can use Dexterity instead of Strength for attacks with monk weapons or unarmed strikes. You can roll a d4 in place of the normal damage of your unarmed strike or monk weapon.",
+      "actionType": "passive",
+      "category": "combat",
+      "damage": {
+        "formula": "1d4",
+        "type": "bludgeoning"
+      }
+    },
+    {
+      "level": 2,
+      "id": "ki",
+      "name": "Ki",
+      "shortDescription": "Spend ki points for special abilities",
+      "description": "Your training allows you to harness the mystic energy of ki. You have 2 ki points. You can spend these points to fuel various ki features. When you spend a ki point, it is unavailable until you finish a short or long rest.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "flurry-of-blows",
+      "name": "Flurry of Blows",
+      "shortDescription": "Make two unarmed strikes as bonus action (1 ki)",
+      "description": "Immediately after you take the Attack action on your turn, you can spend 1 ki point to make two unarmed strikes as a bonus action.",
+      "actionType": "bonus",
+      "category": "combat",
+      "damage": {
+        "formula": "2d4",
+        "type": "bludgeoning"
+      }
+    }
+  ],
+  "warlock": [
+    {
+      "level": 1,
+      "id": "eldritch-blast",
+      "name": "Eldritch Blast",
+      "shortDescription": "Fire a beam of crackling energy (cantrip)",
+      "description": "A beam of crackling energy streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.",
+      "actionType": "action",
+      "category": "spell-like",
+      "damage": {
+        "formula": "1d10",
+        "type": "force"
+      },
+      "range": "120 feet",
+      "attack": {
+        "bonus": 0
+      }
+    }
+  ]
+}
