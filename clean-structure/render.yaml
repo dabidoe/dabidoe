@@ -1,0 +1,38 @@
+# Render deployment configuration
+services:
+  # Backend API
+  - type: web
+    name: character-foundry-api
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: MONGODB_URI
+        sync: false  # Add via Render dashboard
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: BUNNY_API_KEY
+        sync: false
+      - key: BUNNY_STORAGE_ZONE
+        sync: false
+      - key: BUNNY_CDN_HOSTNAME
+        sync: false
+      - key: RUNWARE_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend-url.vercel.app
+
+  # Frontend (optional - can use Vercel instead)
+  - type: web
+    name: character-foundry-web
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
