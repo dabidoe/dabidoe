@@ -1,0 +1,252 @@
+/* CharacterModes.css - Styling for conversation, battle, and skills modes */
+
+/* Conversation Mode */
+.conversation-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.dialogue-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialogue-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.dialogue-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateX(4px);
+}
+
+.dialogue-option:active {
+  transform: translateX(2px);
+}
+
+.dialogue-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.dialogue-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.conversation-hint {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+/* Battle Mode */
+.battle-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+}
+
+.battle-macros,
+.combat-abilities {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.macros-label,
+.abilities-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  color: #d4af37;
+}
+
+.macros-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.macro-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 80px;
+}
+
+.macro-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.macro-btn:active {
+  transform: translateY(0);
+}
+
+.macro-emoji {
+  font-size: 32px;
+}
+
+.macro-name {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.abilities-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Skills Mode */
+.skills-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.skills-header {
+  text-align: center;
+}
+
+.skills-header h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #d4af37;
+}
+
+.skills-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.skill-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.skill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-1px);
+}
+
+.skill-btn:active {
+  transform: translateY(0);
+}
+
+.skill-btn.proficient {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.skill-btn.proficient:hover {
+  border-color: rgba(212, 175, 55, 0.7);
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.skill-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.skill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.skill-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.skill-modifier {
+  font-size: 12px;
+  opacity: 0.8;
+  font-family: 'Courier New', monospace;
+}
+
+.proficiency-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 16px;
+  color: #d4af37;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.6));
+}
+
+.skills-legend {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 13px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .macros-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skills-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
