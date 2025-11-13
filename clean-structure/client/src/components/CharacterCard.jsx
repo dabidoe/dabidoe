@@ -477,35 +477,75 @@ function CharacterCard() {
           {activeTab === 'stats' && (
             <div className="stats-tab">
               <div className="stats-grid">
-                <div className="stat-block">
-                  <div className="stat-name">STR</div>
-                  <div className="stat-score">{character.stats?.str || 16}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.str || 16) - 10) / 2)}</div>
-                </div>
-                <div className="stat-block">
-                  <div className="stat-name">DEX</div>
-                  <div className="stat-score">{character.stats?.dex || 14}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.dex || 14) - 10) / 2)}</div>
-                </div>
-                <div className="stat-block">
-                  <div className="stat-name">CON</div>
-                  <div className="stat-score">{character.stats?.con || 15}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.con || 15) - 10) / 2)}</div>
-                </div>
-                <div className="stat-block">
-                  <div className="stat-name">INT</div>
-                  <div className="stat-score">{character.stats?.int || 10}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.int || 10) - 10) / 2)}</div>
-                </div>
-                <div className="stat-block">
-                  <div className="stat-name">WIS</div>
-                  <div className="stat-score">{character.stats?.wis || 12}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.wis || 12) - 10) / 2)}</div>
-                </div>
-                <div className="stat-block">
-                  <div className="stat-name">CHA</div>
-                  <div className="stat-score">{character.stats?.cha || 14}</div>
-                  <div className="stat-mod">+{Math.floor(((character.stats?.cha || 14) - 10) / 2)}</div>
+                {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
+                  const statValue = character.stats?.[stat] || 10
+                  const modifier = Math.floor((statValue - 10) / 2)
+                  return (
+                    <div
+                      key={stat}
+                      className="stat-block clickable"
+                      onClick={() => {
+                        const roll = Math.floor(Math.random() * 20) + 1
+                        const total = roll + modifier
+                        addMessage(
+                          `🎲 **${stat.toUpperCase()} Check**: d20(${roll}) ${modifier >= 0 ? '+' : ''}${modifier} = **${total}**`,
+                          'player'
+                        )
+                      }}
+                      style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px)'
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(212, 175, 55, 0.3)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)'
+                        e.currentTarget.style.boxShadow = 'none'
+                      }}
+                    >
+                      <div className="stat-name">{stat.toUpperCase()}</div>
+                      <div className="stat-score">{statValue}</div>
+                      <div className="stat-mod">{modifier >= 0 ? '+' : ''}{modifier}</div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Passive Traits Section */}
+              <div className="traits-section" style={{ marginTop: '24px' }}>
+                <h3 style={{ color: '#d4af37', marginBottom: '12px', fontSize: '16px' }}>Passive Traits</h3>
+                <div className="traits-list">
+                  {character.abilities
+                    ?.filter(a => a.details?.actionType === 'passive' && a.category !== 'spell')
+                    .map((trait, index) => (
+                      <div
+                        key={index}
+                        className="trait-item"
+                        style={{
+                          background: 'rgba(45, 45, 68, 0.4)',
+                          border: '1px solid rgba(212, 175, 55, 0.3)',
+                          borderRadius: '6px',
+                          padding: '10px 12px',
+                          marginBottom: '8px'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '16px' }}>
+                            {trait.category === 'combat' ? '⚔️' : trait.category === 'defensive' ? '🛡️' : '🔧'}
+                          </span>
+                          <span style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
+                            {trait.name}
+                          </span>
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', paddingLeft: '24px' }}>
+                          {trait.details?.shortDescription}
+                        </div>
+                      </div>
+                    ))}
+                  {(!character.abilities || character.abilities.filter(a => a.details?.actionType === 'passive' && a.category !== 'spell').length === 0) && (
+                    <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                      No passive traits
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
