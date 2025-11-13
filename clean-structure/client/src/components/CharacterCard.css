@@ -227,19 +227,22 @@
 
 /* ========== CONVERSATION/LOG AREA ========== */
 .conversation-log {
-  flex: 0 0 auto;
-  height: 300px;
+  flex: 1 1 auto;
+  min-height: 200px;
+  max-height: 50vh;
   display: flex;
   flex-direction: column;
   background: rgba(10, 10, 10, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   position: relative;
-  transition: height 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .conversation-log.collapsed {
+  flex: 0 0 auto;
   height: 32px;
   min-height: 32px;
+  max-height: 32px;
 }
 
 /* Section Collapse Button */
@@ -316,6 +319,11 @@
 .log-message.player {
   border-left-color: rgba(134, 239, 172, 0.6);
   background: rgba(30, 40, 30, 0.8);
+}
+
+.log-message.system {
+  border-left-color: rgba(212, 175, 55, 0.6);
+  background: rgba(40, 35, 30, 0.8);
 }
 
 .message-author {
