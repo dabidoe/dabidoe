@@ -26,6 +26,8 @@ function CharacterCard() {
   const [showAbilityBrowser, setShowAbilityBrowser] = useState(false)
   const [showEquipmentBrowser, setShowEquipmentBrowser] = useState(false)
   const [concentration, setConcentration] = useState(null) // {spell: {name, effect}, target: string}
+  const [logCollapsed, setLogCollapsed] = useState(false)
+  const [tabsCollapsed, setTabsCollapsed] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -451,6 +453,8 @@ function CharacterCard() {
             <span>Level {character.level || 10}</span>
             <span style={{ margin: '0 6px', color: 'rgba(255,255,255,0.4)' }}>•</span>
             <span>{character.race || 'Human'}</span>
+            <span style={{ margin: '0 6px', color: 'rgba(255,255,255,0.4)' }}>•</span>
+            <span style={{ fontSize: '11px', color: 'rgba(212,175,55,0.8)' }}>{mood}</span>
           </div>
         </div>
 
@@ -524,36 +528,43 @@ function CharacterCard() {
       </div>
 
       {/* Conversation/Log Area */}
-      <div className="conversation-log">
-        <div className="log-header">
-          <span className="log-title">Activity Log</span>
-          <span className="mood-indicator">{mood}</span>
-        </div>
+      <div className={`conversation-log ${logCollapsed ? 'collapsed' : ''}`}>
+        <button
+          className="section-collapse-btn"
+          onClick={() => setLogCollapsed(!logCollapsed)}
+          title={logCollapsed ? 'Expand log' : 'Collapse log'}
+        >
+          {logCollapsed ? '▼' : '▲'}
+        </button>
 
-        <div className="log-messages">
-          {messages.map((message, index) => (
-            <div key={index} className={`log-message ${message.type}`}>
-              {message.type === 'character' && (
-                <div className="message-author">{character.name}</div>
-              )}
-              {message.type === 'player' && (
-                <div className="message-author">You</div>
-              )}
-              <div className="message-content">{message.text}</div>
+        {!logCollapsed && (
+          <>
+            <div className="log-messages">
+              {messages.map((message, index) => (
+                <div key={index} className={`log-message ${message.type}`}>
+                  {message.type === 'character' && (
+                    <div className="message-author">{character.name}</div>
+                  )}
+                  {message.type === 'player' && (
+                    <div className="message-author">You</div>
+                  )}
+                  <div className="message-content">{message.text}</div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
             </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
 
-        <form className="message-input" onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Type a message..."
-          />
-          <button type="submit">Send</button>
-        </form>
+            <form className="message-input" onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Type a message..."
+              />
+              <button type="submit">Send</button>
+            </form>
+          </>
+        )}
       </div>
 
       {/* Quick Actions Row */}
@@ -623,7 +634,7 @@ function CharacterCard() {
       </div>
 
       {/* Tabs Section */}
-      <div className="tabs-section">
+      <div className={`tabs-section ${tabsCollapsed ? 'collapsed' : ''}`}>
         <div className="tab-headers">
           <button
             className={`tab-header ${activeTab === 'skills' ? 'active' : ''}`}
@@ -655,10 +666,18 @@ function CharacterCard() {
           >
             Equipment
           </button>
+          <button
+            className="section-collapse-btn tab-collapse"
+            onClick={() => setTabsCollapsed(!tabsCollapsed)}
+            title={tabsCollapsed ? 'Expand tabs' : 'Collapse tabs'}
+          >
+            {tabsCollapsed ? '▼' : '▲'}
+          </button>
         </div>
 
-        <div className="tab-content">
-          {activeTab === 'skills' && (
+        {!tabsCollapsed && (
+          <div className="tab-content">
+            {activeTab === 'skills' && (
             <CharacterModes
               character={character}
               mode="skills"
@@ -933,7 +952,8 @@ function CharacterCard() {
               )}
             </div>
           )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Spell Browser Modal */}
