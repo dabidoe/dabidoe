@@ -78,17 +78,24 @@ function AbilityCard({ ability, onUse, character, mode }) {
     <div
       className={`ability-card ${expanded ? 'expanded' : ''} ${!canUse() ? 'disabled' : ''}`}
     >
-      {/* Collapsed View - Entire card is clickable */}
+      {/* Collapsed View - Click to cast, info button to expand */}
       {!expanded && (
         <div
           className="ability-card-header"
-          onClick={() => setExpanded(true)}
-          style={{ cursor: 'pointer' }}
+          onClick={handleUse}
+          style={{ cursor: canUse() ? 'pointer' : 'not-allowed' }}
         >
           <span className="ability-icon">{getDisplayIcon()}</span>
           <span className="ability-name">{details.name}</span>
           {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
           {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
+          <button
+            className="info-button"
+            onClick={(e) => { e.stopPropagation(); setExpanded(true); }}
+            title="View details"
+          >
+            ⓘ
+          </button>
         </div>
       )}
 
@@ -222,13 +229,6 @@ function AbilityCard({ ability, onUse, character, mode }) {
             )}
           </button>
         </div>
-      )}
-
-      {/* Expand indicator */}
-      {!expanded && (
-        <button className="expand-indicator" onClick={() => setExpanded(true)}>
-          ⓘ
-        </button>
       )}
     </div>
   )
