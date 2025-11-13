@@ -228,35 +228,40 @@
 /* ========== CONVERSATION/LOG AREA ========== */
 .conversation-log {
   flex: 0 0 auto;
-  height: 350px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   background: rgba(10, 10, 10, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  transition: height 0.3s ease;
 }
 
-.log-header {
-  padding: 12px 20px;
-  background: rgba(20, 20, 20, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.conversation-log.collapsed {
+  height: 32px;
+  min-height: 32px;
 }
 
-.log-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.mood-indicator {
-  font-size: 12px;
+/* Section Collapse Button */
+.section-collapse-btn {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  background: rgba(40, 40, 40, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
   color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.section-collapse-btn:hover {
+  background: rgba(60, 60, 60, 0.9);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
 }
 
 /* Log Messages */
@@ -267,6 +272,32 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Battle Actions Button */
+.battle-actions-btn {
+  position: sticky;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(255, 215, 0, 0.9) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 20px;
+  padding: 6px 16px;
+  color: #1a1a2e;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  margin-bottom: 12px;
+}
+
+.battle-actions-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 1) 0%, rgba(255, 237, 78, 1) 100%);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5);
 }
 
 .log-message {
@@ -298,6 +329,28 @@
   font-size: 14px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
+}
+
+/* Spell Links in Messages */
+.spell-link {
+  background: rgba(74, 144, 226, 0.2);
+  border: 1px solid rgba(74, 144, 226, 0.4);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: #4a90e2;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.spell-link:hover {
+  background: rgba(74, 144, 226, 0.4);
+  border-color: #4a90e2;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
 }
 
 /* Message Input */
@@ -369,9 +422,9 @@
 
 /* ========== QUICK ACTIONS ROW ========== */
 .quick-actions-row {
-  padding: 12px 20px;
+  padding: 8px 16px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   background: rgba(15, 15, 15, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   overflow-x: auto;
@@ -382,11 +435,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: rgba(30, 30, 30, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 10px 16px;
+  border-radius: 8px;
+  padding: 6px 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 80px;
@@ -409,11 +462,11 @@
 }
 
 .action-icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .action-label {
-  font-size: 11px;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -425,6 +478,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tabs-section.collapsed {
+  flex: 0 0 auto;
 }
 
 /* Tab Headers */
@@ -432,6 +490,15 @@
   display: flex;
   background: rgba(10, 10, 10, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.section-collapse-btn.tab-collapse {
+  position: relative;
+  top: auto;
+  right: auto;
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .tab-header {
