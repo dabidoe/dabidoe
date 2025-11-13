@@ -181,9 +181,10 @@ export function populateCharacterData(character) {
     const spellSlots = getSpellSlots(className, level);
     if (spellSlots) {
       character.spellSlots = {};
+      // Array is 0-indexed but represents [1st, 2nd, 3rd, ...] level spells
       spellSlots.forEach((slots, index) => {
-        if (slots > 0 && index > 0) {
-          character.spellSlots[index] = { current: slots, max: slots };
+        if (slots > 0) {
+          character.spellSlots[index + 1] = { current: slots, max: slots };
         }
       });
     }

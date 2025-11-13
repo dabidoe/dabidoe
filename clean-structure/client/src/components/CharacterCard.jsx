@@ -25,6 +25,7 @@ function CharacterCard() {
   const [showSpellBrowser, setShowSpellBrowser] = useState(false)
   const [showAbilityBrowser, setShowAbilityBrowser] = useState(false)
   const [showEquipmentBrowser, setShowEquipmentBrowser] = useState(false)
+  const [concentration, setConcentration] = useState(null) // {spell: {name, effect}, target: string}
   const messagesEndRef = useRef(null)
 
   // Load character data
