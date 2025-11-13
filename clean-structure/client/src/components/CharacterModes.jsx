@@ -175,11 +175,11 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
 
   const renderBattleMode = () => (
     <div className="battle-mode">
-      {/* Class Abilities & Features */}
+      {/* Active Abilities Only (exclude spells and passive traits) */}
       <div className="combat-abilities">
         <div className="abilities-grid">
           {abilities
-            .filter(a => a.category !== 'spell')
+            .filter(a => a.category !== 'spell' && a.details?.actionType !== 'passive')
             .map((ability) => (
               <AbilityCard
                 key={ability.abilityId}
@@ -193,9 +193,9 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
               />
             ))}
         </div>
-        {(!abilities || abilities.filter(a => a.category !== 'spell').length === 0) && (
+        {(!abilities || abilities.filter(a => a.category !== 'spell' && a.details?.actionType !== 'passive').length === 0) && (
           <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
-            No abilities available
+            No active abilities available. Passive traits are in the Stats tab.
           </div>
         )}
       </div>
