@@ -90,6 +90,7 @@ function CharacterCard() {
 
     const icon = getIcon()
     const abilityName = details.name || ability.name
+    const actionType = details.actionType
 
     // Handle spells with attack rolls
     if (ability.category === 'spell') {
@@ -101,8 +102,9 @@ function CharacterCard() {
       return
     }
 
-    // Handle combat abilities with damage (like Colossus Slayer, Extra Attack, etc.)
-    if (ability.category === 'combat' && (details.damage || ability.damage)) {
+    // Handle active combat abilities with damage (like Colossus Slayer)
+    // Only roll if it has damage AND is meant to be used actively
+    if ((details.damage || ability.damage) && ability.category === 'combat') {
       // Get equipped weapon for base attack
       const meleeWeapons = character.inventory?.filter(i =>
         i.category === 'weapon' && i.equipped && !i.weapon?.properties?.includes('ranged')
@@ -162,8 +164,26 @@ function CharacterCard() {
       return
     }
 
-    // Handle utility/defensive/passive abilities (no damage)
-    let message = `${icon} **${abilityName} Activated**`
+    // Handle passive traits - just show description, no "Activated" messaging
+    if (actionType === 'passive') {
+      let message = `${icon} **${abilityName}**`
+      if (details.shortDescription) {
+        message += `\n\n${details.shortDescription}`
+      }
+      addMessage(message, 'character', 'Contemplative')
+      return
+    }
+
+    // Handle active abilities (action, bonus, reaction)
+    let message = `${icon} **${abilityName}**`
+
+    if (actionType === 'action') {
+      message += ' (Action)'
+    } else if (actionType === 'bonus') {
+      message += ' (Bonus Action)'
+    } else if (actionType === 'reaction') {
+      message += ' (Reaction)'
+    }
 
     if (details.shortDescription) {
       message += `\n\n${details.shortDescription}`
@@ -175,7 +195,7 @@ function CharacterCard() {
     } else if (ability.category === 'utility') {
       addMessage(message, 'character', 'Focused')
     } else {
-      addMessage(message, 'character', 'Contemplative')
+      addMessage(message, 'character', 'Ready')
     }
   }
 
