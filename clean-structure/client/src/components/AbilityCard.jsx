@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import AbilityIcon from './AbilityIcon'
 import './AbilityCard.css'
 
