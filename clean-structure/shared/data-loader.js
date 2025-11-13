@@ -59,6 +59,72 @@ export function getStartingCurrency(className) {
 }
 
 /**
+ * Distribute spells intelligently across available spell levels
+ * Ensures a good mix of spells from each level rather than just grabbing the first N
+ */
+function distributeSpellsByLevel(allSpells, totalCount, maxSpellLevel) {
+  const selectedSpells = [];
+
+  // Filter spells to only those we can cast
+  const availableSpells = allSpells.filter(s =>
+    s.level !== 'cantrip' && parseInt(s.level) <= maxSpellLevel
+  );
+
+  // Group spells by level
+  const spellsByLevel = {};
+  for (let i = 1; i <= maxSpellLevel; i++) {
+    spellsByLevel[i] = availableSpells.filter(s => parseInt(s.level) === i);
+  }
+
+  // Calculate how many spells per level (distribute evenly, with preference for lower levels)
+  const spellsPerLevel = {};
+  let remaining = totalCount;
+
+  // Strategy: Give more spells to lower levels, but ensure all levels get representation
+  for (let level = 1; level <= maxSpellLevel; level++) {
+    const availableAtLevel = spellsByLevel[level]?.length || 0;
+    if (availableAtLevel === 0) continue;
+
+    // Base allocation: at least 1 spell per level, more for lower levels
+    const weight = (maxSpellLevel - level + 1); // Higher weight for lower levels
+    const totalWeight = ((maxSpellLevel + 1) * maxSpellLevel) / 2; // Sum of weights
+    let allocation = Math.max(1, Math.floor((weight / totalWeight) * totalCount));
+
+    // Don't allocate more than available
+    allocation = Math.min(allocation, availableAtLevel);
+    // Don't allocate more than remaining
+    allocation = Math.min(allocation, remaining);
+
+    spellsPerLevel[level] = allocation;
+    remaining -= allocation;
+  }
+
+  // Distribute any remaining spells to lower levels first
+  for (let level = 1; level <= maxSpellLevel && remaining > 0; level++) {
+    const availableAtLevel = spellsByLevel[level]?.length || 0;
+    const currentAllocation = spellsPerLevel[level] || 0;
+
+    if (currentAllocation < availableAtLevel) {
+      const canAdd = Math.min(remaining, availableAtLevel - currentAllocation);
+      spellsPerLevel[level] = currentAllocation + canAdd;
+      remaining -= canAdd;
+    }
+  }
+
+  // Select the actual spells
+  for (let level = 1; level <= maxSpellLevel; level++) {
+    const count = spellsPerLevel[level] || 0;
+    if (count > 0 && spellsByLevel[level]) {
+      // Take the first N spells of this level
+      const spells = spellsByLevel[level].slice(0, count);
+      selectedSpells.push(...spells);
+    }
+  }
+
+  return selectedSpells;
+}
+
+/**
  * Populate a character with D&D 5e data based on class progression
  */
 export function populateCharacterData(character) {
@@ -137,27 +203,23 @@ export function populateCharacterData(character) {
       });
     }
 
-    // Get leveled spells
+    // Determine max spell level available
+    const maxSpellLevel = spellSlots ? spellSlots.findLastIndex(slots => slots > 0) : 1;
+
+    // Get leveled spells with proper distribution
     const spellsKnownCount = getSpellsKnown(className, level);
 
     if (spellsKnownCount !== null && spellsKnownCount > 0) {
       // Known caster (Sorcerer, Bard, Ranger, Warlock)
-      let recommendedSpells = [];
+      let spellsToAdd = [];
 
       if (className === 'ranger') {
         // Use ranger-specific recommendations
-        recommendedSpells = getRangerSpellRecommendations(level);
+        spellsToAdd = getRangerSpellRecommendations(level);
       } else {
-        // Get spells by level availability
-        const maxSpellLevel = spellSlots ? spellSlots.findLastIndex(slots => slots > 0) : 1;
-        recommendedSpells = allSpells.filter(s =>
-          s.level !== 'cantrip' &&
-          parseInt(s.level) <= maxSpellLevel
-        );
+        // Distribute spells intelligently across available spell levels
+        spellsToAdd = distributeSpellsByLevel(allSpells, spellsKnownCount, maxSpellLevel);
       }
-
-      // Take the appropriate number
-      const spellsToAdd = recommendedSpells.slice(0, spellsKnownCount);
 
       spellsToAdd.forEach(spell => {
         character.abilities.push(spellToAbility(spell, true));
@@ -165,13 +227,11 @@ export function populateCharacterData(character) {
     } else {
       // Prepared caster (Wizard, Cleric, Druid, Paladin)
       const preparedCount = getPreparedSpellsCount(className, level, abilityMod);
-      const maxSpellLevel = spellSlots ? spellSlots.findLastIndex(slots => slots > 0) : 1;
 
-      const leveledSpells = allSpells
-        .filter(s => s.level !== 'cantrip' && parseInt(s.level) <= maxSpellLevel)
-        .slice(0, preparedCount);
+      // Distribute prepared spells intelligently across available spell levels
+      const preparedSpells = distributeSpellsByLevel(allSpells, preparedCount, maxSpellLevel);
 
-      leveledSpells.forEach(spell => {
+      preparedSpells.forEach(spell => {
         character.abilities.push(spellToAbility(spell, true));
       });
     }
