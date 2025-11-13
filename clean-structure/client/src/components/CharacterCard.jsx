@@ -106,7 +106,8 @@ function CharacterCard() {
       const spellMod = Math.floor(((character.stats?.[spellcastingAbility] || 10) - 10) / 2)
       const spellAttackBonus = character.proficiencyBonus + spellMod
 
-      let message = `${icon} **Cast ${abilityName}**`
+      // Use special format for clickable spell name: [SPELL:spell-id:Spell Name]
+      let message = `${icon} **Cast [SPELL:${ability.abilityId}:${abilityName}]**`
 
       // Check if spell requires attack roll (look for "spell attack" in description)
       const requiresAttack = details.description?.toLowerCase().includes('spell attack') ||
@@ -307,6 +308,50 @@ function CharacterCard() {
     if (type === 'character' && messageMood) {
       setMood(messageMood)
     }
+  }
+
+  // Render message content with clickable spell links
+  const renderMessageContent = (text) => {
+    // Match pattern: [SPELL:ability-id:Spell Name]
+    const spellLinkRegex = /\[SPELL:([^:]+):([^\]]+)\]/g
+    const parts = []
+    let lastIndex = 0
+    let match
+
+    while ((match = spellLinkRegex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index))
+      }
+
+      // Add clickable spell link
+      const abilityId = match[1]
+      const spellName = match[2]
+      parts.push(
+        <button
+          key={`spell-${match.index}`}
+          className="spell-link"
+          onClick={() => {
+            // Find and show the spell
+            const spell = character.abilities?.find(a => a.abilityId === abilityId)
+            if (spell) {
+              handleAbilityClick(spell)
+            }
+          }}
+        >
+          {spellName}
+        </button>
+      )
+
+      lastIndex = match.index + match[0].length
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex))
+    }
+
+    return parts.length > 0 ? parts : text
   }
 
   const handleSendMessage = async (e) => {
@@ -557,7 +602,7 @@ function CharacterCard() {
                   {message.type === 'player' && (
                     <div className="message-author">You</div>
                   )}
-                  <div className="message-content">{message.text}</div>
+                  <div className="message-content">{renderMessageContent(message.text)}</div>
                 </div>
               ))}
               <div ref={messagesEndRef} />
