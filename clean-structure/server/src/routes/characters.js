@@ -5,6 +5,7 @@
  */
 
 import express from 'express';
+import { populateCharacterData } from '../../shared/data-loader.js';
 
 const router = express.Router();
 
@@ -103,8 +104,11 @@ router.post('/create', async (req, res) => {
       });
     }
 
-    // Generate character using Gemini
+    // Generate character using Gemini (narrative + base stats)
     const character = await gemini.generateCharacter(prompt);
+
+    // Populate character with proper D&D 5e mechanics (spells, abilities, equipment)
+    populateCharacterData(character);
 
     // Generate and upload portrait (free tier - 1 image only)
     if (generateImage && runware && bunny) {
@@ -141,6 +145,70 @@ router.post('/create', async (req, res) => {
     });
   } catch (error) {
     console.error('Character creation error:', error);
+    res.status(500).json({
+      success: false,
+      error: { message: 'Failed to create character', details: error.message }
+    });
+  }
+});
+
+/**
+ * POST /api/characters/create-quick
+ * Quick character creation without AI (for testing/quick builds)
+ * Body: { name, class, level, race }
+ */
+router.post('/create-quick', async (req, res) => {
+  try {
+    const { name, class: className, level = 1, race = 'Human' } = req.body;
+
+    if (!name || !className) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Name and class are required' }
+      });
+    }
+
+    // Create base character object
+    const character = {
+      id: `char-${Date.now()}`,
+      name,
+      class: className,
+      level: parseInt(level),
+      race,
+      stats: {
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 10
+      },
+      hp: {
+        current: 10 + Math.floor((level - 1) * 6),
+        max: 10 + Math.floor((level - 1) * 6)
+      },
+      ac: 10,
+      background: 'adventurer',
+      abilities: [],
+      inventory: [],
+      currency: { cp: 0, sp: 0, gp: 0, pp: 0 }
+    };
+
+    // Populate with D&D 5e mechanics
+    populateCharacterData(character);
+
+    // Save to MongoDB if available
+    const { mongodb } = req.app.locals.services;
+    if (mongodb) {
+      await mongodb.createCharacter(character);
+    }
+
+    res.json({
+      success: true,
+      data: character
+    });
+  } catch (error) {
+    console.error('Quick character creation error:', error);
     res.status(500).json({
       success: false,
       error: { message: 'Failed to create character', details: error.message }
