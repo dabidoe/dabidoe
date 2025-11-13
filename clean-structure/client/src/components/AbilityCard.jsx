@@ -35,6 +35,18 @@ function AbilityCard({ ability, onUse, character, mode }) {
     return `(${uses.current}/${uses.max})`
   }
 
+  // Get spell level text for display
+  const getSpellLevelText = () => {
+    if (ability.category !== 'spell') return ''
+    if (ability.type === 'cantrip' || details.level === 0) return 'Cantrip'
+    if (details.level) {
+      const levelNum = parseInt(details.level)
+      const suffixes = ['', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
+      return `${levelNum}${suffixes[levelNum] || 'th'}-level`
+    }
+    return ''
+  }
+
   // Get display icon text for button (emoji format)
   const getDisplayIcon = () => {
     // Check if iconLayers has an emoji
@@ -69,7 +81,7 @@ function AbilityCard({ ability, onUse, character, mode }) {
       style={{ cursor: expanded ? 'default' : 'pointer' }}
     >
       <button
-        className={`action-btn ${!canUse() ? 'disabled' : ''}`}
+        className={`action-btn ${!canUse() ? 'disabled' : ''} ${ability.category === 'spell' ? 'spell-btn' : ''}`}
         onClick={(e) => {
           e.stopPropagation()
           handleUse()
@@ -77,7 +89,11 @@ function AbilityCard({ ability, onUse, character, mode }) {
         disabled={!canUse()}
         title={expanded ? details.longDescription : details.shortDescription}
       >
-        {getDisplayIcon()} {details.name} {getUsesText()}
+        <span className="ability-btn-content">
+          {getDisplayIcon()} {details.name}
+          {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
+          {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
+        </span>
       </button>
 
       {expanded && (
