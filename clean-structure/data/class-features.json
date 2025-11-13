@@ -160,6 +160,100 @@
       "description": "You have significant experience studying, tracking, hunting, and even talking to a certain type of enemy. Choose a type of favored enemy. You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.",
       "actionType": "passive",
       "category": "utility"
+    },
+    {
+      "level": 1,
+      "id": "natural-explorer",
+      "name": "Natural Explorer",
+      "shortDescription": "Ignore difficult terrain, advantage on initiative",
+      "description": "You are particularly familiar with one type of natural environment. When you make an Intelligence or Wisdom check related to your favored terrain, your proficiency bonus is doubled. While traveling for an hour or more in your favored terrain, difficult terrain doesn't slow your group's travel, you can't become lost except by magical means, you remain alert to danger even when engaged in another activity, and you can move stealthily at a normal pace while alone.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "fighting-style-archery",
+      "name": "Fighting Style: Archery",
+      "shortDescription": "+2 bonus to attack rolls with ranged weapons",
+      "description": "You gain a +2 bonus to attack rolls you make with ranged weapons.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 2,
+      "id": "spellcasting",
+      "name": "Spellcasting",
+      "shortDescription": "Cast ranger spells using Wisdom",
+      "description": "You have learned to use the magical essence of nature to cast spells. Wisdom is your spellcasting ability for ranger spells.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 3,
+      "id": "primeval-awareness",
+      "name": "Primeval Awareness",
+      "shortDescription": "Sense presence of certain creature types",
+      "description": "You can use your action and expend one ranger spell slot to focus your awareness on the region around you. For 1 minute per level of the spell slot you expend, you can sense whether the following types of creatures are present within 1 mile of you: aberrations, celestials, dragons, elementals, fey, fiends, and undead.",
+      "actionType": "action",
+      "category": "utility"
+    },
+    {
+      "level": 5,
+      "id": "extra-attack",
+      "name": "Extra Attack",
+      "shortDescription": "Attack twice when you take the Attack action",
+      "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 8,
+      "id": "lands-stride",
+      "name": "Land's Stride",
+      "shortDescription": "Move through nonmagical difficult terrain without penalty",
+      "description": "Moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed by them and without taking damage from them if they have thorns, spines, or a similar hazard.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 10,
+      "id": "hide-in-plain-sight",
+      "name": "Hide in Plain Sight",
+      "shortDescription": "+10 bonus to Stealth when not moving",
+      "description": "You can spend 1 minute creating camouflage for yourself. You must have access to fresh mud, dirt, plants, soot, and other naturally occurring materials with which to create your camouflage. Once you are camouflaged in this way, you can try to hide by pressing yourself up against a solid surface that is at least as tall and wide as you are. You gain a +10 bonus to Dexterity (Stealth) checks as long as you remain there without moving or taking actions.",
+      "actionType": "action",
+      "category": "utility",
+      "uses": {
+        "max": null,
+        "per": "unlimited"
+      }
+    },
+    {
+      "level": 14,
+      "id": "vanish",
+      "name": "Vanish",
+      "shortDescription": "Can't be tracked except by magical means, Hide as bonus action",
+      "description": "You can use the Hide action as a bonus action on your turn. Also, you can't be tracked by nonmagical means, unless you choose to leave a trail.",
+      "actionType": "bonus",
+      "category": "utility"
+    },
+    {
+      "level": 18,
+      "id": "feral-senses",
+      "name": "Feral Senses",
+      "shortDescription": "Detect invisible creatures within 30 feet",
+      "description": "You gain preternatural senses that help you fight creatures you can't see. When you attack a creature you can't see, your inability to see it doesn't impose disadvantage on your attack rolls against it. You are also aware of the location of any invisible creature within 30 feet of you, provided that the creature isn't hidden from you and you aren't blinded or deafened.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 20,
+      "id": "foe-slayer",
+      "name": "Foe Slayer",
+      "shortDescription": "Add Wisdom modifier to attack or damage vs favored enemy",
+      "description": "You become an unparalleled hunter of your enemies. Once on each of your turns, you can add your Wisdom modifier to the attack roll or the damage roll of an attack you make against one of your favored enemies. You can choose to use this feature before or after the roll, but before any effects of the roll are applied.",
+      "actionType": "passive",
+      "category": "combat"
     }
   ],
   "monk": [
