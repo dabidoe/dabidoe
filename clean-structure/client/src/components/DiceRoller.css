@@ -354,65 +354,51 @@
   color: #d4af37;
 }
 
-/* Stats Display */
-.stats-display {
+/* Actions Grid */
+.actions-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
-.stat-display-item {
-  background: rgba(40, 40, 60, 0.6);
+.action-ability-btn {
+  background: rgba(40, 40, 60, 0.8);
   border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 8px;
-  padding: 12px 8px;
-  text-align: center;
-}
-
-.stat-label {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
   color: #fff;
-  margin-bottom: 2px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
 }
 
-.stat-modifier {
-  font-size: 12px;
+.action-ability-btn:hover {
+  background: rgba(60, 60, 80, 0.9);
+  border-color: #d4af37;
+  transform: translateY(-2px);
+}
+
+.action-ability-btn .ability-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.action-ability-btn .ability-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.action-ability-btn .ability-damage {
+  font-size: 11px;
   color: #4a90e2;
   font-weight: 600;
-}
-
-.other-stats {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.stat-row:last-child {
-  border-bottom: none;
-}
-
-.stat-row strong {
-  color: #d4af37;
-  font-weight: 600;
+  background: rgba(74, 144, 226, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 /* Floating Action Button */
