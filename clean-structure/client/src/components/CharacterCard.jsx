@@ -9,6 +9,7 @@ import AbilityBrowser from './AbilityBrowser'
 import EquipmentBrowser from './EquipmentBrowser'
 import InventoryManager from './inventory/InventoryManager'
 import EquipmentSlots from './inventory/EquipmentSlots'
+import DiceRoller from './DiceRoller'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -28,6 +29,7 @@ function CharacterCard() {
   const [concentration, setConcentration] = useState(null) // {spell: {name, effect}, target: string}
   const [logCollapsed, setLogCollapsed] = useState(false)
   const [tabsCollapsed, setTabsCollapsed] = useState(false)
+  const [showDiceRoller, setShowDiceRoller] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -539,7 +541,14 @@ function CharacterCard() {
 
         {!logCollapsed && (
           <>
-            <div className="log-messages">
+            <div className="log-messages" style={{ position: 'relative' }}>
+              <button
+                className="battle-actions-btn"
+                onClick={() => setTabsCollapsed(false)}
+                title="Quick Access to Abilities"
+              >
+                ⚔️ Actions
+              </button>
               {messages.map((message, index) => (
                 <div key={index} className={`log-message ${message.type}`}>
                   {message.type === 'character' && (
@@ -982,6 +991,24 @@ function CharacterCard() {
           onClose={() => setShowEquipmentBrowser(false)}
         />
       )}
+
+      {/* Dice Roller */}
+      {showDiceRoller && (
+        <DiceRoller
+          character={character}
+          onMessage={addMessage}
+          onClose={() => setShowDiceRoller(false)}
+        />
+      )}
+
+      {/* Floating Dice Roller Button */}
+      <button
+        className="dice-fab"
+        onClick={() => setShowDiceRoller(!showDiceRoller)}
+        title="Dice Roller & Quick Actions"
+      >
+        🎲
+      </button>
     </div>
   )
 }

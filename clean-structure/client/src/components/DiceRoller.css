@@ -1,0 +1,314 @@
+/* Dice Roller Popup */
+.dice-roller-popup {
+  position: fixed;
+  bottom: 110px;
+  right: 30px;
+  width: 360px;
+  max-height: 80vh;
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(22, 33, 62, 0.98) 100%);
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dice-roller-header {
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dice-roller-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #d4af37;
+}
+
+.close-roller-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-roller-btn:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.dice-roller-content {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.roller-section {
+  margin-bottom: 20px;
+}
+
+.roller-section:last-child {
+  margin-bottom: 0;
+}
+
+.roller-section strong {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Quick Rolls */
+.quick-rolls-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.quick-roll-btn {
+  background: rgba(40, 40, 60, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #d4af37;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-roll-btn:hover {
+  background: rgba(60, 60, 80, 0.9);
+  border-color: #d4af37;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+/* Custom Roll Controls */
+.custom-roll-controls {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.control-group label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dice-input {
+  background: rgba(20, 20, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #fff;
+  font-size: 14px;
+  width: 100%;
+}
+
+.dice-input.small {
+  width: 50px;
+  padding: 8px;
+  text-align: center;
+}
+
+.dice-input:focus {
+  outline: none;
+  border-color: #d4af37;
+  background: rgba(30, 30, 40, 0.9);
+}
+
+.dice-select {
+  background: rgba(20, 20, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dice-select:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.roll-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: #1a1a2e;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  white-space: nowrap;
+}
+
+.roll-btn:hover {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.6);
+}
+
+/* Ability Checks */
+.ability-checks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ability-check-btn {
+  background: rgba(40, 40, 60, 0.8);
+  border: 1px solid rgba(100, 150, 200, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.3;
+}
+
+.ability-check-btn:hover {
+  background: rgba(60, 60, 80, 0.9);
+  border-color: rgba(100, 150, 200, 0.6);
+  transform: translateY(-2px);
+}
+
+.mod-value {
+  font-size: 13px;
+  color: #4a90e2;
+  font-weight: bold;
+}
+
+/* Saving Throws */
+.saves-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.save-btn {
+  background: rgba(40, 40, 60, 0.8);
+  border: 1px solid rgba(150, 100, 200, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.3;
+}
+
+.save-btn:hover {
+  background: rgba(60, 60, 80, 0.9);
+  border-color: rgba(150, 100, 200, 0.6);
+  transform: translateY(-2px);
+}
+
+.save-btn.proficient {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(60, 50, 40, 0.8);
+}
+
+.save-btn.proficient:hover {
+  border-color: #d4af37;
+}
+
+.save-btn .mod-value {
+  color: #9b59b6;
+}
+
+.save-btn.proficient .mod-value {
+  color: #d4af37;
+}
+
+/* Floating Action Button */
+.dice-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+  border: none;
+  border-radius: 50%;
+  color: #1a1a2e;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dice-fab:hover {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+.dice-fab:active {
+  transform: scale(0.95);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .dice-roller-popup {
+    right: 10px;
+    bottom: 90px;
+    width: calc(100vw - 20px);
+    max-width: 360px;
+  }
+
+  .dice-fab {
+    right: 15px;
+    bottom: 15px;
+    width: 55px;
+    height: 55px;
+    font-size: 28px;
+  }
+}
