@@ -6,6 +6,7 @@ function DiceRoller({ character, onMessage, onClose }) {
   const [diceType, setDiceType] = useState(20)
   const [modifier, setModifier] = useState(0)
   const [numDice, setNumDice] = useState(1)
+  const [activeTab, setActiveTab] = useState('dice')
 
   const rollDice = (sides, mod = 0, count = 1, label = '') => {
     const rolls = []
@@ -95,124 +96,153 @@ function DiceRoller({ character, onMessage, onClose }) {
   return (
     <div className="dice-roller-popup">
       <div className="dice-roller-header">
-        <h3>🎲 Dice & Actions</h3>
+        <h3>🎲 Quick Actions</h3>
         <button className="close-roller-btn" onClick={onClose}>✕</button>
       </div>
 
-      <div className="dice-roller-content">
-        {/* Combat Actions */}
-        {character && (
-          <div className="roller-section">
-            <strong>Combat Actions</strong>
-            <div className="combat-actions-grid">
-              <button className="combat-action-btn melee" onClick={handleMeleeAttack}>
-                <span className="action-emoji">⚔️</span>
-                <span className="action-text">Melee</span>
-                <span className="weapon-name">
-                  {(() => {
-                    const meleeWeapons = character.inventory?.filter(i =>
-                      i.category === 'weapon' &&
-                      i.equipped &&
-                      !i.weapon?.properties?.includes('ammunition')
-                    )
-                    const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0]
-                    return weapon ? weapon.name : 'Unarmed'
-                  })()}
-                </span>
-              </button>
-              <button className="combat-action-btn ranged" onClick={handleRangedAttack}>
-                <span className="action-emoji">🏹</span>
-                <span className="action-text">Ranged</span>
-                <span className="weapon-name">
-                  {(() => {
-                    const rangedWeapons = character.inventory?.filter(i =>
-                      i.category === 'weapon' &&
-                      i.equipped &&
-                      (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
-                    )
-                    const weapon = rangedWeapons?.[0]
-                    return weapon ? weapon.name : 'Improvised'
-                  })()}
-                </span>
-              </button>
-              <button className="combat-action-btn initiative" onClick={handleInitiative}>
-                <span className="action-emoji">🎲</span>
-                <span className="action-text">Initiative</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Quick Rolls */}
-        <div className="roller-section">
-          <strong>Quick Rolls</strong>
-          <div className="quick-rolls-grid">
-            {quickRolls.map(({ label, sides }) => (
-              <button
-                key={label}
-                className="quick-roll-btn"
-                onClick={() => rollDice(sides, 0, 1, label)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Custom Roll */}
-        <div className="roller-section">
-          <strong>Custom Roll</strong>
-          <div className="custom-roll-controls">
-            <div className="control-group">
-              <label>Dice</label>
-              <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                <input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={numDice}
-                  onChange={(e) => setNumDice(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="dice-input small"
-                />
-                <span style={{ color: 'rgba(255,255,255,0.5)' }}>d</span>
-                <select
-                  value={diceType}
-                  onChange={(e) => setDiceType(parseInt(e.target.value))}
-                  className="dice-select"
-                >
-                  <option value="4">4</option>
-                  <option value="6">6</option>
-                  <option value="8">8</option>
-                  <option value="10">10</option>
-                  <option value="12">12</option>
-                  <option value="20">20</option>
-                  <option value="100">100</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="control-group">
-              <label>Modifier</label>
-              <input
-                type="number"
-                min="-20"
-                max="20"
-                value={modifier}
-                onChange={(e) => setModifier(parseInt(e.target.value) || 0)}
-                className="dice-input"
-              />
-            </div>
-
-            <button className="roll-btn" onClick={handleCustomRoll}>
-              Roll
+      {/* Combat Actions - Always Visible */}
+      {character && (
+        <div className="roller-section combat-section">
+          <div className="combat-actions-grid">
+            <button className="combat-action-btn melee" onClick={handleMeleeAttack}>
+              <span className="action-emoji">⚔️</span>
+              <span className="action-text">Melee</span>
+              <span className="weapon-name">
+                {(() => {
+                  const meleeWeapons = character.inventory?.filter(i =>
+                    i.category === 'weapon' &&
+                    i.equipped &&
+                    !i.weapon?.properties?.includes('ammunition')
+                  )
+                  const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0]
+                  return weapon ? weapon.name : 'Unarmed'
+                })()}
+              </span>
+            </button>
+            <button className="combat-action-btn ranged" onClick={handleRangedAttack}>
+              <span className="action-emoji">🏹</span>
+              <span className="action-text">Ranged</span>
+              <span className="weapon-name">
+                {(() => {
+                  const rangedWeapons = character.inventory?.filter(i =>
+                    i.category === 'weapon' &&
+                    i.equipped &&
+                    (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
+                  )
+                  const weapon = rangedWeapons?.[0]
+                  return weapon ? weapon.name : 'Improvised'
+                })()}
+              </span>
+            </button>
+            <button className="combat-action-btn initiative" onClick={handleInitiative}>
+              <span className="action-emoji">🎲</span>
+              <span className="action-text">Initiative</span>
             </button>
           </div>
         </div>
+      )}
 
-        {/* Ability Score Checks */}
-        {character && (
+      {/* Tabs */}
+      <div className="roller-tabs">
+        <button
+          className={`roller-tab ${activeTab === 'dice' ? 'active' : ''}`}
+          onClick={() => setActiveTab('dice')}
+        >
+          🎲
+        </button>
+        <button
+          className={`roller-tab ${activeTab === 'checks' ? 'active' : ''}`}
+          onClick={() => setActiveTab('checks')}
+        >
+          Checks
+        </button>
+        <button
+          className={`roller-tab ${activeTab === 'saves' ? 'active' : ''}`}
+          onClick={() => setActiveTab('saves')}
+        >
+          Saves
+        </button>
+        <button
+          className={`roller-tab ${activeTab === 'stats' ? 'active' : ''}`}
+          onClick={() => setActiveTab('stats')}
+        >
+          Stats
+        </button>
+      </div>
+
+      <div className="dice-roller-content">
+        {/* Dice Tab */}
+        {activeTab === 'dice' && (
+          <>
+            <div className="roller-section">
+              <strong>Quick Rolls</strong>
+              <div className="quick-rolls-grid">
+                {quickRolls.map(({ label, sides }) => (
+                  <button
+                    key={label}
+                    className="quick-roll-btn"
+                    onClick={() => rollDice(sides, 0, 1, label)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="roller-section">
+              <strong>Custom Roll</strong>
+              <div className="custom-roll-controls">
+                <div className="control-group">
+                  <label>Dice</label>
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={numDice}
+                      onChange={(e) => setNumDice(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="dice-input small"
+                    />
+                    <span style={{ color: 'rgba(255,255,255,0.5)' }}>d</span>
+                    <select
+                      value={diceType}
+                      onChange={(e) => setDiceType(parseInt(e.target.value))}
+                      className="dice-select"
+                    >
+                      <option value="4">4</option>
+                      <option value="6">6</option>
+                      <option value="8">8</option>
+                      <option value="10">10</option>
+                      <option value="12">12</option>
+                      <option value="20">20</option>
+                      <option value="100">100</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="control-group">
+                  <label>Modifier</label>
+                  <input
+                    type="number"
+                    min="-20"
+                    max="20"
+                    value={modifier}
+                    onChange={(e) => setModifier(parseInt(e.target.value) || 0)}
+                    className="dice-input"
+                  />
+                </div>
+
+                <button className="roll-btn" onClick={handleCustomRoll}>
+                  Roll
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Checks Tab */}
+        {activeTab === 'checks' && character && (
           <div className="roller-section">
-            <strong>Ability Checks</strong>
             <div className="ability-checks-grid">
               {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
                 const statValue = character.stats?.[stat] || 10
@@ -232,10 +262,9 @@ function DiceRoller({ character, onMessage, onClose }) {
           </div>
         )}
 
-        {/* Saving Throws */}
-        {character && (
+        {/* Saves Tab */}
+        {activeTab === 'saves' && character && (
           <div className="roller-section">
-            <strong>Saving Throws</strong>
             <div className="saves-grid">
               {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
                 const statValue = character.stats?.[stat] || 10
@@ -254,6 +283,36 @@ function DiceRoller({ character, onMessage, onClose }) {
                   </button>
                 )
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Stats Tab */}
+        {activeTab === 'stats' && character && (
+          <div className="roller-section">
+            <div className="stats-display">
+              {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
+                const statValue = character.stats?.[stat] || 10
+                const mod = Math.floor((statValue - 10) / 2)
+                return (
+                  <div key={stat} className="stat-display-item">
+                    <div className="stat-label">{stat.toUpperCase()}</div>
+                    <div className="stat-value">{statValue}</div>
+                    <div className="stat-modifier">({mod >= 0 ? '+' : ''}{mod})</div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="other-stats">
+              <div className="stat-row">
+                <span>AC:</span> <strong>{character.armorClass || 10}</strong>
+              </div>
+              <div className="stat-row">
+                <span>Speed:</span> <strong>{character.speed || 30} ft</strong>
+              </div>
+              <div className="stat-row">
+                <span>Proficiency:</span> <strong>+{character.proficiencyBonus || 2}</strong>
+              </div>
             </div>
           </div>
         )}
