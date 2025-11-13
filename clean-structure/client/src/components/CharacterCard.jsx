@@ -68,43 +68,50 @@ function CharacterCard() {
 
   // Handle combat abilities
   const handleAbilityClick = (ability) => {
-    const abilityData = {
-      'Sword Strike': { modifier: 9, damageCount: 1, damageSides: 8, damageBonus: 6, icon: '⚔️' },
-      'Divine Fury': { modifier: 8, damageCount: 2, damageSides: 6, damageBonus: 8, icon: '🔥' },
-      'Spear Thrust': { modifier: 10, damageCount: 1, damageSides: 10, damageBonus: 7, icon: '🗡️' },
-      'Shield Wall': { modifier: 7, isDefensive: true, icon: '🛡️' }
+    const details = ability.details || ability
+
+    // Get icon for ability
+    const getIcon = () => {
+      const categoryIcons = {
+        'combat': '⚔️',
+        'utility': '🔧',
+        'defensive': '🛡️',
+        'spell': '✨',
+        'social': '💬'
+      }
+      return categoryIcons[ability.category] || '⭐'
     }
 
-    const data = abilityData[ability.name]
-    if (!data) return
+    const icon = getIcon()
+    const abilityName = details.name || ability.name
 
-    // Handle combat actions
-    if (data.isDefensive) {
-      const roll = rollD20(data.modifier)
-      const acBonus = Math.floor((roll.total - 10) / 5)
-      let responseText = `${data.icon} **Shield Defense**: AC Bonus +${acBonus} (rolled ${roll.total})`
-      if (roll.isCrit) responseText += ' **CRITICAL!**'
-      if (roll.isFail) responseText += ' *Critical miss...*'
+    // Handle spells
+    if (ability.category === 'spell') {
+      let message = `${icon} **Cast ${abilityName}**`
+      if (details.shortDescription) {
+        message += `\n\n${details.shortDescription}`
+      }
+      addMessage(message, 'character', 'Focused')
+      return
+    }
 
-      responseText += '\n\n' + getNarration(ability.name, { attack: roll })
-      addMessage(responseText, 'character', 'Defensive')
+    // Handle class features and abilities
+    let message = `${icon} **${abilityName} Activated**`
+
+    if (details.shortDescription) {
+      message += `\n\n${details.shortDescription}`
+    }
+
+    // Special handling for combat abilities
+    if (ability.category === 'combat') {
+      message += '\n\n*Ready for combat!*'
+      addMessage(message, 'character', 'Battle Ready')
+    } else if (ability.category === 'defensive') {
+      addMessage(message, 'character', 'Defensive')
+    } else if (ability.category === 'utility') {
+      addMessage(message, 'character', 'Focused')
     } else {
-      // Attack ability
-      const result = rollAttack(data)
-      let responseText = `${data.icon} **${ability.name}**: Attack ${result.attack.total} (d20: ${result.attack.d20}+${result.attack.modifier})`
-
-      if (result.attack.isCrit) {
-        responseText += ' **CRITICAL HIT!**'
-      } else if (result.attack.isFail) {
-        responseText += ' *Critical miss...*'
-      }
-
-      if (result.damage) {
-        responseText += `\n💥 **Damage**: ${result.damage.total} (${result.damage.formula}) [${result.damage.rolls.join(', ')}]`
-      }
-
-      responseText += '\n\n' + getNarration(ability.name, result)
-      addMessage(responseText, 'character', 'Focused')
+      addMessage(message, 'character', 'Contemplative')
     }
   }
 
