@@ -91,7 +91,7 @@ function CharacterCard() {
     const icon = getIcon()
     const abilityName = details.name || ability.name
 
-    // Handle spells
+    // Handle spells with attack rolls
     if (ability.category === 'spell') {
       let message = `${icon} **Cast ${abilityName}**`
       if (details.shortDescription) {
@@ -101,18 +101,76 @@ function CharacterCard() {
       return
     }
 
-    // Handle class features and abilities
+    // Handle combat abilities with damage (like Colossus Slayer, Extra Attack, etc.)
+    if (ability.category === 'combat' && (details.damage || ability.damage)) {
+      // Get equipped weapon for base attack
+      const meleeWeapons = character.inventory?.filter(i =>
+        i.category === 'weapon' && i.equipped && !i.weapon?.properties?.includes('ranged')
+      )
+      const weapon = meleeWeapons?.[0] || { name: 'Unarmed Strike', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
+
+      // Calculate attack bonus
+      const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
+      const attackRoll = Math.floor(Math.random() * 20) + 1
+      const attackTotal = attackRoll + attackBonus
+
+      let message = `${icon} **${abilityName}**\n\n`
+      message += `🎯 Attack Roll: d20(${attackRoll}) + ${attackBonus} = **${attackTotal}**`
+
+      if (attackRoll === 20) {
+        message += ' 🎉 **CRITICAL HIT!**'
+      } else if (attackRoll === 1) {
+        message += ' 💀 *Critical miss...*'
+      }
+
+      // Roll weapon damage
+      const weaponDamage = weapon.weapon.damage
+      const weaponDiceMatch = weaponDamage.match(/(\d+)d(\d+)/)
+      if (weaponDiceMatch) {
+        const [_, numDice, diceSize] = weaponDiceMatch
+        let totalDamage = 0
+        const rolls = []
+        for (let i = 0; i < parseInt(numDice); i++) {
+          const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+          rolls.push(roll)
+          totalDamage += roll
+        }
+        const damageBonus = Math.floor((character.stats.str - 10) / 2)
+        totalDamage += damageBonus
+
+        message += `\n💥 ${weapon.name} Damage: ${weaponDamage}+${damageBonus} = **${totalDamage}** ${weapon.weapon.damageType} [${rolls.join(', ')}]`
+      }
+
+      // Roll ability extra damage (like Colossus Slayer's 1d8)
+      const abilityDamage = details.damage || ability.damage
+      if (abilityDamage && abilityDamage.formula) {
+        const damageMatch = abilityDamage.formula.match(/(\d+)d(\d+)/)
+        if (damageMatch) {
+          const [_, numDice, diceSize] = damageMatch
+          let totalExtraDamage = 0
+          const extraRolls = []
+          for (let i = 0; i < parseInt(numDice); i++) {
+            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+            extraRolls.push(roll)
+            totalExtraDamage += roll
+          }
+          message += `\n✨ ${abilityName} Damage: ${abilityDamage.formula} = **${totalExtraDamage}** ${abilityDamage.type} [${extraRolls.join(', ')}]`
+        }
+      }
+
+      addMessage(message, 'character', 'Battle Ready')
+      return
+    }
+
+    // Handle utility/defensive/passive abilities (no damage)
     let message = `${icon} **${abilityName} Activated**`
 
     if (details.shortDescription) {
       message += `\n\n${details.shortDescription}`
     }
 
-    // Special handling for combat abilities
-    if (ability.category === 'combat') {
-      message += '\n\n*Ready for combat!*'
-      addMessage(message, 'character', 'Battle Ready')
-    } else if (ability.category === 'defensive') {
+    // Add flavor based on category
+    if (ability.category === 'defensive') {
       addMessage(message, 'character', 'Defensive')
     } else if (ability.category === 'utility') {
       addMessage(message, 'character', 'Focused')

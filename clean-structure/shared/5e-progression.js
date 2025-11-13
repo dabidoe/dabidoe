@@ -706,7 +706,10 @@ export const HUNTER_ABILITIES = {
     description: 'Your tenacity can wear down the most potent foes. When you hit a creature with a weapon attack, the creature takes an extra 1d8 damage if it\'s below its hit point maximum. You can deal this extra damage only once per turn.',
     actionType: 'passive',
     category: 'combat',
-    damage: '1d8'
+    damage: {
+      formula: '1d8',
+      type: 'slashing'
+    }
   },
   'giant-killer': {
     id: 'giant-killer',
