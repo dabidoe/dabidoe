@@ -334,6 +334,50 @@
   box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
 }
 
+/* Ability Links in Messages */
+.ability-link {
+  background: rgba(155, 89, 182, 0.2);
+  border: 1px solid rgba(155, 89, 182, 0.4);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: #9b59b6;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.ability-link:hover {
+  background: rgba(155, 89, 182, 0.4);
+  border-color: #9b59b6;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(155, 89, 182, 0.3);
+}
+
+/* Equipment Links in Messages */
+.equipment-link {
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: #d4af37;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+}
+
+.equipment-link:hover {
+  background: rgba(212, 175, 55, 0.4);
+  border-color: #d4af37;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(212, 175, 55, 0.3);
+}
+
 /* Message Toggle Button */
 .message-toggle-btn {
   margin-top: 8px;
