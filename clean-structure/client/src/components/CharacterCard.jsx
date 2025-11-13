@@ -256,59 +256,95 @@ function CharacterCard() {
 
   return (
     <div className="character-card">
-      {/* Large Header with Portrait + Stats */}
-      <div className="character-header-large">
-        <div className="portrait-section">
-          <div className="character-portrait">
-            {/* Portrait - supports emoji or image URL */}
-            {character.portraitUrl ? (
-              <img src={character.portraitUrl} alt={character.name} className="portrait-image" />
-            ) : (
-              <div className="portrait-placeholder">{character.portrait || '🎭'}</div>
-            )}
+      {/* Compact Header with Portrait + Stats */}
+      <div className="character-header-compact" style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        padding: '12px 16px',
+        background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%)',
+        borderBottom: '2px solid rgba(212, 175, 55, 0.3)',
+        position: 'relative'
+      }}>
+        {/* Portrait */}
+        <div className="character-portrait-compact" style={{
+          width: '60px',
+          height: '60px',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          border: '2px solid #d4af37',
+          flexShrink: 0
+        }}>
+          {character.portraitUrl ? (
+            <img src={character.portraitUrl} alt={character.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', background: 'rgba(0,0,0,0.3)' }}>
+              {character.portrait || '🎭'}
+            </div>
+          )}
+        </div>
+
+        {/* Name & Class Info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ color: '#d4af37', fontSize: '18px', fontWeight: 'bold', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {character.name}
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>
+            <span>{character.class || 'Fighter'}</span>
+            <span style={{ margin: '0 6px', color: 'rgba(255,255,255,0.4)' }}>•</span>
+            <span>Level {character.level || 10}</span>
+            <span style={{ margin: '0 6px', color: 'rgba(255,255,255,0.4)' }}>•</span>
+            <span>{character.race || 'Human'}</span>
           </div>
         </div>
 
-        <div className="header-stats">
-          <div className="character-name-large">{character.name}</div>
-          <div className="character-details">
-            <span className="detail-item">{character.class || 'Fighter'}</span>
-            <span className="detail-separator">•</span>
-            <span className="detail-item">Level {character.level || 10}</span>
-            <span className="detail-separator">•</span>
-            <span className="detail-item">{character.race || 'Human'}</span>
+        {/* Compact Stats */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* HP */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '60px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '10px', fontWeight: '600', marginBottom: '2px' }}>HP</div>
+            <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
+              {currentHP}<span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>/{character.hp.max}</span>
+            </div>
+            <div style={{ width: '50px', height: '4px', background: 'rgba(0,0,0,0.4)', borderRadius: '2px', marginTop: '2px', overflow: 'hidden' }}>
+              <div className={`stat-bar-fill hp ${getHPClass()}`} style={{ height: '100%', width: `${(currentHP / character.hp.max) * 100}%`, transition: 'width 0.3s ease' }} />
+            </div>
           </div>
 
-          <div className="stat-bars">
-            <div className="stat-bar-item">
-              <span className="stat-label">HP</span>
-              <div className="stat-bar-bg">
-                <div
-                  className={`stat-bar-fill hp ${getHPClass()}`}
-                  style={{ width: `${(currentHP / character.hp.max) * 100}%` }}
-                />
-              </div>
-              <span className="stat-value">{currentHP}/{character.hp.max}</span>
-            </div>
+          {/* AC */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '40px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '10px', fontWeight: '600', marginBottom: '2px' }}>AC</div>
+            <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{character.ac || 18}</div>
+          </div>
 
-            <div className="quick-stats">
-              <div className="quick-stat">
-                <span className="quick-stat-label">AC</span>
-                <span className="quick-stat-value">{character.ac || 18}</span>
-              </div>
-              <div className="quick-stat">
-                <span className="quick-stat-label">Initiative</span>
-                <span className="quick-stat-value">+{character.initiative || 3}</span>
-              </div>
-              <div className="quick-stat">
-                <span className="quick-stat-label">Speed</span>
-                <span className="quick-stat-value">{character.speed || 30}ft</span>
-              </div>
-            </div>
+          {/* Initiative */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '40px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '10px', fontWeight: '600', marginBottom: '2px' }}>INIT</div>
+            <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>+{character.initiative || 3}</div>
+          </div>
+
+          {/* Speed */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '40px' }}>
+            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '10px', fontWeight: '600', marginBottom: '2px' }}>SPD</div>
+            <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{character.speed || 30}<span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>ft</span></div>
           </div>
         </div>
 
-        <button className="close-btn-top" onClick={() => navigate('/')}>✕</button>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            background: 'transparent',
+            border: 'none',
+            color: '#888',
+            fontSize: '20px',
+            cursor: 'pointer',
+            padding: '4px',
+            lineHeight: 1
+          }}
+        >✕</button>
       </div>
 
       {/* Conversation/Log Area */}
