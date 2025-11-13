@@ -861,19 +861,42 @@ function CharacterCard() {
               >
                 📚 Browse Spell Library
               </button>
-              <div className="spell-list">
+              <div className="spells-grid">
                 {character.abilities
                   ?.filter(ability => ability.category === 'spell')
-                  .map((spell, index) => (
-                    <div key={index} className="spell-item" onClick={() => handleAbilityClick(spell)}>
-                      <span className="spell-name">{spell.details?.name || spell.name}</span>
-                      <span className="spell-level">
-                        {spell.type === 'cantrip' ? 'Cantrip' : `Level ${spell.level || spell.details?.level || '?'}`}
-                      </span>
-                    </div>
-                  ))}
+                  .map((spell, index) => {
+                    const SPELL_SCHOOL_EMOJIS = {
+                      'abjuration': '🛡️',
+                      'conjuration': '✨',
+                      'divination': '🔮',
+                      'enchantment': '💫',
+                      'evocation': '🔥',
+                      'illusion': '🎭',
+                      'necromancy': '💀',
+                      'transmutation': '⚗️'
+                    }
+
+                    const school = (spell.details?.school || '').toLowerCase()
+                    const emoji = SPELL_SCHOOL_EMOJIS[school] || '✨'
+                    const spellLevel = spell.type === 'cantrip' ? 'Cantrip' :
+                                      `Level ${spell.level || spell.details?.level || '?'}`
+
+                    return (
+                      <button
+                        key={index}
+                        className="spell-btn"
+                        onClick={() => handleAbilityClick(spell)}
+                      >
+                        <span className="spell-emoji">{emoji}</span>
+                        <div className="spell-info">
+                          <div className="spell-name">{spell.details?.name || spell.name}</div>
+                          <div className="spell-meta">{spellLevel} • {spell.details?.school || 'Unknown'}</div>
+                        </div>
+                      </button>
+                    )
+                  })}
                 {(!character.abilities || character.abilities.filter(a => a.category === 'spell').length === 0) && (
-                  <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
+                  <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', gridColumn: '1 / -1'}}>
                     No spells available
                   </div>
                 )}
