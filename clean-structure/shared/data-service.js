@@ -278,6 +278,7 @@ export function featureToAbility(feature) {
     name: feature.name,
     category: feature.category || 'combat',
     equipped: true,
+    usable: feature.usable, // Preserve usable flag (true = clickable ability)
     damage: feature.damage, // Preserve damage for combat abilities
     details: {
       name: feature.name,
@@ -285,6 +286,7 @@ export function featureToAbility(feature) {
       school: 'Class Feature',
       description: feature.description,
       actionType: feature.actionType,
+      usable: feature.usable, // Include in details too
       uses: feature.uses,
       damage: feature.damage, // Include in details too
       range: feature.range,

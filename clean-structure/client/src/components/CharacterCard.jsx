@@ -515,7 +515,11 @@ function CharacterCard() {
                 <h3 style={{ color: '#d4af37', marginBottom: '12px', fontSize: '16px' }}>Passive Traits</h3>
                 <div className="traits-list">
                   {character.abilities
-                    ?.filter(a => a.details?.actionType === 'passive' && a.category !== 'spell')
+                    ?.filter(a =>
+                      a.details?.actionType === 'passive' &&
+                      a.category !== 'spell' &&
+                      !a.usable && !a.details?.usable // Exclude usable abilities like Colossus Slayer
+                    )
                     .map((trait, index) => (
                       <div
                         key={index}

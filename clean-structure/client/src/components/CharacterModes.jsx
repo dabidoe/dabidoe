@@ -173,14 +173,22 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
     </div>
   )
 
-  const renderBattleMode = () => (
-    <div className="battle-mode">
-      {/* Active Abilities Only (exclude spells and passive traits) */}
-      <div className="combat-abilities">
-        <div className="abilities-grid">
-          {abilities
-            .filter(a => a.category !== 'spell' && a.details?.actionType !== 'passive')
-            .map((ability) => (
+  const renderBattleMode = () => {
+    // Filter for usable abilities: action/bonus/reaction OR passive with usable flag
+    const usableAbilities = abilities.filter(a =>
+      a.category !== 'spell' && (
+        a.usable === true ||
+        a.details?.usable === true ||
+        (a.details?.actionType !== 'passive' && a.details?.actionType !== undefined)
+      )
+    )
+
+    return (
+      <div className="battle-mode">
+        {/* Usable Abilities Only (exclude spells and non-usable passive traits) */}
+        <div className="combat-abilities">
+          <div className="abilities-grid">
+            {usableAbilities.map((ability) => (
               <AbilityCard
                 key={ability.abilityId}
                 ability={ability}
@@ -192,15 +200,16 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
                 mode="battle"
               />
             ))}
-        </div>
-        {(!abilities || abilities.filter(a => a.category !== 'spell' && a.details?.actionType !== 'passive').length === 0) && (
-          <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
-            No active abilities available. Passive traits are in the Stats tab.
           </div>
-        )}
+          {usableAbilities.length === 0 && (
+            <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
+              No active abilities available. Passive traits are in the Stats tab.
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   const renderSkillsMode = () => (
     <div className="skills-mode">
