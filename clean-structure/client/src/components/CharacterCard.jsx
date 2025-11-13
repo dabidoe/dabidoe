@@ -881,6 +881,12 @@ function CharacterCard() {
                     const spellLevel = spell.type === 'cantrip' ? 'Cantrip' :
                                       `Level ${spell.level || spell.details?.level || '?'}`
 
+                    // Build brief description
+                    const descParts = []
+                    if (spell.details?.castingTime) descParts.push(spell.details.castingTime)
+                    if (spell.details?.range) descParts.push(spell.details.range)
+                    const briefDesc = descParts.join(' • ')
+
                     return (
                       <button
                         key={index}
@@ -891,6 +897,7 @@ function CharacterCard() {
                         <div className="spell-info">
                           <div className="spell-name">{spell.details?.name || spell.name}</div>
                           <div className="spell-meta">{spellLevel} • {spell.details?.school || 'Unknown'}</div>
+                          {briefDesc && <div className="spell-description">{briefDesc}</div>}
                         </div>
                       </button>
                     )
