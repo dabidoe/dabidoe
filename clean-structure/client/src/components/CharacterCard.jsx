@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import { getDemoCharacter } from '../data/demo-characters'
+import { populateCharacterData } from '../../../shared/data-loader'
 import CharacterModes from './CharacterModes'
 import './CharacterCard.css'
 
@@ -22,9 +23,11 @@ function CharacterCard() {
     const loadCharacter = async () => {
       const loadedCharacter = getDemoCharacter(characterId)
       if (loadedCharacter) {
-        setCharacter(loadedCharacter)
-        setCurrentHP(loadedCharacter.hp.current)
-        setMessages([loadedCharacter.initialMessage])
+        // Populate with actual D&D data (spells, abilities, equipment)
+        const populatedCharacter = populateCharacterData({ ...loadedCharacter })
+        setCharacter(populatedCharacter)
+        setCurrentHP(populatedCharacter.hp.current)
+        setMessages([populatedCharacter.initialMessage])
       }
       setLoading(false)
     }
