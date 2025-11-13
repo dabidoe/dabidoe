@@ -227,8 +227,9 @@
 
 /* ========== CONVERSATION/LOG AREA ========== */
 .conversation-log {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 200px;
+  max-height: 50vh;
   display: flex;
   flex-direction: column;
   background: rgba(10, 10, 10, 0.95);
@@ -248,7 +249,7 @@
 .section-collapse-btn {
   position: absolute;
   top: 4px;
-  right: 8px;
+  left: 8px;
   background: rgba(40, 40, 40, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -332,6 +333,26 @@
   color: #fff;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+/* Message Toggle Button */
+.message-toggle-btn {
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: rgba(40, 40, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.message-toggle-btn:hover {
+  background: rgba(60, 60, 60, 0.9);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
 }
 
 /* Message Input */
@@ -426,8 +447,8 @@
   position: relative;
   top: auto;
   right: auto;
+  left: auto;
   flex: 0 0 auto;
-  margin-left: auto;
 }
 
 .tab-header {
