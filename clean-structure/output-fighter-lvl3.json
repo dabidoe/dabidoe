@@ -1,0 +1,216 @@
+{
+  "id": "char-fighter-001",
+  "name": "Boromir",
+  "class": "Fighter",
+  "level": 3,
+  "race": "Human",
+  "stats": {
+    "str": 16,
+    "dex": 14,
+    "con": 15,
+    "int": 10,
+    "wis": 11,
+    "cha": 12
+  },
+  "hp": {
+    "current": 28,
+    "max": 28
+  },
+  "ac": 18,
+  "background": "soldier",
+  "proficiencyBonus": 2,
+  "abilities": [
+    {
+      "level": 1,
+      "id": "second-wind-1763039363359-acix9fj3f",
+      "name": "Second Wind",
+      "shortDescription": "Regain hit points as a bonus action",
+      "description": "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.",
+      "actionType": "bonus",
+      "category": "class-feature",
+      "uses": {
+        "type": "short rest",
+        "current": 1,
+        "max": 1,
+        "per": "short rest"
+      },
+      "type": "feature",
+      "equipped": true
+    },
+    {
+      "level": 1,
+      "id": "fighting-style-dueling-1763039363359-lk15pkkhv",
+      "name": "Fighting Style: Dueling",
+      "shortDescription": "+2 damage when wielding one weapon",
+      "description": "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.",
+      "actionType": "passive",
+      "category": "class-feature",
+      "type": "feature",
+      "equipped": true,
+      "uses": null
+    },
+    {
+      "level": 2,
+      "id": "action-surge-1763039363359-k1zzuaejc",
+      "name": "Action Surge",
+      "shortDescription": "Take an additional action on your turn",
+      "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action. Once you use this feature, you must finish a short or long rest before you can use it again.",
+      "actionType": "action",
+      "category": "class-feature",
+      "uses": {
+        "type": "short rest",
+        "current": 1,
+        "max": 1,
+        "per": "short rest"
+      },
+      "type": "feature",
+      "equipped": true
+    }
+  ],
+  "inventory": [
+    {
+      "id": "longsword-1763039363359-f8qflht6",
+      "name": "Longsword",
+      "category": "weapon",
+      "rarity": "common",
+      "slot": "mainHand",
+      "weight": 3,
+      "value": 15,
+      "description": "A versatile one-handed sword",
+      "weapon": {
+        "damage": "1d8",
+        "damageType": "slashing",
+        "properties": [
+          "versatile"
+        ],
+        "versatileDamage": "1d10",
+        "range": "5 ft"
+      },
+      "equipped": true,
+      "attuned": false
+    },
+    {
+      "id": "shield-1763039363359-q8gntf4v5",
+      "name": "Shield",
+      "category": "shield",
+      "rarity": "common",
+      "slot": "offHand",
+      "weight": 6,
+      "value": 10,
+      "description": "A basic wooden shield",
+      "shield": {
+        "acBonus": 2
+      },
+      "equipped": true,
+      "attuned": false
+    },
+    {
+      "id": "chain-mail-1763039363359-1wfum1uwm",
+      "name": "Chain Mail",
+      "category": "armor",
+      "rarity": "common",
+      "slot": "body",
+      "weight": 55,
+      "value": 75,
+      "description": "Heavy interlocking metal rings",
+      "armor": {
+        "ac": 16,
+        "type": "heavy",
+        "maxDexBonus": 0,
+        "stealthDisadvantage": true,
+        "strengthRequired": 13
+      },
+      "equipped": true,
+      "attuned": false
+    },
+    {
+      "id": "potion-healing-1763039363359-fk66zmck1",
+      "name": "Potion of Healing",
+      "category": "potion",
+      "rarity": "common",
+      "weight": 0.5,
+      "value": 50,
+      "quantity": 1,
+      "description": "A magical elixir that restores health",
+      "consumable": {
+        "effect": "Heal 2d4+2",
+        "duration": "Instant"
+      },
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "backpack-1763039363359-2atok22rl",
+      "name": "Backpack",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 5,
+      "value": 2,
+      "quantity": 1,
+      "description": "A leather pack for carrying gear",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "bedroll-1763039363359-xyvam4v3f",
+      "name": "Bedroll",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 7,
+      "value": 1,
+      "quantity": 1,
+      "description": "A simple sleeping roll",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "rations-1763039363359-7xf6dn2io",
+      "name": "Rations (1 day)",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 2,
+      "value": 0.5,
+      "quantity": 10,
+      "description": "Dried food for travel",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "rope-hemp-1763039363359-7m2gevg0l",
+      "name": "Hempen Rope (50 feet)",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 10,
+      "value": 1,
+      "quantity": 1,
+      "description": "Strong rope for climbing and binding",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "torch-1763039363359-yt176tlwv",
+      "name": "Torch",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 1,
+      "value": 0.01,
+      "quantity": 10,
+      "description": "Provides bright light in a 20-foot radius for 1 hour",
+      "equipped": false,
+      "attuned": false
+    }
+  ],
+  "currency": {
+    "cp": 0,
+    "sp": 0,
+    "gp": 125,
+    "pp": 0
+  },
+  "backstory": "Captain of the Guard of Gondor, son of the Steward. Proud warrior seeking to defend his city.",
+  "personality": "Brave, proud, loyal to his homeland. Struggles with the allure of power.",
+  "traits": [
+    "Master swordsman",
+    "Tactical mind",
+    "Conflicted soul"
+  ]
+}
