@@ -26,6 +26,9 @@ function CharacterCard() {
   const [showSpellBrowser, setShowSpellBrowser] = useState(false)
   const [showAbilityBrowser, setShowAbilityBrowser] = useState(false)
   const [showEquipmentBrowser, setShowEquipmentBrowser] = useState(false)
+  const [selectedSpellId, setSelectedSpellId] = useState(null)
+  const [selectedAbilityId, setSelectedAbilityId] = useState(null)
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState(null)
   const [concentration, setConcentration] = useState(null) // {spell: {name, effect}, target: string}
   const [logCollapsed, setLogCollapsed] = useState(false)
   const [tabsCollapsed, setTabsCollapsed] = useState(false)
@@ -343,34 +346,44 @@ function CharacterCard() {
     addMessage(message, 'system')
   }
 
-  // Render message content with clickable spell links
+  // Render message content with clickable spell/ability/equipment links
   const renderMessageContent = (text) => {
-    // Match pattern: [SPELL:ability-id:Spell Name]
-    const spellLinkRegex = /\[SPELL:([^:]+):([^\]]+)\]/g
+    // Match patterns: [SPELL:id:Name], [ABILITY:id:Name], [EQUIPMENT:id:Name]
+    const linkRegex = /\[(SPELL|ABILITY|EQUIPMENT):([^:]+):([^\]]+)\]/g
     const parts = []
     let lastIndex = 0
     let match
 
-    while ((match = spellLinkRegex.exec(text)) !== null) {
+    while ((match = linkRegex.exec(text)) !== null) {
       // Add text before the match
       if (match.index > lastIndex) {
         parts.push(text.substring(lastIndex, match.index))
       }
 
-      // Add clickable spell link
-      const abilityId = match[1]
-      const spellName = match[2]
+      const linkType = match[1]
+      const itemId = match[2]
+      const itemName = match[3]
+
+      // Add clickable link based on type
       parts.push(
         <button
-          key={`spell-${match.index}`}
-          className="spell-link"
+          key={`${linkType}-${match.index}`}
+          className={`${linkType.toLowerCase()}-link item-link`}
           onClick={() => {
-            // Open spell browser to view spell details
-            setShowSpellBrowser(true)
+            if (linkType === 'SPELL') {
+              setSelectedSpellId(itemId)
+              setShowSpellBrowser(true)
+            } else if (linkType === 'ABILITY') {
+              setSelectedAbilityId(itemId)
+              setShowAbilityBrowser(true)
+            } else if (linkType === 'EQUIPMENT') {
+              setSelectedEquipmentId(itemId)
+              setShowEquipmentBrowser(true)
+            }
           }}
-          title="Click to open spell library"
+          title={`Click to view ${linkType.toLowerCase()}`}
         >
-          {spellName}
+          {itemName}
         </button>
       )
 
@@ -1033,8 +1046,12 @@ function CharacterCard() {
       {showSpellBrowser && (
         <SpellBrowser
           character={character}
+          selectedSpellId={selectedSpellId}
           onAddSpell={handleAddSpell}
-          onClose={() => setShowSpellBrowser(false)}
+          onClose={() => {
+            setShowSpellBrowser(false)
+            setSelectedSpellId(null)
+          }}
         />
       )}
 
@@ -1042,8 +1059,12 @@ function CharacterCard() {
       {showAbilityBrowser && (
         <AbilityBrowser
           character={character}
+          selectedAbilityId={selectedAbilityId}
           onAddAbility={handleAddAbility}
-          onClose={() => setShowAbilityBrowser(false)}
+          onClose={() => {
+            setShowAbilityBrowser(false)
+            setSelectedAbilityId(null)
+          }}
         />
       )}
 
@@ -1051,8 +1072,12 @@ function CharacterCard() {
       {showEquipmentBrowser && (
         <EquipmentBrowser
           character={character}
+          selectedEquipmentId={selectedEquipmentId}
           onAddEquipment={handleAddEquipment}
-          onClose={() => setShowEquipmentBrowser(false)}
+          onClose={() => {
+            setShowEquipmentBrowser(false)
+            setSelectedEquipmentId(null)
+          }}
         />
       )}
 

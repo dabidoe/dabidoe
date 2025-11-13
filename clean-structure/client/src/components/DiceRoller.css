@@ -62,6 +62,47 @@
   transform: rotate(90deg);
 }
 
+/* Combat Section - Always Visible */
+.combat-section {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  margin: 0;
+}
+
+/* Tabs */
+.roller-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.roller-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.roller-tab:hover {
+  color: rgba(212, 175, 55, 0.8);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.roller-tab.active {
+  color: #d4af37;
+  border-bottom-color: #d4af37;
+  background: rgba(212, 175, 55, 0.15);
+}
+
 .dice-roller-content {
   padding: 16px 20px;
   overflow-y: auto;
@@ -311,6 +352,67 @@
 
 .save-btn.proficient .mod-value {
   color: #d4af37;
+}
+
+/* Stats Display */
+.stats-display {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-display-item {
+  background: rgba(40, 40, 60, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.stat-modifier {
+  font-size: 12px;
+  color: #4a90e2;
+  font-weight: 600;
+}
+
+.other-stats {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row strong {
+  color: #d4af37;
+  font-weight: 600;
 }
 
 /* Floating Action Button */
