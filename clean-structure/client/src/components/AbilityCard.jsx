@@ -78,33 +78,17 @@ function AbilityCard({ ability, onUse, character, mode }) {
     <div
       className={`ability-card ${expanded ? 'expanded' : ''} ${!canUse() ? 'disabled' : ''}`}
     >
-      {/* Collapsed View */}
+      {/* Collapsed View - Entire card is clickable */}
       {!expanded && (
-        <div className="ability-card-header">
-          {/* Main clickable area to expand */}
-          <div
-            className="ability-info-area"
-            onClick={() => setExpanded(true)}
-            style={{ cursor: 'pointer', flex: 1 }}
-          >
-            <span className="ability-icon">{getDisplayIcon()}</span>
-            <span className="ability-name">{details.name}</span>
-            {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
-            {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
-          </div>
-
-          {/* Quick cast button */}
-          <button
-            className={`quick-cast-btn ${!canUse() ? 'disabled' : ''} ${ability.category === 'spell' ? 'spell-quick-cast' : ''}`}
-            onClick={(e) => {
-              e.stopPropagation()
-              handleUse()
-            }}
-            disabled={!canUse()}
-            title={ability.category === 'spell' ? 'Quick cast' : 'Use ability'}
-          >
-            {ability.category === 'spell' ? '✨' : '⚡'}
-          </button>
+        <div
+          className="ability-card-header"
+          onClick={() => setExpanded(true)}
+          style={{ cursor: 'pointer' }}
+        >
+          <span className="ability-icon">{getDisplayIcon()}</span>
+          <span className="ability-name">{details.name}</span>
+          {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
+          {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
         </div>
       )}
 
