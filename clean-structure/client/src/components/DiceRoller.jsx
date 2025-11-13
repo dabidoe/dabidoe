@@ -44,6 +44,43 @@ function DiceRoller({ character, onMessage, onClose }) {
     rollDice(diceType, modifier, numDice, 'Custom Roll')
   }
 
+  // Handle combat actions
+  const handleMeleeAttack = () => {
+    const meleeWeapons = character.inventory?.filter(i =>
+      i.category === 'weapon' &&
+      i.equipped &&
+      !i.weapon?.properties?.includes('ammunition')
+    )
+    const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
+    const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
+    const roll = Math.floor(Math.random() * 20) + 1
+    const total = roll + attackBonus
+    const damageType = weapon.weapon?.damageType || 'bludgeoning'
+    onMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
+  }
+
+  const handleRangedAttack = () => {
+    const rangedWeapons = character.inventory?.filter(i =>
+      i.category === 'weapon' &&
+      i.equipped &&
+      (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
+    )
+    const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
+    const useStr = weapon.weapon?.properties?.includes('thrown') && !weapon.weapon?.properties?.includes('ammunition')
+    const attackBonus = Math.floor(((useStr ? character.stats.str : character.stats.dex) - 10) / 2) + character.proficiencyBonus
+    const roll = Math.floor(Math.random() * 20) + 1
+    const total = roll + attackBonus
+    const damageType = weapon.weapon?.damageType || 'bludgeoning'
+    onMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
+  }
+
+  const handleInitiative = () => {
+    const initiativeBonus = Math.floor((character.stats.dex - 10) / 2)
+    const roll = Math.floor(Math.random() * 20) + 1
+    const total = roll + initiativeBonus
+    onMessage(`🎲 Initiative: d20(${roll}) + ${initiativeBonus} = ${total}`, 'player')
+  }
+
   // Quick roll buttons
   const quickRolls = [
     { label: 'd4', sides: 4 },
@@ -58,11 +95,32 @@ function DiceRoller({ character, onMessage, onClose }) {
   return (
     <div className="dice-roller-popup">
       <div className="dice-roller-header">
-        <h3>🎲 Dice Roller</h3>
+        <h3>🎲 Dice & Actions</h3>
         <button className="close-roller-btn" onClick={onClose}>✕</button>
       </div>
 
       <div className="dice-roller-content">
+        {/* Combat Actions */}
+        {character && (
+          <div className="roller-section">
+            <strong>Combat Actions</strong>
+            <div className="combat-actions-grid">
+              <button className="combat-action-btn melee" onClick={handleMeleeAttack}>
+                <span className="action-emoji">⚔️</span>
+                <span className="action-text">Melee</span>
+              </button>
+              <button className="combat-action-btn ranged" onClick={handleRangedAttack}>
+                <span className="action-emoji">🏹</span>
+                <span className="action-text">Ranged</span>
+              </button>
+              <button className="combat-action-btn initiative" onClick={handleInitiative}>
+                <span className="action-emoji">🎲</span>
+                <span className="action-text">Initiative</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Quick Rolls */}
         <div className="roller-section">
           <strong>Quick Rolls</strong>
