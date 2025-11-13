@@ -5,7 +5,7 @@
  */
 
 import express from 'express';
-import { populateCharacterData } from '../../shared/data-loader.js';
+import { populateCharacterData } from '../../../shared/data-loader.js';
 
 const router = express.Router();
 
