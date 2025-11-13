@@ -194,10 +194,10 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
 
       {/* Combat Abilities */}
       <div className="combat-abilities">
-        <div className="abilities-label">Combat Abilities</div>
+        <div className="abilities-label">Class Abilities & Features</div>
         <div className="abilities-grid">
           {abilities
-            .filter(a => ['attack', 'spell'].includes(a.category) && a.equipped)
+            .filter(a => a.category !== 'spell')
             .map((ability) => (
               <AbilityCard
                 key={ability.abilityId}
@@ -211,6 +211,11 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
               />
             ))}
         </div>
+        {(!abilities || abilities.filter(a => a.category !== 'spell').length === 0) && (
+          <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
+            No abilities available
+          </div>
+        )}
       </div>
     </div>
   )
