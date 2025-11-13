@@ -522,44 +522,63 @@
   padding: 10px;
 }
 
-.spell-list {
+.spells-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   max-width: 800px;
 }
 
-.spell-item {
+.spell-btn {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  background: rgba(30, 30, 30, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
   cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: left;
 }
 
-.spell-item:hover {
-  background: rgba(40, 40, 40, 0.9);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-  transform: translateX(4px);
+.spell-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(74, 144, 226, 0.4);
+  transform: translateY(-1px);
+}
+
+.spell-btn:active {
+  transform: translateY(0);
+}
+
+.spell-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.spell-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
 }
 
 .spell-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.2;
   color: #fff;
 }
 
-.spell-level {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 10px;
-  border-radius: 12px;
+.spell-meta {
+  font-size: 11px;
+  opacity: 0.7;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* ========== EQUIPMENT TAB ========== */
