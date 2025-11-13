@@ -278,6 +278,7 @@ export function featureToAbility(feature) {
     name: feature.name,
     category: feature.category || 'combat',
     equipped: true,
+    damage: feature.damage, // Preserve damage for combat abilities
     details: {
       name: feature.name,
       shortDescription: feature.shortDescription,
@@ -285,6 +286,9 @@ export function featureToAbility(feature) {
       description: feature.description,
       actionType: feature.actionType,
       uses: feature.uses,
+      damage: feature.damage, // Include in details too
+      range: feature.range,
+      effects: feature.effects,
       iconLayers: [[getCategoryIcon(feature.category)]]
     }
   };
