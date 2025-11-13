@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import './CharacterCreation.css'
 
+// API configuration
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+
 /**
  * CharacterCreation - Simple mobile-first character creation
  * Two paths: Freeform prompt OR Quick pick dropdowns
@@ -86,7 +89,7 @@ function PromptCreator({ onBack }) {
 
     try {
       // Call your backend API
-      const response = await fetch('https://app.characterfoundry.io/api/characters/create', {
+      const response = await fetch(`${API_URL}/characters/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,11 +104,13 @@ function PromptCreator({ onBack }) {
         throw new Error('Failed to generate character')
       }
 
-      const data = await response.json()
+      const result = await response.json()
 
       // Navigate to preview with character data
+      // Backend returns { success: true, data: character }
+      const character = result.data || result.character
       navigate('/character-preview', {
-        state: { character: data.character, imageUrl: data.imageUrl },
+        state: { character, imageUrl: character.images?.portrait },
       })
     } catch (err) {
       console.error('Error creating character:', err)
@@ -245,14 +250,16 @@ function QuickCreator({ onBack }) {
 
     try {
       // Call your backend API
-      const response = await fetch('https://app.characterfoundry.io/api/characters/create', {
+      const response = await fetch(`${API_URL}/characters/create-quick`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: 'quick',
-          ...formData,
+          name: formData.name,
+          class: formData.class,
+          level: formData.level,
+          race: formData.race,
         }),
       })
 
@@ -260,11 +267,13 @@ function QuickCreator({ onBack }) {
         throw new Error('Failed to generate character')
       }
 
-      const data = await response.json()
+      const result = await response.json()
 
       // Navigate to preview with character data
+      // Backend returns { success: true, data: character }
+      const character = result.data || result.character
       navigate('/character-preview', {
-        state: { character: data.character, imageUrl: data.imageUrl },
+        state: { character, imageUrl: character.images?.portrait },
       })
     } catch (err) {
       console.error('Error creating character:', err)
