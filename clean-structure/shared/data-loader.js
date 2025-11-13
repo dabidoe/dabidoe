@@ -3,9 +3,9 @@
  * Utilities to populate characters with spells, items, and abilities
  */
 
-import spellsSRD from '../data/spells-srd.json' assert { type: 'json' };
-import itemsSRD from '../data/items-srd.json' assert { type: 'json' };
-import classFeatures from '../data/class-features.json' assert { type: 'json' };
+import spellsSRD from '../data/spells-srd.json' with { type: 'json' };
+import itemsSRD from '../data/items-srd.json' with { type: 'json' };
+import classFeatures from '../data/class-features.json' with { type: 'json' };
 import {
   getSpellSlots,
   getClassFeatures as getProgressionFeatures,
