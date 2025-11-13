@@ -196,6 +196,23 @@
   color: #ccc;
 }
 
+/* Spell Description Specific Styling */
+.spell-description {
+  background: rgba(74, 144, 226, 0.05);
+  border-left: 3px solid rgba(74, 144, 226, 0.5);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.spell-desc-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.6;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+
 /* Uses Bar */
 .ability-uses {
   margin-bottom: 12px;
@@ -252,6 +269,24 @@
   opacity: 0.5;
   cursor: not-allowed;
   background: #555;
+}
+
+/* Cast Spell Button */
+.cast-spell-btn {
+  background: linear-gradient(135deg, #4a90e2 0%, #5fa3ef 100%);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.cast-spell-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5fa3ef 0%, #74b3f5 100%);
+  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.6);
+}
+
+.cast-spell-btn .cantrip-note,
+.cast-spell-btn .spell-level-note {
+  font-size: 11px;
+  opacity: 0.8;
+  font-weight: normal;
 }
 
 /* Spell Level Badge */
