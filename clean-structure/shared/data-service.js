@@ -177,32 +177,50 @@ export function getArmor() {
 export function getStartingEquipment(className) {
   const lowerClass = className.toLowerCase();
 
-  // Basic starting equipment by class
-  const startingEquipment = {
+  // Basic starting equipment by class (ID + equipped/quantity info)
+  const startingEquipmentIds = {
     ranger: [
+      { id: 'greataxe', equipped: true },
+      { id: 'handaxe', equipped: false, quantity: 2 },
       { id: 'longbow', equipped: false },
       { id: 'leather-armor', equipped: true },
-      { id: 'dagger', quantity: 2 },
       { id: 'backpack', equipped: true },
-      { id: 'rations', quantity: 10 },
-      { id: 'rope-hemp', quantity: 1 }
+      { id: 'rations', equipped: false, quantity: 10 },
+      { id: 'rope-hemp', equipped: false, quantity: 1 },
+      { id: 'potion-healing', equipped: false, quantity: 2 }
     ],
     fighter: [
       { id: 'longsword', equipped: true },
       { id: 'shield', equipped: true },
       { id: 'chain-mail', equipped: true },
       { id: 'backpack', equipped: true },
-      { id: 'rations', quantity: 10 }
+      { id: 'rations', equipped: false, quantity: 10 }
     ],
     wizard: [
       { id: 'dagger', equipped: true },
       { id: 'backpack', equipped: true },
-      { id: 'rations', quantity: 10 }
+      { id: 'rations', equipped: false, quantity: 10 }
     ],
     // Add more classes as needed
   };
 
-  return startingEquipment[lowerClass] || [];
+  const equipmentIds = startingEquipmentIds[lowerClass] || [];
+
+  // Map IDs to full item objects from items-srd.json
+  return equipmentIds.map(equipInfo => {
+    const fullItem = getItemById(equipInfo.id);
+    if (!fullItem) {
+      console.warn(`Item not found: ${equipInfo.id}`);
+      return null;
+    }
+
+    // Merge full item data with equipped/quantity info
+    return {
+      ...fullItem,
+      equipped: equipInfo.equipped || false,
+      quantity: equipInfo.quantity || 1
+    };
+  }).filter(item => item !== null);
 }
 
 /**
