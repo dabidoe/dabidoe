@@ -6,6 +6,15 @@
 import spellsSRD from '../data/spells-srd.json' assert { type: 'json' };
 import itemsSRD from '../data/items-srd.json' assert { type: 'json' };
 import classFeatures from '../data/class-features.json' assert { type: 'json' };
+import {
+  getSpellSlots,
+  getClassFeatures as getProgressionFeatures,
+  getCantripsKnown,
+  getSpellsKnown,
+  getPreparedSpellsCount,
+  PROFICIENCY_BONUS,
+  CLASS_PROGRESSION
+} from './5e-progression.js';
 
 /**
  * Get all spells available to a class
@@ -100,17 +109,23 @@ export function getStartingEquipment(className, background = 'adventurer') {
 
 /**
  * Get class abilities for a specific level
+ * Returns unified ability objects (includes both class features and spells)
  */
-export function getClassAbilities(className, level) {
+export function getClassAbilities(className, level, characterLevel = null) {
   const normalizedClass = className.toLowerCase();
   const features = classFeatures[normalizedClass] || [];
+  const actualLevel = characterLevel || level;
 
   return features
     .filter(feature => feature.level <= level)
     .map(feature => ({
       ...feature,
       id: `${feature.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      category: 'class-feature',
+      type: 'feature',
+      equipped: true, // Auto-equip class features
       uses: feature.uses ? {
+        type: feature.uses.per,
         current: feature.uses.max,
         max: feature.uses.max,
         per: feature.uses.per
@@ -145,7 +160,7 @@ export function getStartingCurrency(className) {
 }
 
 /**
- * Populate a character with D&D 5e data
+ * Populate a character with D&D 5e data based on class progression
  */
 export function populateCharacterData(character) {
   if (!character.class || !character.level) {
@@ -153,34 +168,125 @@ export function populateCharacterData(character) {
     return character;
   }
 
-  // Add spells if spellcaster
-  const spellcastingClasses = ['wizard', 'cleric', 'paladin', 'ranger', 'warlock', 'sorcerer', 'bard', 'druid'];
-  if (spellcastingClasses.includes(character.class.toLowerCase())) {
-    const allSpells = getSpellsForClass(character.class, character.level);
-    const cantrips = allSpells.filter(s => s.level === 0);
-    const leveled = allSpells.filter(s => s.level > 0 && s.level <= Math.ceil(character.level / 2));
+  const className = character.class.toLowerCase();
+  const level = character.level;
+  const classData = CLASS_PROGRESSION[className];
 
-    // Auto-prepare some spells
-    const preparedSpells = leveled.slice(0, Math.max(3, Math.floor(character.level / 2)));
-    preparedSpells.forEach(spell => spell.prepared = true);
+  if (!classData) {
+    console.warn(`Unknown class: ${character.class}`);
+    return character;
+  }
 
-    character.spellcasting = character.spellcasting || { enabled: true, spells: [] };
-    character.spellcasting.spells = [...cantrips, ...preparedSpells];
+  // Set proficiency bonus
+  character.proficiencyBonus = PROFICIENCY_BONUS[level];
+
+  // Initialize abilities array (unified spells + features)
+  if (!character.abilities) {
+    character.abilities = [];
+  }
+
+  // Add class features
+  const classAbilities = getClassAbilities(className, level);
+  character.abilities = [...character.abilities, ...classAbilities];
+
+  // Handle spellcasting
+  if (classData.spellcasting) {
+    const spellcastingAbility = classData.spellcasting.ability;
+    const abilityMod = Math.floor(((character.stats?.[spellcastingAbility] || 10) - 10) / 2);
+
+    // Get spell slots
+    const spellSlots = getSpellSlots(className, level);
+    if (spellSlots) {
+      character.spellSlots = {
+        1: { current: spellSlots[0], max: spellSlots[0] },
+        2: { current: spellSlots[1], max: spellSlots[1] },
+        3: { current: spellSlots[2], max: spellSlots[2] },
+        4: { current: spellSlots[3], max: spellSlots[3] },
+        5: { current: spellSlots[4], max: spellSlots[4] },
+        6: { current: spellSlots[5], max: spellSlots[5] },
+        7: { current: spellSlots[6], max: spellSlots[6] },
+        8: { current: spellSlots[7], max: spellSlots[7] },
+        9: { current: spellSlots[8], max: spellSlots[8] }
+      };
+    }
+
+    // Get all available spells for the class
+    const allSpells = getSpellsForClass(className, level);
+
+    // Get cantrips
+    const numCantrips = getCantripsKnown(className, level);
+    const cantrips = allSpells
+      .filter(s => s.level === 0)
+      .slice(0, numCantrips)
+      .map(spell => ({
+        ...spell,
+        category: 'spell',
+        type: 'cantrip',
+        equipped: true,
+        prepared: true,
+        alwaysPrepared: true,
+        uses: null // Cantrips don't use spell slots
+      }));
+
+    // Get leveled spells
+    const maxSpellLevel = spellSlots ? spellSlots.findIndex((slots, idx) => idx > 0 && slots > 0) + 1 : 1;
+    const leveledSpells = allSpells.filter(s => s.level > 0 && s.level <= maxSpellLevel);
+
+    // Determine how many spells to add
+    let spellsToAdd = [];
+    const spellsKnownCount = getSpellsKnown(className, level);
+
+    if (spellsKnownCount !== null) {
+      // Known caster (Sorcerer, Bard, Ranger, Warlock)
+      spellsToAdd = leveledSpells.slice(0, spellsKnownCount).map(spell => ({
+        ...spell,
+        category: 'spell',
+        type: 'leveled-spell',
+        equipped: true,
+        prepared: true,
+        alwaysPrepared: false,
+        uses: {
+          type: 'spell-slot',
+          slotLevel: spell.level
+        }
+      }));
+    } else {
+      // Prepared caster (Wizard, Cleric, Druid, Paladin)
+      const preparedCount = getPreparedSpellsCount(className, level, abilityMod);
+      spellsToAdd = leveledSpells.slice(0, preparedCount).map(spell => ({
+        ...spell,
+        category: 'spell',
+        type: 'leveled-spell',
+        equipped: false, // Can swap prepared spells
+        prepared: true,
+        alwaysPrepared: false,
+        uses: {
+          type: 'spell-slot',
+          slotLevel: spell.level
+        }
+      }));
+    }
+
+    // Add spells to abilities
+    character.abilities = [...character.abilities, ...cantrips, ...spellsToAdd];
+
+    // Set spellcasting info
+    character.spellcasting = {
+      enabled: true,
+      ability: spellcastingAbility,
+      spellSaveDC: 8 + character.proficiencyBonus + abilityMod,
+      spellAttackBonus: character.proficiencyBonus + abilityMod
+    };
   }
 
   // Add starting equipment if empty
   if (!character.inventory || character.inventory.length === 0) {
-    character.inventory = getStartingEquipment(character.class, character.background);
-  }
-
-  // Add class abilities
-  if (!character.abilities || character.abilities.length === 0) {
-    character.abilities = getClassAbilities(character.class, character.level);
+    character.inventory = getStartingEquipment(className, character.background);
   }
 
   // Add starting currency if empty
   if (!character.currency || character.currency.gp === 0) {
-    character.currency = getStartingCurrency(character.class);
+    character.currency = getStartingCurrency(className);
   }
 
   return character;
