@@ -1,0 +1,498 @@
+{
+  "id": "char-wizard-001",
+  "name": "Gandalf",
+  "class": "Wizard",
+  "level": 5,
+  "race": "Human",
+  "stats": {
+    "str": 8,
+    "dex": 14,
+    "con": 13,
+    "int": 17,
+    "wis": 12,
+    "cha": 11
+  },
+  "hp": {
+    "current": 28,
+    "max": 28
+  },
+  "ac": 12,
+  "background": "sage",
+  "proficiencyBonus": 3,
+  "abilities": [
+    {
+      "level": 1,
+      "id": "arcane-recovery-1763039363353-qhrrcfh9x",
+      "name": "Arcane Recovery",
+      "shortDescription": "Recover spell slots during short rest",
+      "description": "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up).",
+      "actionType": "action",
+      "category": "class-feature",
+      "uses": {
+        "type": "long rest",
+        "current": 1,
+        "max": 1,
+        "per": "long rest"
+      },
+      "type": "feature",
+      "equipped": true
+    },
+    {
+      "id": "acid-splash",
+      "name": "Acid Splash",
+      "level": 0,
+      "school": "conjuration",
+      "castingTime": "1 action",
+      "range": "60 feet",
+      "components": "V, S",
+      "duration": "Instantaneous",
+      "concentration": false,
+      "ritual": false,
+      "description": "You hurl a bubble of acid. Choose one creature within range, or choose two creatures within range that are within 5 feet of each other. A target must succeed on a Dexterity saving throw or take 1d6 acid damage.\n\nThis spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).",
+      "damage": "1d6",
+      "damageType": "acid",
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": true,
+      "category": "spell",
+      "type": "cantrip",
+      "equipped": true,
+      "uses": null
+    },
+    {
+      "id": "blade-ward",
+      "name": "Blade Ward",
+      "level": 0,
+      "school": "abjuration",
+      "castingTime": "1 action",
+      "range": "Self",
+      "components": "V, S",
+      "duration": "1 round",
+      "concentration": false,
+      "ritual": false,
+      "description": "You extend your hand and trace a sigil of warding in the air. Until the end of your next turn, you have resistance against bludgeoning, piercing, and slashing damage dealt by weapon attacks.",
+      "damage": null,
+      "damageType": "bludgeoning",
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": true,
+      "category": "spell",
+      "type": "cantrip",
+      "equipped": true,
+      "uses": null
+    },
+    {
+      "id": "chill-touch",
+      "name": "Chill Touch",
+      "level": 0,
+      "school": "necromancy",
+      "castingTime": "1 action",
+      "range": "120 feet",
+      "components": "V, S",
+      "duration": "1 round",
+      "concentration": false,
+      "ritual": false,
+      "description": "You create a ghostly, skeletal hand in the space of a creature within range. Make a ranged spell attack against the creature to assail it with the chill of the grave. On a hit, the target takes 1d8 necrotic damage, and it can't regain hit points until the start of your next turn. Until then, the hand clings to the target.\n\nIf you hit an undead target, it also has disadvantage on attack rolls against you until the end of your next turn.\n\nThis spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).",
+      "damage": "1d8",
+      "damageType": "necrotic",
+      "attackRoll": true,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": true,
+      "category": "spell",
+      "type": "cantrip",
+      "equipped": true,
+      "uses": null
+    },
+    {
+      "id": "dancing-lights",
+      "name": "Dancing Lights",
+      "level": 0,
+      "school": "evocation",
+      "castingTime": "1 action",
+      "range": "120 feet",
+      "components": "V, S, M (a bit of phosphorus or wychwood, or a glowworm)",
+      "duration": "Concentration, up to 1 minute",
+      "concentration": false,
+      "ritual": false,
+      "description": "You create up to four torch-sized lights within range, making them appear as torches, lanterns, or glowing orbs that hover in the air for the duration. You can also combine the four lights into one glowing vaguely humanoid form of Medium size. Whichever form you choose, each light sheds dim light in a 10-foot radius. As a bonus action on your turn, you can move the lights up to 60 feet to a new spot within range. A light must be within 20 feet of another light created by this spell, and a light winks out if it exceeds the spell’s range.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": true,
+      "category": "spell",
+      "type": "cantrip",
+      "equipped": true,
+      "uses": null
+    },
+    {
+      "id": "alarm",
+      "name": "Alarm",
+      "level": 1,
+      "school": "abjuration",
+      "castingTime": "1 action",
+      "range": "30 feet",
+      "components": "V, S, M (a tiny bell and a piece of fine silver wire)",
+      "duration": "8 hours",
+      "concentration": false,
+      "ritual": true,
+      "description": "You set an alarm against unwanted intrusion. Choose a door, a window, or an area within range that is no larger than a 20-foot cube. Until the spell ends, an alarm alerts you whenever a Tiny or larger creature touches or enters the warded area. When you cast the spell, you can designate creatures that won't set off the alarm. You also choose whether the alarm is mental or audible.\n\nA mental alarm alerts you with a ping in your mind if you are within 1 mile of the warded area. This ping awakens you if you are sleeping.\n\nAn audible alarm produces the sound of a hand bell for 10 seconds within 60 feet.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "burning-hands",
+      "name": "Burning Hands",
+      "level": 1,
+      "school": "evocation",
+      "castingTime": "1 action",
+      "range": "Self (15-foot cone)",
+      "components": "V, S",
+      "duration": "Instantaneous",
+      "concentration": false,
+      "ritual": false,
+      "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.\n\nThe fire ignites any flammable objects in the area that aren’t being worn or carried.",
+      "damage": "3d6",
+      "damageType": "fire",
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "charm-person",
+      "name": "Charm Person",
+      "level": 1,
+      "school": "enchantment",
+      "castingTime": "1 action",
+      "range": "30 feet",
+      "components": "V, S",
+      "duration": "1 hour",
+      "concentration": false,
+      "ritual": false,
+      "description": "You attempt to charm a humanoid you can see within range. It must make a Wisdom saving throw, and does so with advantage if you or your companions are fighting it. If it fails the saving throw, it is charmed by you until the spell ends or until you or your companions do anything harmful to it. The charmed creature regards you as a friendly acquaintance. When the spell ends, the creature knows it was charmed by you.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "chromatic-orb",
+      "name": "Chromatic Orb",
+      "level": 1,
+      "school": "evocation",
+      "castingTime": "1 action",
+      "range": "90 feet",
+      "components": "V, S, M (a diamond worth at least 50gp)",
+      "duration": "Instantaneous",
+      "concentration": false,
+      "ritual": false,
+      "description": "You hurl a 4-inch-diameter sphere of energy at a creature that you can see within range. You choose acid, cold, fire, lightning, poison, or thunder for the type of orb you create, and then make a ranged spell attack against the target. If the attack hits, the creature takes 3d8 of the type you chose.",
+      "damage": "3d8",
+      "damageType": "acid",
+      "attackRoll": true,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "color-spray",
+      "name": "Color Spray",
+      "level": 1,
+      "school": "illusion",
+      "castingTime": "1 action",
+      "range": "Self (15-foot cone)",
+      "components": "V, S, M (a pinch of powder or sand that is colored red, yellow, and blue)",
+      "duration": "1 round",
+      "concentration": false,
+      "ritual": false,
+      "description": "A dazzling array of flashing, colored light springs from your hand. Roll 6d10; the total is how many hit points of creatures this spell can effect. Creatures in a 15-foot cone originating from you are affected in ascending order of their current hit points (ignoring unconscious creatures and creatures that can't see).\n\nStarting with the creature that has the lowest current hit points, each creature affected by this spell is blinded until the spell ends. Subtract each creature's hit points from the total before moving on to the creature with the next lowest hit points. A creature's hit points must be equal to or less than the remaining total for that creature to be affected.",
+      "damage": "6d10",
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "comprehend-languages",
+      "name": "Comprehend Languages",
+      "level": 1,
+      "school": "divination",
+      "castingTime": "1 action",
+      "range": "Self",
+      "components": "V, S, M (a pinch of soot and salt)",
+      "duration": "1 hour",
+      "concentration": false,
+      "ritual": true,
+      "description": "For the duration, you understand the literal meaning of any spoken language that you hear. You also understand any written language that you see, but you must be touching the surface on which the words are written. It takes about 1 minute to read one page of text.\n\nThis spell doesn’t decode secret messages in a text or a glyph, such as an arcane sigil, that isn’t part of a written language.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "detect-magic",
+      "name": "Detect Magic",
+      "level": 1,
+      "school": "divination",
+      "castingTime": "1 action",
+      "range": "Self",
+      "components": "V, S",
+      "duration": "Concentration, up to 10 minutes",
+      "concentration": false,
+      "ritual": true,
+      "description": "For the duration, you sense the presence of magic within 30 feet of you. If you sense magic in this way, you can use your action to see a faint aura around any visible creature or object in the area that bears magic, and you learn its school of magic, if any.\n\nThe spell can penetrate most barriers, but it is blocked by 1 foot of stone, 1 inch of common metal, a thin sheet of lead, or 3 feet of wood or dirt.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    },
+    {
+      "id": "disguise-self",
+      "name": "Disguise Self",
+      "level": 1,
+      "school": "illusion",
+      "castingTime": "1 action",
+      "range": "Self",
+      "components": "V, S",
+      "duration": "1 hour",
+      "concentration": false,
+      "ritual": false,
+      "description": "You make yourself -- including your clothing, armor, weapons, and other belongings on your person -- look different until the spell ends or until you use your action to dismiss it. You can seem 1 foot shorter or taller and can appear thin, fat, or in between. You can't change your body type, so you must adopt a form that has the same basic arrangement of limbs. Otherwise, the extent of the illusion is up to you.\n\nThe changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to your outfit, objects pass through the hat, and anyone who touches it would feel nothing or would feel your head and hair. If you use this spell to appear thinner than you are, the hand of someone who reaches out to touch you would bump into you while it was seemingly still in midair.\n\nTo discern that you are disguised, a creature can use its action to inspect your apperance and must succeed on an Intelligence (Investigation) check against your spell save DC.",
+      "damage": null,
+      "damageType": null,
+      "attackRoll": false,
+      "savingThrow": null,
+      "prepared": true,
+      "alwaysPrepared": false,
+      "category": "spell",
+      "type": "leveled-spell",
+      "equipped": false,
+      "uses": {
+        "type": "spell-slot",
+        "slotLevel": 1
+      }
+    }
+  ],
+  "spellSlots": {
+    "1": {
+      "current": 4,
+      "max": 4
+    },
+    "2": {
+      "current": 3,
+      "max": 3
+    },
+    "3": {
+      "current": 2,
+      "max": 2
+    },
+    "4": {
+      "current": 0,
+      "max": 0
+    },
+    "5": {
+      "current": 0,
+      "max": 0
+    },
+    "6": {
+      "current": 0,
+      "max": 0
+    },
+    "7": {
+      "current": 0,
+      "max": 0
+    },
+    "8": {
+      "current": 0,
+      "max": 0
+    },
+    "9": {
+      "current": 0,
+      "max": 0
+    }
+  },
+  "spellcasting": {
+    "enabled": true,
+    "ability": "int",
+    "spellSaveDC": 14,
+    "spellAttackBonus": 6
+  },
+  "inventory": [
+    {
+      "id": "dagger-1763039363359-sqyi6ymiy",
+      "name": "Dagger",
+      "category": "weapon",
+      "rarity": "common",
+      "slot": "mainHand",
+      "weight": 1,
+      "value": 2,
+      "description": "A small, throwable blade",
+      "weapon": {
+        "damage": "1d4",
+        "damageType": "piercing",
+        "properties": [
+          "finesse",
+          "light",
+          "thrown"
+        ],
+        "range": "20/60 ft"
+      },
+      "equipped": true,
+      "attuned": false
+    },
+    {
+      "id": "potion-healing-1763039363359-4szcilmxk",
+      "name": "Potion of Healing",
+      "category": "potion",
+      "rarity": "common",
+      "weight": 0.5,
+      "value": 50,
+      "quantity": 1,
+      "description": "A magical elixir that restores health",
+      "consumable": {
+        "effect": "Heal 2d4+2",
+        "duration": "Instant"
+      },
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "backpack-1763039363359-87cdoezeb",
+      "name": "Backpack",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 5,
+      "value": 2,
+      "quantity": 1,
+      "description": "A leather pack for carrying gear",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "bedroll-1763039363359-3btmym1kr",
+      "name": "Bedroll",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 7,
+      "value": 1,
+      "quantity": 1,
+      "description": "A simple sleeping roll",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "rations-1763039363359-63rxuw5id",
+      "name": "Rations (1 day)",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 2,
+      "value": 0.5,
+      "quantity": 10,
+      "description": "Dried food for travel",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "rope-hemp-1763039363359-xwksihqri",
+      "name": "Hempen Rope (50 feet)",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 10,
+      "value": 1,
+      "quantity": 1,
+      "description": "Strong rope for climbing and binding",
+      "equipped": false,
+      "attuned": false
+    },
+    {
+      "id": "torch-1763039363359-4gkpo70aa",
+      "name": "Torch",
+      "category": "gear",
+      "rarity": "common",
+      "weight": 1,
+      "value": 0.01,
+      "quantity": 10,
+      "description": "Provides bright light in a 20-foot radius for 1 hour",
+      "equipped": false,
+      "attuned": false
+    }
+  ],
+  "currency": {
+    "cp": 0,
+    "sp": 0,
+    "gp": 100,
+    "pp": 0
+  },
+  "backstory": "An ancient wizard who has walked Middle-earth for thousands of years, guiding and protecting the free peoples.",
+  "personality": "Wise, patient, mysterious. Quick to anger when facing evil, but kind to the innocent.",
+  "traits": [
+    "Ancient wisdom",
+    "Powerful magic",
+    "Mentor to heroes"
+  ]
+}
