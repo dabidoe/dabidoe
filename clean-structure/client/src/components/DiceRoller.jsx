@@ -352,14 +352,19 @@ function DiceRoller({ character, onMessage, onClose }) {
                         // Roll for the ability
                         const details = ability.details || {}
                         const abilityName = details.name || ability.name
-                        const damage = details.damage || '1d8'
-                        onMessage(`${icon} **${abilityName}**: ${damage}`, 'player')
+                        // Handle damage being either string or object {formula, type}
+                        const damageFormula = typeof details.damage === 'object' ? details.damage.formula : (details.damage || '1d8')
+                        onMessage(`${icon} **${abilityName}**: ${damageFormula}`, 'player')
                       }}
                     >
                       <span className="ability-icon">{icon}</span>
                       <span className="ability-name">{ability.details?.name || ability.name}</span>
                       {ability.details?.damage && (
-                        <span className="ability-damage">{ability.details.damage}</span>
+                        <span className="ability-damage">
+                          {typeof ability.details.damage === 'object'
+                            ? ability.details.damage.formula
+                            : ability.details.damage}
+                        </span>
                       )}
                     </button>
                   )
