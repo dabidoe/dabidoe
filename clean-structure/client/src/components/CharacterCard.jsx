@@ -4,6 +4,7 @@ import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import { getDemoCharacter } from '../data/demo-characters'
 import { populateCharacterData } from '../../../shared/data-loader'
 import CharacterModes from './CharacterModes'
+import SpellBrowser from './SpellBrowser'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -16,6 +17,7 @@ function CharacterCard() {
   const [character, setCharacter] = useState(null)
   const [currentHP, setCurrentHP] = useState(104)
   const [loading, setLoading] = useState(true)
+  const [showSpellBrowser, setShowSpellBrowser] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -141,6 +143,15 @@ function CharacterCard() {
         addMessage("Your words reach me across the ages...", 'character', 'Thoughtful')
       }, 1000)
     }
+  }
+
+  // Handle adding spell from spell browser
+  const handleAddSpell = (spell) => {
+    setCharacter(prev => ({
+      ...prev,
+      abilities: [...(prev.abilities || []), spell]
+    }))
+    addMessage(`✨ Learned new spell: **${spell.name}**`, 'system')
   }
 
   return (
@@ -399,6 +410,27 @@ function CharacterCard() {
                   </div>
                 </div>
               )}
+              <button
+                className="browse-spells-btn"
+                onClick={() => setShowSpellBrowser(true)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  marginBottom: '16px',
+                  background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#1a1a2e',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+              >
+                📚 Browse Spell Library
+              </button>
               <div className="spell-list">
                 {character.abilities
                   ?.filter(ability => ability.category === 'spell')
@@ -442,6 +474,15 @@ function CharacterCard() {
           )}
         </div>
       </div>
+
+      {/* Spell Browser Modal */}
+      {showSpellBrowser && (
+        <SpellBrowser
+          character={character}
+          onAddSpell={handleAddSpell}
+          onClose={() => setShowSpellBrowser(false)}
+        />
+      )}
     </div>
   )
 }
