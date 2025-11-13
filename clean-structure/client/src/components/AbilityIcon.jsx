@@ -97,9 +97,4 @@ AbilityIcon.propTypes = {
   format: PropTypes.oneOf(['auto', 'emoji', 'image']),
 }
 
-AbilityIcon.defaultProps = {
-  size: 'medium',
-  format: 'auto',
-}
-
 export default AbilityIcon
