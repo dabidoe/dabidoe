@@ -619,14 +619,7 @@ function CharacterCard() {
 
         {!logCollapsed && (
           <>
-            <div className="log-messages" style={{ position: 'relative' }}>
-              <button
-                className="battle-actions-btn"
-                onClick={() => setTabsCollapsed(false)}
-                title="Quick Access to Abilities"
-              >
-                ⚔️ Actions
-              </button>
+            <div className="log-messages">
               {messages.map((message, index) => (
                 <div key={index} className={`log-message ${message.type}`}>
                   {message.type === 'character' && (
@@ -655,72 +648,6 @@ function CharacterCard() {
             </form>
           </>
         )}
-      </div>
-
-      {/* Quick Actions Row */}
-      <div className="quick-actions-row">
-        <button className="quick-action-btn" onClick={() => {
-          // Prioritize mainHand for melee, exclude ranged-only weapons
-          const meleeWeapons = character.inventory?.filter(i =>
-            i.category === 'weapon' &&
-            i.equipped &&
-            !i.weapon?.properties?.includes('ammunition') // Exclude bows/crossbows
-          )
-          // Prefer mainHand slot for melee
-          const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
-          const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
-          const roll = Math.floor(Math.random() * 20) + 1
-          const total = roll + attackBonus
-          const damageType = weapon.weapon?.damageType || 'bludgeoning'
-          addMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
-        }}>
-          <span className="action-icon">⚔️</span>
-          <span className="action-label">Melee</span>
-        </button>
-        <button className="quick-action-btn" onClick={() => {
-          // Look for thrown or ammunition weapons
-          const rangedWeapons = character.inventory?.filter(i =>
-            i.category === 'weapon' &&
-            i.equipped &&
-            (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
-          )
-          const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
-          // Use STR for thrown weapons, DEX for ammunition weapons
-          const useStr = weapon.weapon?.properties?.includes('thrown') && !weapon.weapon?.properties?.includes('ammunition')
-          const attackBonus = Math.floor(((useStr ? character.stats.str : character.stats.dex) - 10) / 2) + character.proficiencyBonus
-          const roll = Math.floor(Math.random() * 20) + 1
-          const total = roll + attackBonus
-          const damageType = weapon.weapon?.damageType || 'bludgeoning'
-          addMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
-        }}>
-          <span className="action-icon">🏹</span>
-          <span className="action-label">Ranged</span>
-        </button>
-        <button className="quick-action-btn" onClick={() => {
-          const spells = character.abilities?.filter(a => a.category === 'spell' && a.type === 'leveled-spell') || []
-          if (spells.length > 0) {
-            const spell = spells[0]
-            addMessage(`✨ Cast ${spell.name}!`, 'player')
-          } else {
-            addMessage(`✨ No spells available`, 'player')
-          }
-        }}>
-          <span className="action-icon">✨</span>
-          <span className="action-label">Spell</span>
-        </button>
-        <button className="quick-action-btn" onClick={() => {
-          const initiativeBonus = Math.floor((character.stats.dex - 10) / 2)
-          const roll = Math.floor(Math.random() * 20) + 1
-          const total = roll + initiativeBonus
-          addMessage(`🎲 Initiative: d20(${roll}) + ${initiativeBonus} = ${total}`, 'player')
-        }}>
-          <span className="action-icon">🎲</span>
-          <span className="action-label">Initiative</span>
-        </button>
-        <button className="quick-action-btn edit-btn" onClick={() => addMessage('⚙️ Character editing coming soon!', 'system')}>
-          <span className="action-icon">⚙️</span>
-          <span className="action-label">Edit</span>
-        </button>
       </div>
 
       {/* Tabs Section */}
