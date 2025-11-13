@@ -369,7 +369,46 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
 
               {/* Actions */}
               <div className="item-actions">
-                {(selectedItem.category === 'weapon' || selectedItem.category === 'armor' || selectedItem.category === 'shield') && (
+                {selectedItem.category === 'weapon' && (
+                  <>
+                    {!selectedItem.equipped && (
+                      <>
+                        <button
+                          className="action-btn primary"
+                          onClick={() => {
+                            // Equip to main hand
+                            const updatedItem = { ...selectedItem, slot: 'mainHand', equipped: true };
+                            if (onEquipItem) onEquipItem(updatedItem);
+                            closeModal();
+                          }}
+                        >
+                          ⚔️ Equip Main Hand
+                        </button>
+                        <button
+                          className="action-btn primary"
+                          onClick={() => {
+                            // Equip to off hand
+                            const updatedItem = { ...selectedItem, slot: 'offHand', equipped: true };
+                            if (onEquipItem) onEquipItem(updatedItem);
+                            closeModal();
+                          }}
+                        >
+                          🗡️ Equip Off Hand
+                        </button>
+                      </>
+                    )}
+                    {selectedItem.equipped && (
+                      <button
+                        className="action-btn primary"
+                        onClick={() => handleToggleEquip(selectedItem)}
+                      >
+                        ❌ Unequip
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {(selectedItem.category === 'armor' || selectedItem.category === 'shield') && (
                   <button
                     className="action-btn primary"
                     onClick={() => handleToggleEquip(selectedItem)}
