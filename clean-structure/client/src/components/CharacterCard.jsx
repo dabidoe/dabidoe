@@ -310,6 +310,38 @@ function CharacterCard() {
     }
   }
 
+  // Show spell details in chat without casting
+  const handleViewSpell = (spell) => {
+    if (!spell || !spell.details) return
+
+    const details = spell.details
+    let message = `📖 **${details.name}**\n\n`
+
+    // Show level and school
+    if (spell.type === 'cantrip') {
+      message += `**Cantrip** • ${details.school || ''}\n`
+    } else if (details.level) {
+      const levelNum = parseInt(details.level)
+      const suffixes = ['', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
+      message += `**${levelNum}${suffixes[levelNum] || 'th'}-level ${details.school || ''}**\n`
+    }
+
+    // Show casting info
+    if (details.castingTime) message += `⏱️ **Casting Time:** ${details.castingTime}\n`
+    if (details.range) message += `📏 **Range:** ${details.range}\n`
+    if (details.duration) message += `⏳ **Duration:** ${details.duration}\n`
+    if (details.components) message += `🔮 **Components:** ${details.components}\n`
+
+    // Show description
+    if (details.description) {
+      message += `\n${details.description.substring(0, 300)}${details.description.length > 300 ? '...' : ''}`
+    } else if (details.shortDescription) {
+      message += `\n${details.shortDescription}`
+    }
+
+    addMessage(message, 'system')
+  }
+
   // Render message content with clickable spell links
   const renderMessageContent = (text) => {
     // Match pattern: [SPELL:ability-id:Spell Name]
@@ -332,12 +364,13 @@ function CharacterCard() {
           key={`spell-${match.index}`}
           className="spell-link"
           onClick={() => {
-            // Find and show the spell
+            // Find and show the spell details (not cast)
             const spell = character.abilities?.find(a => a.abilityId === abilityId)
             if (spell) {
-              handleAbilityClick(spell)
+              handleViewSpell(spell)
             }
           }}
+          title="Click to view spell details"
         >
           {spellName}
         </button>
@@ -601,6 +634,9 @@ function CharacterCard() {
                   )}
                   {message.type === 'player' && (
                     <div className="message-author">You</div>
+                  )}
+                  {message.type === 'system' && (
+                    <div className="message-author">📖 Spell Info</div>
                   )}
                   <div className="message-content">{renderMessageContent(message.text)}</div>
                 </div>
