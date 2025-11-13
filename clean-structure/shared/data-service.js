@@ -180,8 +180,9 @@ export function getStartingEquipment(className) {
   // Basic starting equipment by class (ID + equipped/quantity info)
   const startingEquipmentIds = {
     ranger: [
-      { id: 'greataxe', equipped: true },
-      { id: 'handaxe', equipped: false, quantity: 2 },
+      { id: 'greataxe', equipped: true, slot: 'mainHand' },
+      { id: 'handaxe', equipped: true, slot: 'offHand' }, // One equipped for ranged/thrown attacks
+      { id: 'handaxe', equipped: false, quantity: 1 }, // Second handaxe in inventory
       { id: 'longbow', equipped: false },
       { id: 'leather-armor', equipped: true },
       { id: 'backpack', equipped: true },
@@ -190,16 +191,29 @@ export function getStartingEquipment(className) {
       { id: 'potion-healing', equipped: false, quantity: 2 }
     ],
     fighter: [
-      { id: 'longsword', equipped: true },
-      { id: 'shield', equipped: true },
+      { id: 'longsword', equipped: true, slot: 'mainHand' },
+      { id: 'shield', equipped: true, slot: 'offHand' },
       { id: 'chain-mail', equipped: true },
       { id: 'backpack', equipped: true },
       { id: 'rations', equipped: false, quantity: 10 }
     ],
-    wizard: [
-      { id: 'dagger', equipped: true },
+    paladin: [
+      { id: 'longsword', equipped: true, slot: 'mainHand' },
+      { id: 'shield', equipped: true, slot: 'offHand' },
+      { id: 'plate-armor', equipped: true },
       { id: 'backpack', equipped: true },
-      { id: 'rations', equipped: false, quantity: 10 }
+      { id: 'holy-symbol', equipped: true },
+      { id: 'rations', equipped: false, quantity: 10 },
+      { id: 'potion-healing', equipped: false, quantity: 3 }
+    ],
+    wizard: [
+      { id: 'quarterstaff', equipped: true, slot: 'mainHand' },
+      { id: 'dagger', equipped: false },
+      { id: 'spellbook', equipped: true },
+      { id: 'component-pouch', equipped: true },
+      { id: 'backpack', equipped: true },
+      { id: 'rations', equipped: false, quantity: 10 },
+      { id: 'scroll-magic-missile', equipped: false, quantity: 2 }
     ],
     // Add more classes as needed
   };
@@ -214,11 +228,12 @@ export function getStartingEquipment(className) {
       return null;
     }
 
-    // Merge full item data with equipped/quantity info
+    // Merge full item data with equipped/quantity/slot info
     return {
       ...fullItem,
       equipped: equipInfo.equipped || false,
-      quantity: equipInfo.quantity || 1
+      quantity: equipInfo.quantity || 1,
+      slot: equipInfo.slot || fullItem.slot // Use equipInfo slot if specified, otherwise use item's default slot
     };
   }).filter(item => item !== null);
 }

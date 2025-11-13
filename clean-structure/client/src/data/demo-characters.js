@@ -142,6 +142,88 @@ export const demoCharacters = {
       mood: 'Contemplative',
       text: "You find me in a moment of reflection. The weight of eight decades rests upon these shoulders, yet I appear as I did in my prime at Troy."
     }
+  },
+
+  seraphina: {
+    id: 'seraphina',
+    name: 'Seraphina the Radiant',
+    race: 'Human',
+    class: 'Paladin',
+    subclass: 'Oath of Devotion',
+    level: 12,
+    hp: { current: 110, max: 110 },
+    ac: 20,
+    initiative: 1,
+    speed: 30,
+    portrait: '⚔️',
+    portraitUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=seraphina&backgroundColor=1a1a1a&radius=10',
+    stats: {
+      str: 18,
+      dex: 12,
+      con: 16,
+      int: 10,
+      wis: 14,
+      cha: 18  // Primary stat for Paladin spellcasting
+    },
+    proficiencies: ['Athletics', 'Insight', 'Persuasion', 'Religion'],
+    background: 'Noble',
+    alignment: 'Lawful Good',
+    // abilities, spellSlots, inventory will be populated by data-loader.js
+    initialMessage: {
+      type: 'character',
+      mood: 'Righteous',
+      text: "I am Seraphina, sworn to the Oath of Devotion. My blade serves justice, my shield protects the innocent, and my faith illuminates the darkest paths."
+    },
+    personality: {
+      traits: [
+        'Unwavering devotion to honor and duty',
+        'Compassionate protector of the weak',
+        'Inspires courage in allies'
+      ],
+      background: 'Noble',
+      alignment: 'Lawful Good'
+    }
+  },
+
+  mordecai: {
+    id: 'mordecai',
+    name: 'Mordecai the Arcane',
+    race: 'High Elf',
+    class: 'Wizard',
+    subclass: 'School of Evocation',
+    level: 12,
+    hp: { current: 72, max: 72 },
+    ac: 15,  // With Mage Armor
+    initiative: 3,
+    speed: 30,
+    portrait: '🧙',
+    portraitUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=mordecai&backgroundColor=1a1a1a&radius=10',
+    stats: {
+      str: 8,
+      dex: 16,  // +2 from High Elf racial
+      con: 14,
+      int: 20,  // +1 from High Elf racial, primary stat for Wizard
+      wis: 12,
+      cha: 10
+    },
+    proficiencies: ['Arcana', 'History', 'Investigation', 'Insight'],
+    background: 'Sage',
+    alignment: 'Neutral Good',
+    // abilities, spellSlots, inventory will be populated by data-loader.js
+    initialMessage: {
+      type: 'character',
+      mood: 'Scholarly',
+      text: "Knowledge is the key to all power. I am Mordecai, master of the arcane arts. Through study and discipline, I have learned to reshape reality itself."
+    },
+    personality: {
+      traits: [
+        'Insatiably curious about magical phenomena',
+        'Methodical and precise in spellcasting',
+        'Values knowledge above all else'
+      ],
+      background: 'Sage',
+      alignment: 'Neutral Good'
+    }
   }
 }
 
@@ -160,6 +242,22 @@ export const demoCharacterList = [
     title: 'Hero of Troy',
     portrait: '🛡️',
     description: 'An 80-year-old immortal who hasn\'t aged a day since Troy. Contemplating eight decades of life.',
+    available: true
+  },
+  {
+    id: 'seraphina',
+    name: 'Seraphina the Radiant',
+    title: 'Paladin of Devotion',
+    portrait: '⚔️',
+    description: 'A devoted paladin sworn to protect the innocent. Wields divine magic and martial prowess with equal skill.',
+    available: true
+  },
+  {
+    id: 'mordecai',
+    name: 'Mordecai the Arcane',
+    title: 'Master Evoker',
+    portrait: '🧙',
+    description: 'A High Elf wizard specializing in evocation magic. Commands devastating elemental powers with scholarly precision.',
     available: true
   }
 ]

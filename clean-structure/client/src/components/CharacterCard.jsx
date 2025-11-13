@@ -105,11 +105,13 @@ function CharacterCard() {
     // Handle active combat abilities with damage (like Colossus Slayer)
     // Only roll if it has damage AND is meant to be used actively
     if ((details.damage || ability.damage) && ability.category === 'combat') {
-      // Get equipped weapon for base attack
+      // Get equipped weapon for base attack - prefer mainHand
       const meleeWeapons = character.inventory?.filter(i =>
-        i.category === 'weapon' && i.equipped && !i.weapon?.properties?.includes('ranged')
+        i.category === 'weapon' &&
+        i.equipped &&
+        !i.weapon?.properties?.includes('ammunition') // Exclude bows/crossbows for melee attacks
       )
-      const weapon = meleeWeapons?.[0] || { name: 'Unarmed Strike', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
+      const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0] || { name: 'Unarmed Strike', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
 
       // Calculate attack bonus
       const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
@@ -383,23 +385,38 @@ function CharacterCard() {
       {/* Quick Actions Row */}
       <div className="quick-actions-row">
         <button className="quick-action-btn" onClick={() => {
-          const meleeWeapons = character.inventory?.filter(i => i.category === 'weapon' && i.equipped && !i.weapon?.properties?.includes('ranged'))
-          const weapon = meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4' } }
+          // Prioritize mainHand for melee, exclude ranged-only weapons
+          const meleeWeapons = character.inventory?.filter(i =>
+            i.category === 'weapon' &&
+            i.equipped &&
+            !i.weapon?.properties?.includes('ammunition') // Exclude bows/crossbows
+          )
+          // Prefer mainHand slot for melee
+          const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
           const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
           const roll = Math.floor(Math.random() * 20) + 1
           const total = roll + attackBonus
-          addMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total}`, 'player')
+          const damageType = weapon.weapon?.damageType || 'bludgeoning'
+          addMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
         }}>
           <span className="action-icon">⚔️</span>
           <span className="action-label">Melee</span>
         </button>
         <button className="quick-action-btn" onClick={() => {
-          const rangedWeapons = character.inventory?.filter(i => i.category === 'weapon' && i.equipped && (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition')))
-          const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4' } }
-          const attackBonus = Math.floor((character.stats.dex - 10) / 2) + character.proficiencyBonus
+          // Look for thrown or ammunition weapons
+          const rangedWeapons = character.inventory?.filter(i =>
+            i.category === 'weapon' &&
+            i.equipped &&
+            (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
+          )
+          const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
+          // Use STR for thrown weapons, DEX for ammunition weapons
+          const useStr = weapon.weapon?.properties?.includes('thrown') && !weapon.weapon?.properties?.includes('ammunition')
+          const attackBonus = Math.floor(((useStr ? character.stats.str : character.stats.dex) - 10) / 2) + character.proficiencyBonus
           const roll = Math.floor(Math.random() * 20) + 1
           const total = roll + attackBonus
-          addMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total}`, 'player')
+          const damageType = weapon.weapon?.damageType || 'bludgeoning'
+          addMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
         }}>
           <span className="action-icon">🏹</span>
           <span className="action-label">Ranged</span>

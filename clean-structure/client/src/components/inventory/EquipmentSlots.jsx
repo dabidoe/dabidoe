@@ -128,13 +128,20 @@ function EquipmentSlots({ character, onSlotClick, onUnequipItem }) {
 
   // Handle slot click
   const handleSlotClick = (slot, item) => {
-    if (item && onUnequipItem) {
-      if (confirm(`Unequip ${item.name}?`)) {
-        onUnequipItem(item);
-      }
+    if (item) {
+      // Show selected slot for menu
+      setSelectedSlot(selectedSlot === slot ? null : slot);
     } else if (onSlotClick) {
       onSlotClick(slot);
     }
+  };
+
+  // Handle unequip from menu
+  const handleUnequipFromMenu = (item) => {
+    if (onUnequipItem) {
+      onUnequipItem(item);
+    }
+    setSelectedSlot(null);
   };
 
   const totalAC = calculateAC();
@@ -286,42 +293,66 @@ function EquipmentSlots({ character, onSlotClick, onUnequipItem }) {
 
         {/* Main/Off Hand Row */}
         <div className="equipment-row two-column">
-          <button
-            className={`equipment-slot ${equipment.mainHand ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('mainHand', equipment.mainHand)}
-          >
-            <div className="slot-icon">{equipment.mainHand ? (equipment.mainHand.image || getSlotIcon('mainHand')) : getSlotIcon('mainHand')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('mainHand')}</div>
-              {equipment.mainHand ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.mainHand.rarity) }}>
-                  {equipment.mainHand.name}
-                  {equipment.mainHand.weapon && <span className="slot-bonus"> ({equipment.mainHand.weapon.damage})</span>}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
+          <div className="slot-container">
+            <button
+              className={`equipment-slot ${equipment.mainHand ? 'filled' : 'empty'} ${selectedSlot === 'mainHand' ? 'selected' : ''}`}
+              onClick={() => handleSlotClick('mainHand', equipment.mainHand)}
+            >
+              <div className="slot-icon">{equipment.mainHand ? (equipment.mainHand.image || getSlotIcon('mainHand')) : getSlotIcon('mainHand')}</div>
+              <div className="slot-info">
+                <div className="slot-label">{getSlotLabel('mainHand')}</div>
+                {equipment.mainHand ? (
+                  <div className="slot-item" style={{ color: getRarityColor(equipment.mainHand.rarity) }}>
+                    {equipment.mainHand.name}
+                    {equipment.mainHand.weapon && <span className="slot-bonus"> ({equipment.mainHand.weapon.damage})</span>}
+                  </div>
+                ) : (
+                  <div className="slot-empty">Empty</div>
+                )}
+              </div>
+            </button>
+            {selectedSlot === 'mainHand' && equipment.mainHand && (
+              <div className="slot-menu">
+                <button
+                  className="menu-btn unequip"
+                  onClick={() => handleUnequipFromMenu(equipment.mainHand)}
+                >
+                  ❌ Unequip
+                </button>
+              </div>
+            )}
+          </div>
 
-          <button
-            className={`equipment-slot ${equipment.offHand ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('offHand', equipment.offHand)}
-          >
-            <div className="slot-icon">{equipment.offHand ? (equipment.offHand.image || getSlotIcon('offHand')) : getSlotIcon('offHand')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('offHand')}</div>
-              {equipment.offHand ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.offHand.rarity) }}>
-                  {equipment.offHand.name}
-                  {equipment.offHand.shield && <span className="slot-bonus"> (+{equipment.offHand.shield.acBonus} AC)</span>}
-                  {equipment.offHand.weapon && <span className="slot-bonus"> ({equipment.offHand.weapon.damage})</span>}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
+          <div className="slot-container">
+            <button
+              className={`equipment-slot ${equipment.offHand ? 'filled' : 'empty'} ${selectedSlot === 'offHand' ? 'selected' : ''}`}
+              onClick={() => handleSlotClick('offHand', equipment.offHand)}
+            >
+              <div className="slot-icon">{equipment.offHand ? (equipment.offHand.image || getSlotIcon('offHand')) : getSlotIcon('offHand')}</div>
+              <div className="slot-info">
+                <div className="slot-label">{getSlotLabel('offHand')}</div>
+                {equipment.offHand ? (
+                  <div className="slot-item" style={{ color: getRarityColor(equipment.offHand.rarity) }}>
+                    {equipment.offHand.name}
+                    {equipment.offHand.shield && <span className="slot-bonus"> (+{equipment.offHand.shield.acBonus} AC)</span>}
+                    {equipment.offHand.weapon && <span className="slot-bonus"> ({equipment.offHand.weapon.damage})</span>}
+                  </div>
+                ) : (
+                  <div className="slot-empty">Empty</div>
+                )}
+              </div>
+            </button>
+            {selectedSlot === 'offHand' && equipment.offHand && (
+              <div className="slot-menu">
+                <button
+                  className="menu-btn unequip"
+                  onClick={() => handleUnequipFromMenu(equipment.offHand)}
+                >
+                  ❌ Unequip
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Back Slot */}
