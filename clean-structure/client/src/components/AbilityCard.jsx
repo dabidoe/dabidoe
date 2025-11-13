@@ -77,24 +77,36 @@ function AbilityCard({ ability, onUse, character, mode }) {
   return (
     <div
       className={`ability-card ${expanded ? 'expanded' : ''} ${!canUse() ? 'disabled' : ''}`}
-      onClick={() => !expanded && setExpanded(true)}
-      style={{ cursor: expanded ? 'default' : 'pointer' }}
     >
-      <button
-        className={`action-btn ${!canUse() ? 'disabled' : ''} ${ability.category === 'spell' ? 'spell-btn' : ''}`}
-        onClick={(e) => {
-          e.stopPropagation()
-          handleUse()
-        }}
-        disabled={!canUse()}
-        title={expanded ? details.longDescription : details.shortDescription}
-      >
-        <span className="ability-btn-content">
-          {getDisplayIcon()} {details.name}
-          {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
-          {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
-        </span>
-      </button>
+      {/* Collapsed View */}
+      {!expanded && (
+        <div className="ability-card-header">
+          {/* Main clickable area to expand */}
+          <div
+            className="ability-info-area"
+            onClick={() => setExpanded(true)}
+            style={{ cursor: 'pointer', flex: 1 }}
+          >
+            <span className="ability-icon">{getDisplayIcon()}</span>
+            <span className="ability-name">{details.name}</span>
+            {getSpellLevelText() && <span className="spell-level-badge">{getSpellLevelText()}</span>}
+            {getUsesText() && <span className="uses-badge">{getUsesText()}</span>}
+          </div>
+
+          {/* Quick cast button */}
+          <button
+            className={`quick-cast-btn ${!canUse() ? 'disabled' : ''} ${ability.category === 'spell' ? 'spell-quick-cast' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleUse()
+            }}
+            disabled={!canUse()}
+            title={ability.category === 'spell' ? 'Quick cast' : 'Use ability'}
+          >
+            {ability.category === 'spell' ? '✨' : '⚡'}
+          </button>
+        </div>
+      )}
 
       {expanded && (
         <div className="ability-details" onClick={(e) => e.stopPropagation()}>
