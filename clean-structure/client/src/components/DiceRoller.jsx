@@ -45,6 +45,27 @@ function DiceRoller({ character, onMessage, onClose }) {
     rollDice(diceType, modifier, numDice, 'Custom Roll')
   }
 
+  // Helper to parse and roll damage dice (e.g., "1d8", "2d6+3")
+  const rollDamage = (damageStr) => {
+    const match = damageStr.match(/(\d+)d(\d+)([+-]\d+)?/)
+    if (!match) return { total: 0, rolls: [], formula: damageStr }
+
+    const count = parseInt(match[1])
+    const sides = parseInt(match[2])
+    const modifier = match[3] ? parseInt(match[3]) : 0
+
+    const rolls = []
+    let total = 0
+    for (let i = 0; i < count; i++) {
+      const roll = Math.floor(Math.random() * sides) + 1
+      rolls.push(roll)
+      total += roll
+    }
+    total += modifier
+
+    return { total, rolls, formula: damageStr }
+  }
+
   // Handle combat actions
   const handleMeleeAttack = () => {
     const meleeWeapons = character.inventory?.filter(i =>
@@ -54,10 +75,19 @@ function DiceRoller({ character, onMessage, onClose }) {
     )
     const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
     const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
-    const roll = Math.floor(Math.random() * 20) + 1
-    const total = roll + attackBonus
+    const attackRoll = Math.floor(Math.random() * 20) + 1
+    const attackTotal = attackRoll + attackBonus
+
+    // Roll damage
+    const damageFormula = weapon.weapon?.damage || '1d4'
     const damageType = weapon.weapon?.damageType || 'bludgeoning'
-    onMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
+    const damageBonus = Math.floor((character.stats.str - 10) / 2)
+    const damage = rollDamage(damageFormula)
+    const totalDamage = damage.total + damageBonus
+
+    onMessage(`⚔️ **${weapon.name} Attack**\n\n` +
+              `To Hit: d20(${attackRoll}) + ${attackBonus} = **${attackTotal}**\n` +
+              `Damage: ${damageFormula}(${damage.rolls.join(', ')}) + ${damageBonus} = **${totalDamage} ${damageType}**`, 'player')
   }
 
   const handleRangedAttack = () => {
@@ -69,10 +99,19 @@ function DiceRoller({ character, onMessage, onClose }) {
     const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4', damageType: 'bludgeoning' } }
     const useStr = weapon.weapon?.properties?.includes('thrown') && !weapon.weapon?.properties?.includes('ammunition')
     const attackBonus = Math.floor(((useStr ? character.stats.str : character.stats.dex) - 10) / 2) + character.proficiencyBonus
-    const roll = Math.floor(Math.random() * 20) + 1
-    const total = roll + attackBonus
+    const attackRoll = Math.floor(Math.random() * 20) + 1
+    const attackTotal = attackRoll + attackBonus
+
+    // Roll damage
+    const damageFormula = weapon.weapon?.damage || '1d4'
     const damageType = weapon.weapon?.damageType || 'bludgeoning'
-    onMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total} (${weapon.weapon?.damage || '1d4'} ${damageType})`, 'player')
+    const damageBonus = Math.floor(((useStr ? character.stats.str : character.stats.dex) - 10) / 2)
+    const damage = rollDamage(damageFormula)
+    const totalDamage = damage.total + damageBonus
+
+    onMessage(`🏹 **${weapon.name} Attack**\n\n` +
+              `To Hit: d20(${attackRoll}) + ${attackBonus} = **${attackTotal}**\n` +
+              `Damage: ${damageFormula}(${damage.rolls.join(', ')}) + ${damageBonus} = **${totalDamage} ${damageType}**`, 'player')
   }
 
   const handleInitiative = () => {
@@ -163,10 +202,10 @@ function DiceRoller({ character, onMessage, onClose }) {
           Saves
         </button>
         <button
-          className={`roller-tab ${activeTab === 'stats' ? 'active' : ''}`}
-          onClick={() => setActiveTab('stats')}
+          className={`roller-tab ${activeTab === 'actions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('actions')}
         >
-          Stats
+          Actions
         </button>
       </div>
 
@@ -287,32 +326,54 @@ function DiceRoller({ character, onMessage, onClose }) {
           </div>
         )}
 
-        {/* Stats Tab */}
-        {activeTab === 'stats' && character && (
+        {/* Actions Tab */}
+        {activeTab === 'actions' && character && (
           <div className="roller-section">
-            <div className="stats-display">
-              {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
-                const statValue = character.stats?.[stat] || 10
-                const mod = Math.floor((statValue - 10) / 2)
-                return (
-                  <div key={stat} className="stat-display-item">
-                    <div className="stat-label">{stat.toUpperCase()}</div>
-                    <div className="stat-value">{statValue}</div>
-                    <div className="stat-modifier">({mod >= 0 ? '+' : ''}{mod})</div>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="other-stats">
-              <div className="stat-row">
-                <span>AC:</span> <strong>{character.armorClass || 10}</strong>
-              </div>
-              <div className="stat-row">
-                <span>Speed:</span> <strong>{character.speed || 30} ft</strong>
-              </div>
-              <div className="stat-row">
-                <span>Proficiency:</span> <strong>+{character.proficiencyBonus || 2}</strong>
-              </div>
+            <div className="actions-grid">
+              {character.abilities
+                ?.filter(ability => {
+                  // Show abilities/spells that have damage or attack rolls
+                  const details = ability.details || {}
+                  const desc = (details.description || '').toLowerCase()
+                  const shortDesc = (details.shortDescription || '').toLowerCase()
+                  const hasAttack = details.attack || desc.includes('attack') || shortDesc.includes('attack')
+                  const hasDamage = details.damage || desc.includes('d4') || desc.includes('d6') ||
+                                   desc.includes('d8') || desc.includes('d10') || desc.includes('d12') || desc.includes('d20')
+                  return hasAttack || hasDamage
+                })
+                .map((ability, index) => {
+                  const isSpell = ability.category === 'spell'
+                  const icon = isSpell ? '✨' : '⚔️'
+                  return (
+                    <button
+                      key={index}
+                      className="action-ability-btn"
+                      onClick={() => {
+                        // Roll for the ability
+                        const details = ability.details || {}
+                        const abilityName = details.name || ability.name
+                        const damage = details.damage || '1d8'
+                        onMessage(`${icon} **${abilityName}**: ${damage}`, 'player')
+                      }}
+                    >
+                      <span className="ability-icon">{icon}</span>
+                      <span className="ability-name">{ability.details?.name || ability.name}</span>
+                      {ability.details?.damage && (
+                        <span className="ability-damage">{ability.details.damage}</span>
+                      )}
+                    </button>
+                  )
+                })}
+              {(!character.abilities || character.abilities.filter(a => {
+                const details = a.details || {}
+                const desc = (details.description || '').toLowerCase()
+                const shortDesc = (details.shortDescription || '').toLowerCase()
+                return details.attack || details.damage || desc.includes('d')
+              }).length === 0) && (
+                <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', gridColumn: '1 / -1'}}>
+                  No actions available
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -228,7 +228,8 @@
 /* ========== CONVERSATION/LOG AREA ========== */
 .conversation-log {
   flex: 1 1 auto;
-  min-height: 200px;
+  min-height: 250px;
+  max-height: 40vh;
   display: flex;
   flex-direction: column;
   background: rgba(10, 10, 10, 0.95);
@@ -239,9 +240,10 @@
 
 .conversation-log.collapsed {
   flex: 0 0 auto;
-  height: 32px;
-  min-height: 32px;
-  max-height: 32px;
+  height: 80px;
+  min-height: 80px;
+  max-height: 80px;
+  overflow: hidden;
 }
 
 /* Section Collapse Button */
