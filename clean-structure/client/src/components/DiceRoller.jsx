@@ -108,10 +108,32 @@ function DiceRoller({ character, onMessage, onClose }) {
               <button className="combat-action-btn melee" onClick={handleMeleeAttack}>
                 <span className="action-emoji">⚔️</span>
                 <span className="action-text">Melee</span>
+                <span className="weapon-name">
+                  {(() => {
+                    const meleeWeapons = character.inventory?.filter(i =>
+                      i.category === 'weapon' &&
+                      i.equipped &&
+                      !i.weapon?.properties?.includes('ammunition')
+                    )
+                    const weapon = meleeWeapons?.find(w => w.slot === 'mainHand') || meleeWeapons?.[0]
+                    return weapon ? weapon.name : 'Unarmed'
+                  })()}
+                </span>
               </button>
               <button className="combat-action-btn ranged" onClick={handleRangedAttack}>
                 <span className="action-emoji">🏹</span>
                 <span className="action-text">Ranged</span>
+                <span className="weapon-name">
+                  {(() => {
+                    const rangedWeapons = character.inventory?.filter(i =>
+                      i.category === 'weapon' &&
+                      i.equipped &&
+                      (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition'))
+                    )
+                    const weapon = rangedWeapons?.[0]
+                    return weapon ? weapon.name : 'Improvised'
+                  })()}
+                </span>
               </button>
               <button className="combat-action-btn initiative" onClick={handleInitiative}>
                 <span className="action-emoji">🎲</span>

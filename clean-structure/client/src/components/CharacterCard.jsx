@@ -30,6 +30,7 @@ function CharacterCard() {
   const [logCollapsed, setLogCollapsed] = useState(false)
   const [tabsCollapsed, setTabsCollapsed] = useState(false)
   const [showDiceRoller, setShowDiceRoller] = useState(false)
+  const [expandedMessages, setExpandedMessages] = useState({}) // Track which messages are expanded
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -364,13 +365,10 @@ function CharacterCard() {
           key={`spell-${match.index}`}
           className="spell-link"
           onClick={() => {
-            // Find and show the spell details (not cast)
-            const spell = character.abilities?.find(a => a.abilityId === abilityId)
-            if (spell) {
-              handleViewSpell(spell)
-            }
+            // Open spell browser to view spell details
+            setShowSpellBrowser(true)
           }}
-          title="Click to view spell details"
+          title="Click to open spell library"
         >
           {spellName}
         </button>
@@ -398,6 +396,14 @@ function CharacterCard() {
         addMessage("Your words reach me across the ages...", 'character', 'Thoughtful')
       }, 1000)
     }
+  }
+
+  // Toggle message expansion
+  const toggleMessageExpansion = (index) => {
+    setExpandedMessages(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }))
   }
 
   // Handle adding spell from spell browser
@@ -620,20 +626,40 @@ function CharacterCard() {
         {!logCollapsed && (
           <>
             <div className="log-messages">
-              {messages.map((message, index) => (
-                <div key={index} className={`log-message ${message.type}`}>
-                  {message.type === 'character' && (
-                    <div className="message-author">{character.name}</div>
-                  )}
-                  {message.type === 'player' && (
-                    <div className="message-author">You</div>
-                  )}
-                  {message.type === 'system' && (
-                    <div className="message-author">📖 Spell Info</div>
-                  )}
-                  <div className="message-content">{renderMessageContent(message.text)}</div>
-                </div>
-              ))}
+              {messages.map((message, index) => {
+                const messageLength = message.text.length
+                const isLong = messageLength > 200
+                const isExpanded = expandedMessages[index]
+                const shouldTruncate = isLong && !isExpanded
+
+                return (
+                  <div key={index} className={`log-message ${message.type}`}>
+                    {message.type === 'character' && (
+                      <div className="message-author">{character.name}</div>
+                    )}
+                    {message.type === 'player' && (
+                      <div className="message-author">You</div>
+                    )}
+                    {message.type === 'system' && (
+                      <div className="message-author">📖 Spell Info</div>
+                    )}
+                    <div className="message-content">
+                      {shouldTruncate
+                        ? renderMessageContent(message.text.substring(0, 200) + '...')
+                        : renderMessageContent(message.text)
+                      }
+                    </div>
+                    {isLong && (
+                      <button
+                        className="message-toggle-btn"
+                        onClick={() => toggleMessageExpansion(index)}
+                      >
+                        {isExpanded ? '▲ Show less' : '▼ Show more'}
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
               <div ref={messagesEndRef} />
             </div>
 
