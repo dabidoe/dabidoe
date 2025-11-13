@@ -166,15 +166,23 @@ function AbilityCard({ ability, onUse, character, mode }) {
           )}
 
           {/* Description */}
-          {details.shortDescription && (
+          {details.shortDescription && !details.description && (
             <div className="ability-description">
               <strong>Description:</strong>
               <p>{details.shortDescription}</p>
             </div>
           )}
 
-          {/* Long Description */}
-          {details.longDescription && (
+          {/* Full Spell Description */}
+          {ability.category === 'spell' && details.description && (
+            <div className="ability-description spell-description">
+              <strong>Description:</strong>
+              <div className="spell-desc-content">{details.description}</div>
+            </div>
+          )}
+
+          {/* Non-spell Long Description */}
+          {ability.category !== 'spell' && details.longDescription && (
             <div className="ability-description long">
               <pre>{details.longDescription}</pre>
             </div>
@@ -195,13 +203,27 @@ function AbilityCard({ ability, onUse, character, mode }) {
             </div>
           )}
 
-          {/* Use Button (when expanded) */}
+          {/* Cast/Use Button (when expanded) */}
           <button
-            className="use-ability-btn"
+            className={`use-ability-btn ${ability.category === 'spell' ? 'cast-spell-btn' : ''}`}
             onClick={handleUse}
             disabled={!canUse()}
           >
-            {canUse() ? `Use ${details.name}` : 'No Uses Remaining'}
+            {canUse() ? (
+              ability.category === 'spell' ? (
+                <>
+                  ✨ Cast {details.name}
+                  {ability.type === 'cantrip' && <span className="cantrip-note"> (Cantrip)</span>}
+                  {ability.type === 'leveled-spell' && details.level && (
+                    <span className="spell-level-note"> (Level {details.level})</span>
+                  )}
+                </>
+              ) : (
+                `Use ${details.name}`
+              )
+            ) : (
+              'No Uses Remaining'
+            )}
           </button>
         </div>
       )}
