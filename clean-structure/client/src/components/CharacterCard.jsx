@@ -125,8 +125,12 @@ function CharacterCard() {
       <div className="character-header-large">
         <div className="portrait-section">
           <div className="character-portrait">
-            {/* Placeholder portrait */}
-            <div className="portrait-placeholder">🛡️</div>
+            {/* Portrait - supports emoji or image URL */}
+            {character.portraitUrl ? (
+              <img src={character.portraitUrl} alt={character.name} className="portrait-image" />
+            ) : (
+              <div className="portrait-placeholder">{character.portrait || '🎭'}</div>
+            )}
           </div>
         </div>
 

@@ -49,6 +49,38 @@
     }
   },
   {
+    "id": "greataxe",
+    "name": "Greataxe",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 7,
+    "value": 30,
+    "description": "A massive two-handed axe favored by barbarians",
+    "weapon": {
+      "damage": "1d12",
+      "damageType": "slashing",
+      "properties": ["two-handed", "heavy"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "handaxe",
+    "name": "Handaxe",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 5,
+    "description": "A light throwable axe, useful in melee or at range",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "slashing",
+      "properties": ["light", "thrown"],
+      "range": "20/60 ft"
+    }
+  },
+  {
     "id": "dagger",
     "name": "Dagger",
     "category": "weapon",
