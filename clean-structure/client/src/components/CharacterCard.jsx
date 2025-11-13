@@ -6,6 +6,7 @@ import { populateCharacterData } from '../../../shared/data-loader'
 import CharacterModes from './CharacterModes'
 import SpellBrowser from './SpellBrowser'
 import AbilityBrowser from './AbilityBrowser'
+import EquipmentBrowser from './EquipmentBrowser'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -20,6 +21,7 @@ function CharacterCard() {
   const [loading, setLoading] = useState(true)
   const [showSpellBrowser, setShowSpellBrowser] = useState(false)
   const [showAbilityBrowser, setShowAbilityBrowser] = useState(false)
+  const [showEquipmentBrowser, setShowEquipmentBrowser] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -163,6 +165,15 @@ function CharacterCard() {
       abilities: [...(prev.abilities || []), ability]
     }))
     addMessage(`⚔️ Gained new ability: **${ability.name}**`, 'system')
+  }
+
+  // Handle adding equipment from equipment browser
+  const handleAddEquipment = (item) => {
+    setCharacter(prev => ({
+      ...prev,
+      inventory: [...(prev.inventory || []), item]
+    }))
+    addMessage(`🎒 Added to inventory: **${item.name}**`, 'system')
   }
 
   return (
@@ -487,6 +498,27 @@ function CharacterCard() {
 
           {activeTab === 'equipment' && (
             <div className="equipment-tab">
+              <button
+                className="browse-equipment-btn"
+                onClick={() => setShowEquipmentBrowser(true)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  marginBottom: '16px',
+                  background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#1a1a2e',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+              >
+                🎒 Browse Equipment & Gear
+              </button>
               <div className="equipment-list">
                 {character.inventory?.map((item, index) => (
                   <div key={index} className={`equipment-item ${item.equipped ? 'equipped' : ''}`}>
@@ -524,6 +556,15 @@ function CharacterCard() {
           character={character}
           onAddAbility={handleAddAbility}
           onClose={() => setShowAbilityBrowser(false)}
+        />
+      )}
+
+      {/* Equipment Browser Modal */}
+      {showEquipmentBrowser && (
+        <EquipmentBrowser
+          character={character}
+          onAddEquipment={handleAddEquipment}
+          onClose={() => setShowEquipmentBrowser(false)}
         />
       )}
     </div>
