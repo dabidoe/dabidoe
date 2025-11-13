@@ -680,6 +680,13 @@ function CharacterCard() {
       <div className={`tabs-section ${tabsCollapsed ? 'collapsed' : ''}`}>
         <div className="tab-headers">
           <button
+            className="section-collapse-btn tab-collapse"
+            onClick={() => setTabsCollapsed(!tabsCollapsed)}
+            title={tabsCollapsed ? 'Expand tabs' : 'Collapse tabs'}
+          >
+            {tabsCollapsed ? '▼' : '▲'}
+          </button>
+          <button
             className={`tab-header ${activeTab === 'skills' ? 'active' : ''}`}
             onClick={() => setActiveTab('skills')}
           >
@@ -708,13 +715,6 @@ function CharacterCard() {
             onClick={() => setActiveTab('equipment')}
           >
             Equipment
-          </button>
-          <button
-            className="section-collapse-btn tab-collapse"
-            onClick={() => setTabsCollapsed(!tabsCollapsed)}
-            title={tabsCollapsed ? 'Expand tabs' : 'Collapse tabs'}
-          >
-            {tabsCollapsed ? '▼' : '▲'}
           </button>
         </div>
 

@@ -227,8 +227,9 @@
 
 /* ========== CONVERSATION/LOG AREA ========== */
 .conversation-log {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 200px;
+  max-height: 50vh;
   display: flex;
   flex-direction: column;
   background: rgba(10, 10, 10, 0.95);
@@ -248,7 +249,7 @@
 .section-collapse-btn {
   position: absolute;
   top: 4px;
-  right: 8px;
+  left: 8px;
   background: rgba(40, 40, 40, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -446,8 +447,8 @@
   position: relative;
   top: auto;
   right: auto;
+  left: auto;
   flex: 0 0 auto;
-  margin-left: auto;
 }
 
 .tab-header {
