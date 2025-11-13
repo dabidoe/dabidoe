@@ -1,8 +1,7 @@
 .ability-card {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
   background: linear-gradient(135deg, rgba(45, 45, 68, 0.6) 0%, rgba(26, 26, 46, 0.6) 100%);
   border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 8px;
@@ -18,33 +17,88 @@
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }
 
-.ability-card .action-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: #fff;
-  text-align: left;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  transition: color 0.2s ease;
-}
-
-.ability-card .action-btn:hover {
-  color: #d4af37;
-}
-
 .ability-card.expanded {
-  flex-direction: column;
-  align-items: stretch;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 12px;
   padding: 12px;
   margin-bottom: 12px;
 }
 
-.ability-card.disabled .action-btn {
+/* Collapsed Card Header */
+.ability-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ability-info-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.ability-info-area:hover {
+  color: #d4af37;
+}
+
+.ability-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ability-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Quick Cast Button */
+.quick-cast-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+  border: none;
+  border-radius: 8px;
+  color: #1a1a2e;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.quick-cast-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5);
+}
+
+.quick-cast-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.quick-cast-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #555;
+}
+
+.quick-cast-btn.spell-quick-cast {
+  background: linear-gradient(135deg, #4a90e2 0%, #5fa3ef 100%);
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.quick-cast-btn.spell-quick-cast:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5fa3ef 0%, #74b3f5 100%);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.5);
+}
+
+.ability-card.disabled .quick-cast-btn {
   opacity: 0.5;
   cursor: not-allowed;
   background: linear-gradient(45deg, #555, #666);
