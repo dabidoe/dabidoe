@@ -9,7 +9,11 @@ import CharacterCreation from './components/CharacterCreation'
 import CharacterPreview, { CharacterSheet } from './components/CharacterPreview'
 import './App.css'
 
+console.log('🎨 App.jsx loading...')
+console.log('✅ All components imported')
+
 function App() {
+  console.log('🎨 App component rendering...')
   const [loading, setLoading] = useState(false)  // Skip loading screen for now
 
   const handleLoadComplete = () => {
