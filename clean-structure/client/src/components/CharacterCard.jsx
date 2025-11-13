@@ -44,6 +44,20 @@ function CharacterCard() {
     return <div className="character-loading">Loading character...</div>
   }
 
+  // Helper to get item icon by category
+  const getItemIcon = (category) => {
+    const icons = {
+      weapon: '⚔️',
+      armor: '🛡️',
+      shield: '🛡️',
+      potion: '🧪',
+      gear: '🎒',
+      ring: '💍',
+      scroll: '📜'
+    }
+    return icons[category] || '📦'
+  }
+
   // Get HP display class based on current HP
   const getHPClass = () => {
     const percentage = currentHP / character.hp.max
@@ -214,23 +228,50 @@ function CharacterCard() {
 
       {/* Quick Actions Row */}
       <div className="quick-actions-row">
-        <button className="quick-action-btn" onClick={() => addMessage('⚔️ Sword Strike!', 'character')}>
+        <button className="quick-action-btn" onClick={() => {
+          const meleeWeapons = character.inventory?.filter(i => i.category === 'weapon' && i.equipped && !i.weapon?.properties?.includes('ranged'))
+          const weapon = meleeWeapons?.[0] || { name: 'Unarmed', weapon: { damage: '1d4' } }
+          const attackBonus = Math.floor((character.stats.str - 10) / 2) + character.proficiencyBonus
+          const roll = Math.floor(Math.random() * 20) + 1
+          const total = roll + attackBonus
+          addMessage(`⚔️ ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total}`, 'player')
+        }}>
           <span className="action-icon">⚔️</span>
-          <span className="action-label">Attack</span>
+          <span className="action-label">Melee</span>
         </button>
-        <button className="quick-action-btn" onClick={() => addMessage('🛡️ Shield Wall!', 'character')}>
-          <span className="action-icon">🛡️</span>
-          <span className="action-label">Defend</span>
+        <button className="quick-action-btn" onClick={() => {
+          const rangedWeapons = character.inventory?.filter(i => i.category === 'weapon' && i.equipped && (i.weapon?.properties?.includes('thrown') || i.weapon?.properties?.includes('ammunition')))
+          const weapon = rangedWeapons?.[0] || { name: 'Improvised', weapon: { damage: '1d4' } }
+          const attackBonus = Math.floor((character.stats.dex - 10) / 2) + character.proficiencyBonus
+          const roll = Math.floor(Math.random() * 20) + 1
+          const total = roll + attackBonus
+          addMessage(`🏹 ${weapon.name} Attack: d20(${roll}) + ${attackBonus} = ${total}`, 'player')
+        }}>
+          <span className="action-icon">🏹</span>
+          <span className="action-label">Ranged</span>
         </button>
-        <button className="quick-action-btn" onClick={() => addMessage('🎲 Initiative Roll: 18', 'character')}>
+        <button className="quick-action-btn" onClick={() => {
+          const spells = character.abilities?.filter(a => a.category === 'spell' && a.type === 'leveled-spell') || []
+          if (spells.length > 0) {
+            const spell = spells[0]
+            addMessage(`✨ Cast ${spell.name}!`, 'player')
+          } else {
+            addMessage(`✨ No spells available`, 'player')
+          }
+        }}>
+          <span className="action-icon">✨</span>
+          <span className="action-label">Spell</span>
+        </button>
+        <button className="quick-action-btn" onClick={() => {
+          const initiativeBonus = Math.floor((character.stats.dex - 10) / 2)
+          const roll = Math.floor(Math.random() * 20) + 1
+          const total = roll + initiativeBonus
+          addMessage(`🎲 Initiative: d20(${roll}) + ${initiativeBonus} = ${total}`, 'player')
+        }}>
           <span className="action-icon">🎲</span>
           <span className="action-label">Initiative</span>
         </button>
-        <button className="quick-action-btn" onClick={() => addMessage('💚 Healed 10 HP', 'character')}>
-          <span className="action-icon">💚</span>
-          <span className="action-label">Heal</span>
-        </button>
-        <button className="quick-action-btn edit-btn">
+        <button className="quick-action-btn edit-btn" onClick={() => addMessage('⚙️ Character editing coming soon!', 'system')}>
           <span className="action-icon">⚙️</span>
           <span className="action-label">Edit</span>
         </button>
@@ -331,19 +372,42 @@ function CharacterCard() {
 
           {activeTab === 'spells' && (
             <div className="spells-tab">
+              {character.spellSlots && (
+                <div className="spell-slots-display" style={{marginBottom: '20px'}}>
+                  <h4 style={{marginBottom: '10px', color: 'rgba(255,255,255,0.9)'}}>Spell Slots:</h4>
+                  <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                    {Object.entries(character.spellSlots).map(([level, slots]) => (
+                      <div key={level} style={{
+                        padding: '8px 12px',
+                        background: 'rgba(30,30,30,0.8)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '8px'
+                      }}>
+                        <span style={{color: 'rgba(255,255,255,0.7)', fontSize: '12px'}}>Level {level}:</span>
+                        <span style={{color: '#fff', marginLeft: '6px', fontWeight: 'bold'}}>
+                          {slots.current}/{slots.max}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="spell-list">
-                <div className="spell-item">
-                  <span className="spell-name">Cure Wounds</span>
-                  <span className="spell-level">Level 1</span>
-                </div>
-                <div className="spell-item">
-                  <span className="spell-name">Shield of Faith</span>
-                  <span className="spell-level">Level 1</span>
-                </div>
-                <div className="spell-item">
-                  <span className="spell-name">Hold Person</span>
-                  <span className="spell-level">Level 2</span>
-                </div>
+                {character.abilities
+                  ?.filter(ability => ability.category === 'spell')
+                  .map((spell, index) => (
+                    <div key={index} className="spell-item" onClick={() => handleAbilityClick(spell)}>
+                      <span className="spell-name">{spell.details?.name || spell.name}</span>
+                      <span className="spell-level">
+                        {spell.type === 'cantrip' ? 'Cantrip' : `Level ${spell.level || spell.details?.level || '?'}`}
+                      </span>
+                    </div>
+                  ))}
+                {(!character.abilities || character.abilities.filter(a => a.category === 'spell').length === 0) && (
+                  <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
+                    No spells available
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -351,20 +415,21 @@ function CharacterCard() {
           {activeTab === 'equipment' && (
             <div className="equipment-tab">
               <div className="equipment-list">
-                <div className="equipment-item equipped">
-                  <span className="equipment-icon">⚔️</span>
-                  <span className="equipment-name">Longsword</span>
-                  <span className="equipment-status">Equipped</span>
-                </div>
-                <div className="equipment-item equipped">
-                  <span className="equipment-icon">🛡️</span>
-                  <span className="equipment-name">Shield</span>
-                  <span className="equipment-status">Equipped</span>
-                </div>
-                <div className="equipment-item">
-                  <span className="equipment-icon">🎒</span>
-                  <span className="equipment-name">Backpack</span>
-                </div>
+                {character.inventory?.map((item, index) => (
+                  <div key={index} className={`equipment-item ${item.equipped ? 'equipped' : ''}`}>
+                    <span className="equipment-icon">{getItemIcon(item.category)}</span>
+                    <span className="equipment-name">
+                      {item.name}
+                      {item.quantity > 1 && ` x${item.quantity}`}
+                    </span>
+                    {item.equipped && <span className="equipment-status">Equipped</span>}
+                  </div>
+                ))}
+                {(!character.inventory || character.inventory.length === 0) && (
+                  <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
+                    No equipment
+                  </div>
+                )}
               </div>
             </div>
           )}
