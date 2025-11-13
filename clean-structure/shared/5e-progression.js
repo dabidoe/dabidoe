@@ -482,6 +482,268 @@ export const CLASS_PROGRESSION = {
   }
 };
 
+// Subclass definitions with features by level
+export const SUBCLASSES = {
+  ranger: {
+    hunter: {
+      name: 'Hunter',
+      description: 'A master of hunting and tracking prey',
+      features: {
+        3: [
+          {
+            id: 'hunters-prey',
+            name: "Hunter's Prey",
+            shortDescription: 'Choose a combat tactic: Colossus Slayer, Giant Killer, or Horde Breaker',
+            description: 'Choose one of three features: Colossus Slayer (extra 1d8 damage to wounded creatures), Giant Killer (react to attack Large+ creatures), or Horde Breaker (extra attack against nearby creature).',
+            actionType: 'passive',
+            category: 'combat',
+            choices: ['colossus-slayer', 'giant-killer', 'horde-breaker']
+          }
+        ],
+        7: [
+          {
+            id: 'defensive-tactics',
+            name: 'Defensive Tactics',
+            shortDescription: 'Choose a defensive ability',
+            description: 'Choose one defensive ability: Escape the Horde (no opportunity attacks from creatures you attacked), Multiattack Defense (bonus AC after being hit), or Steel Will (advantage on saves vs frightened).',
+            actionType: 'passive',
+            category: 'defensive',
+            choices: ['escape-the-horde', 'multiattack-defense', 'steel-will']
+          }
+        ],
+        11: [
+          {
+            id: 'multiattack',
+            name: 'Multiattack',
+            shortDescription: 'Choose a multiattack option',
+            description: 'Choose one multiattack feature: Volley (attack all creatures in 10ft radius), or Whirlwind Attack (melee attack all creatures within 5ft).',
+            actionType: 'action',
+            category: 'combat',
+            choices: ['volley', 'whirlwind-attack']
+          }
+        ],
+        15: [
+          {
+            id: 'superior-hunters-defense',
+            name: "Superior Hunter's Defense",
+            shortDescription: 'Choose a superior defensive ability',
+            description: 'Choose one defensive ability: Evasion (dex save for half damage becomes no damage), Stand Against the Tide (redirect missed attack to another creature), or Uncanny Dodge (halve damage from one attack as reaction).',
+            actionType: 'reaction',
+            category: 'defensive',
+            choices: ['evasion', 'stand-against-the-tide', 'uncanny-dodge']
+          }
+        ]
+      }
+    },
+    beastMaster: {
+      name: 'Beast Master',
+      description: 'Forms a powerful bond with a beast companion',
+      features: {
+        3: [
+          {
+            id: 'rangers-companion',
+            name: "Ranger's Companion",
+            shortDescription: 'Gain a beast companion that fights alongside you',
+            description: 'You gain a beast companion that accompanies you on your adventures. The beast obeys your commands and takes its turn on your initiative.',
+            actionType: 'passive',
+            category: 'utility'
+          }
+        ],
+        7: [
+          {
+            id: 'exceptional-training',
+            name: 'Exceptional Training',
+            shortDescription: 'Beast companion can attack when you take Attack action',
+            description: 'Your beast companion can use its reaction to make a melee attack when you command it as part of your Attack action.',
+            actionType: 'bonus',
+            category: 'combat'
+          }
+        ],
+        11: [
+          {
+            id: 'bestial-fury',
+            name: 'Bestial Fury',
+            shortDescription: 'Beast companion can make two attacks',
+            description: 'When you command your beast companion to take the Attack action, it can make two attacks.',
+            actionType: 'passive',
+            category: 'combat'
+          }
+        ],
+        15: [
+          {
+            id: 'share-spells',
+            name: 'Share Spells',
+            shortDescription: 'Cast ranger spells on your beast companion',
+            description: 'When you cast a spell targeting yourself, you can also affect your beast companion if it is within 30 feet.',
+            actionType: 'passive',
+            category: 'utility'
+          }
+        ]
+      }
+    },
+    gloomStalker: {
+      name: 'Gloom Stalker',
+      description: 'Master of ambush and darkness',
+      features: {
+        3: [
+          {
+            id: 'dread-ambusher',
+            name: 'Dread Ambusher',
+            shortDescription: 'Extra attack and movement on first turn',
+            description: 'You can give yourself a bonus to initiative equal to your Wisdom modifier. On your first turn, you have +10 feet walking speed and can make an extra weapon attack. If that attack hits, add 1d8 damage.',
+            actionType: 'passive',
+            category: 'combat'
+          },
+          {
+            id: 'umbral-sight',
+            name: 'Umbral Sight',
+            shortDescription: 'Darkvision 60ft and invisible to darkvision',
+            description: 'You gain darkvision out to 60 feet (or +30 if you have it). You are invisible to creatures relying on darkvision in darkness.',
+            actionType: 'passive',
+            category: 'utility'
+          }
+        ],
+        7: [
+          {
+            id: 'iron-mind',
+            name: 'Iron Mind',
+            shortDescription: 'Proficiency in Wisdom saves',
+            description: 'You gain proficiency in Wisdom saving throws. If you already have this proficiency, choose Intelligence or Charisma.',
+            actionType: 'passive',
+            category: 'defensive'
+          }
+        ],
+        11: [
+          {
+            id: 'stalkers-flurry',
+            name: "Stalker's Flurry",
+            shortDescription: 'Extra attack when you miss',
+            description: 'Once per turn when you miss with an attack, you can make another attack.',
+            actionType: 'passive',
+            category: 'combat'
+          }
+        ],
+        15: [
+          {
+            id: 'shadowy-dodge',
+            name: 'Shadowy Dodge',
+            shortDescription: 'Impose disadvantage when attacked',
+            description: 'When a creature attacks you and you can see it, you can use your reaction to impose disadvantage on its attack roll.',
+            actionType: 'reaction',
+            category: 'defensive'
+          }
+        ]
+      }
+    }
+  },
+
+  fighter: {
+    champion: {
+      name: 'Champion',
+      description: 'Master of physical combat',
+      features: {
+        3: [
+          {
+            id: 'improved-critical',
+            name: 'Improved Critical',
+            shortDescription: 'Critical hits on 19-20',
+            description: 'Your weapon attacks score a critical hit on a roll of 19 or 20.',
+            actionType: 'passive',
+            category: 'combat'
+          }
+        ],
+        7: [
+          {
+            id: 'remarkable-athlete',
+            name: 'Remarkable Athlete',
+            shortDescription: 'Add half proficiency to certain checks',
+            description: 'You can add half your proficiency bonus (rounded up) to any Strength, Dexterity, or Constitution check you make that doesn\'t already use your proficiency bonus.',
+            actionType: 'passive',
+            category: 'utility'
+          }
+        ],
+        10: [
+          {
+            id: 'additional-fighting-style',
+            name: 'Additional Fighting Style',
+            shortDescription: 'Gain a second fighting style',
+            description: 'You can choose a second option from the Fighting Style class feature.',
+            actionType: 'passive',
+            category: 'combat'
+          }
+        ],
+        15: [
+          {
+            id: 'superior-critical',
+            name: 'Superior Critical',
+            shortDescription: 'Critical hits on 18-20',
+            description: 'Your weapon attacks score a critical hit on a roll of 18, 19, or 20.',
+            actionType: 'passive',
+            category: 'combat'
+          }
+        ],
+        18: [
+          {
+            id: 'survivor',
+            name: 'Survivor',
+            shortDescription: 'Regenerate HP at start of turn',
+            description: 'At the start of each of your turns, you regain hit points equal to 5 + your Constitution modifier if you have no more than half your hit points left.',
+            actionType: 'passive',
+            category: 'defensive'
+          }
+        ]
+      }
+    }
+  }
+};
+
+// Specific Hunter subclass abilities (Colossus Slayer, etc.)
+export const HUNTER_ABILITIES = {
+  'colossus-slayer': {
+    id: 'colossus-slayer',
+    name: 'Colossus Slayer',
+    shortDescription: 'Deal 1d8 extra damage to wounded creatures',
+    description: 'Your tenacity can wear down the most potent foes. When you hit a creature with a weapon attack, the creature takes an extra 1d8 damage if it\'s below its hit point maximum. You can deal this extra damage only once per turn.',
+    actionType: 'passive',
+    category: 'combat',
+    damage: '1d8'
+  },
+  'giant-killer': {
+    id: 'giant-killer',
+    name: 'Giant Killer',
+    shortDescription: 'React to attack Large or larger creatures',
+    description: 'When a Large or larger creature within 5 feet of you hits or misses you with an attack, you can use your reaction to attack that creature immediately after its attack, provided you can see the creature.',
+    actionType: 'reaction',
+    category: 'combat'
+  },
+  'horde-breaker': {
+    id: 'horde-breaker',
+    name: 'Horde Breaker',
+    shortDescription: 'Make an extra attack against a nearby creature',
+    description: 'Once on each of your turns when you make a weapon attack, you can make another attack with the same weapon against a different creature that is within 5 feet of the original target and within range of your weapon.',
+    actionType: 'passive',
+    category: 'combat'
+  }
+};
+
+// Get subclass features for a class/subclass up to a specific level
+export function getSubclassFeatures(className, subclassName, level) {
+  const classSubclasses = SUBCLASSES[className.toLowerCase()];
+  if (!classSubclasses) return [];
+
+  const subclass = classSubclasses[subclassName.toLowerCase().replace(/\s+/g, '')];
+  if (!subclass) return [];
+
+  const features = [];
+  for (let lvl = 1; lvl <= level; lvl++) {
+    if (subclass.features[lvl]) {
+      features.push(...subclass.features[lvl]);
+    }
+  }
+
+  return features;
+}
+
 // Get spell slots for a class at a specific level
 export function getSpellSlots(className, level) {
   const classData = CLASS_PROGRESSION[className.toLowerCase()];
@@ -544,8 +806,11 @@ export default {
   SPELL_SLOTS,
   PROFICIENCY_BONUS,
   CLASS_PROGRESSION,
+  SUBCLASSES,
+  HUNTER_ABILITIES,
   getSpellSlots,
   getClassFeatures,
+  getSubclassFeatures,
   getCantripsKnown,
   getSpellsKnown,
   getPreparedSpellsCount

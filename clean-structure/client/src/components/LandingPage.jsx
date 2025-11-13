@@ -48,16 +48,19 @@ function LandingPage() {
           <div className="featured-preview">
             <div
               className="character-preview-card"
+              onClick={() => navigate('/character/burlon')}
+            >
+              <div className="preview-icon">🪓</div>
+              <h3>Burlon Throatchoppa</h3>
+              <p>Half-Orc Hunter</p>
+            </div>
+            <div
+              className="character-preview-card"
               onClick={() => navigate('/character/achilles')}
             >
               <div className="preview-icon">🛡️</div>
               <h3>Achilles</h3>
               <p>Legendary Warrior</p>
-            </div>
-            <div className="character-preview-card" onClick={() => alert('More characters coming soon!')}>
-              <div className="preview-icon">🧙</div>
-              <h3>Coming Soon</h3>
-              <p>More Characters</p>
             </div>
           </div>
         </section>
