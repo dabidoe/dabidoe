@@ -8,8 +8,7 @@ import './CharacterCard.css'
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
-  const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
-  const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
+  const [activeTab, setActiveTab] = useState('skills') // skills, abilities, stats, spells, equipment
   const [mood, setMood] = useState('Contemplative')
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
@@ -21,10 +20,6 @@ function CharacterCard() {
   // Load character data
   useEffect(() => {
     const loadCharacter = async () => {
-      // TODO: Replace with API call to your Node server
-      // const response = await fetch(`/api/characters/${characterId}`)
-      // const data = await response.json()
-
       const loadedCharacter = getDemoCharacter(characterId)
       if (loadedCharacter) {
         setCharacter(loadedCharacter)
@@ -54,47 +49,17 @@ function CharacterCard() {
     return ''
   }
 
-  // Handle scene/mode switching
-  const handleModeChange = (newMode) => {
-    setMode(newMode)
-    if (newMode === 'battle') {
-      setMood('Battle Ready')
-    } else {
-      setMood('Contemplative')
-    }
-  }
-
   // Handle combat abilities
   const handleAbilityClick = (ability) => {
     const abilityData = {
       'Sword Strike': { modifier: 9, damageCount: 1, damageSides: 8, damageBonus: 6, icon: '⚔️' },
       'Divine Fury': { modifier: 8, damageCount: 2, damageSides: 6, damageBonus: 8, icon: '🔥' },
       'Spear Thrust': { modifier: 10, damageCount: 1, damageSides: 10, damageBonus: 7, icon: '🗡️' },
-      'Shield Wall': { modifier: 7, isDefensive: true, icon: '🛡️' },
-      'Tell Story': { isStory: true, icon: '📖' },
-      'Current Quest': { isQuest: true, icon: '🗺️' }
+      'Shield Wall': { modifier: 7, isDefensive: true, icon: '🛡️' }
     }
 
     const data = abilityData[ability.name]
-
     if (!data) return
-
-    // Handle story/quest actions
-    if (data.isStory) {
-      const storyText = mode === 'battle'
-        ? '📖 At Troy, I thought glory was everything. This battle taught me there are causes worth more than fame.'
-        : '📖 Troy haunts my memory. I learned victory without meaning is hollow. Here I fight for something greater.'
-      addMessage(storyText, 'character', mood)
-      return
-    }
-
-    if (data.isQuest) {
-      const questText = mode === 'battle'
-        ? '🗺️ This is our great quest - lead 600,000 souls to freedom. Every step defies empires and gods.'
-        : '🗺️ The real quest is simple: help these people find hope. I finally understand purpose.'
-      addMessage(questText, 'character', mood)
-      return
-    }
 
     // Handle combat actions
     if (data.isDefensive) {
@@ -122,17 +87,8 @@ function CharacterCard() {
       }
 
       responseText += '\n\n' + getNarration(ability.name, result)
-
       addMessage(responseText, 'character', 'Focused')
-
-      // Switch to battle mode on crit with Divine Fury
-      if (result.attack.isCrit && ability.name === 'Divine Fury') {
-        setTimeout(() => handleModeChange('battle'), 800)
-      }
     }
-
-    // TODO: Send ability use to API
-    // await useAbility(characterId, ability.name, { mode, currentHP })
   }
 
   // Add message to chat
@@ -145,7 +101,6 @@ function CharacterCard() {
     }
     setMessages(prev => [...prev, newMessage])
 
-    // Update the mood display when a character message with a mood is added
     if (type === 'character' && messageMood) {
       setMood(messageMood)
     }
@@ -157,12 +112,7 @@ function CharacterCard() {
       addMessage(inputMessage, 'player')
       setInputMessage('')
 
-      // TODO: Replace with API call to your Node server
-      // import { sendMessage } from '../services/api'
-      // const response = await sendMessage(characterId, inputMessage, messages)
-      // addMessage(response.text, 'character', response.mood)
-
-      // Simulate character response for now
+      // Simulate character response
       setTimeout(() => {
         addMessage("Your words reach me across the ages...", 'character', 'Thoughtful')
       }, 1000)
@@ -171,90 +121,246 @@ function CharacterCard() {
 
   return (
     <div className="character-card">
-      <div className="character-header">
-        <div className="character-info">
-          <div className="character-name">{character.name.toUpperCase()}</div>
-          <div className="stats-line">
-            <div className={`hp-display ${getHPClass()}`}>
-              {currentHP}/{character.hp.max} HP
+      {/* Large Header with Portrait + Stats */}
+      <div className="character-header-large">
+        <div className="portrait-section">
+          <div className="character-portrait">
+            {/* Placeholder portrait */}
+            <div className="portrait-placeholder">🛡️</div>
+          </div>
+        </div>
+
+        <div className="header-stats">
+          <div className="character-name-large">{character.name}</div>
+          <div className="character-details">
+            <span className="detail-item">{character.class || 'Fighter'}</span>
+            <span className="detail-separator">•</span>
+            <span className="detail-item">Level {character.level || 10}</span>
+            <span className="detail-separator">•</span>
+            <span className="detail-item">{character.race || 'Human'}</span>
+          </div>
+
+          <div className="stat-bars">
+            <div className="stat-bar-item">
+              <span className="stat-label">HP</span>
+              <div className="stat-bar-bg">
+                <div
+                  className={`stat-bar-fill hp ${getHPClass()}`}
+                  style={{ width: `${(currentHP / character.hp.max) * 100}%` }}
+                />
+              </div>
+              <span className="stat-value">{currentHP}/{character.hp.max}</span>
             </div>
-            <div className="ac-display">AC {character.ac}</div>
-            <div className="scene-indicator">
-              {mode === 'portrait' ? 'Portrait Mode' : 'Red Sea Battle'}
+
+            <div className="quick-stats">
+              <div className="quick-stat">
+                <span className="quick-stat-label">AC</span>
+                <span className="quick-stat-value">{character.ac || 18}</span>
+              </div>
+              <div className="quick-stat">
+                <span className="quick-stat-label">Initiative</span>
+                <span className="quick-stat-value">+{character.initiative || 3}</span>
+              </div>
+              <div className="quick-stat">
+                <span className="quick-stat-label">Speed</span>
+                <span className="quick-stat-value">{character.speed || 30}ft</span>
+              </div>
             </div>
           </div>
         </div>
-        <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+
+        <button className="close-btn-top" onClick={() => navigate('/')}>✕</button>
       </div>
 
-      <div className="character-body">
-        <div className="image-section">
-          <div className={`character-image ${mode !== 'portrait' ? 'hidden' : ''}`} id="portraitImage"></div>
-          <div className={`character-image ${mode !== 'battle' ? 'hidden' : ''}`} id="battleImage"></div>
-
-          <div className="scene-switcher">
-            <button
-              className={`scene-btn ${mode === 'portrait' ? 'active' : ''}`}
-              onClick={() => handleModeChange('portrait')}
-            >
-              Portrait
-            </button>
-            <button
-              className={`scene-btn ${mode === 'battle' ? 'active' : ''}`}
-              onClick={() => handleModeChange('battle')}
-            >
-              Battle
-            </button>
-          </div>
+      {/* Conversation/Log Area */}
+      <div className="conversation-log">
+        <div className="log-header">
+          <span className="log-title">Activity Log</span>
+          <span className="mood-indicator">{mood}</span>
         </div>
 
-        <div className="chat-section">
-          <div className="chat-header">
-            <span>⚔️ Speaking with {character.name}</span>
-            <span className="mood-indicator">{mood}</span>
-          </div>
+        <div className="log-messages">
+          {messages.map((message, index) => (
+            <div key={index} className={`log-message ${message.type}`}>
+              {message.type === 'character' && (
+                <div className="message-author">{character.name}</div>
+              )}
+              {message.type === 'player' && (
+                <div className="message-author">You</div>
+              )}
+              <div className="message-content">{message.text}</div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
 
-          <div className="chat-messages">
-            {messages.map((message, index) => (
-              <div key={index} className={`message ${message.type}`}>
-                {message.type === 'character' && (
-                  <div className="author">
-                    <span>{character.name}</span>
-                    <span>{mode === 'battle' ? '⚔️' : character.portrait}</span>
-                  </div>
-                )}
-                {message.type === 'player' && (
-                  <div className="author">You</div>
-                )}
-                <div className="message-text" style={{ whiteSpace: 'pre-line' }}>
-                  {message.text}
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
+        <form className="message-input" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Type a message..."
+          />
+          <button type="submit">Send</button>
+        </form>
+      </div>
 
-          <div className="interaction-modes">
-            {/* Unified interface - no tabs, everything visible */}
+      {/* Quick Actions Row */}
+      <div className="quick-actions-row">
+        <button className="quick-action-btn" onClick={() => addMessage('⚔️ Sword Strike!', 'character')}>
+          <span className="action-icon">⚔️</span>
+          <span className="action-label">Attack</span>
+        </button>
+        <button className="quick-action-btn" onClick={() => addMessage('🛡️ Shield Wall!', 'character')}>
+          <span className="action-icon">🛡️</span>
+          <span className="action-label">Defend</span>
+        </button>
+        <button className="quick-action-btn" onClick={() => addMessage('🎲 Initiative Roll: 18', 'character')}>
+          <span className="action-icon">🎲</span>
+          <span className="action-label">Initiative</span>
+        </button>
+        <button className="quick-action-btn" onClick={() => addMessage('💚 Healed 10 HP', 'character')}>
+          <span className="action-icon">💚</span>
+          <span className="action-label">Heal</span>
+        </button>
+        <button className="quick-action-btn edit-btn">
+          <span className="action-icon">⚙️</span>
+          <span className="action-label">Edit</span>
+        </button>
+      </div>
+
+      {/* Tabs Section */}
+      <div className="tabs-section">
+        <div className="tab-headers">
+          <button
+            className={`tab-header ${activeTab === 'skills' ? 'active' : ''}`}
+            onClick={() => setActiveTab('skills')}
+          >
+            Skills
+          </button>
+          <button
+            className={`tab-header ${activeTab === 'abilities' ? 'active' : ''}`}
+            onClick={() => setActiveTab('abilities')}
+          >
+            Abilities
+          </button>
+          <button
+            className={`tab-header ${activeTab === 'stats' ? 'active' : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            Stats
+          </button>
+          <button
+            className={`tab-header ${activeTab === 'spells' ? 'active' : ''}`}
+            onClick={() => setActiveTab('spells')}
+          >
+            Spells
+          </button>
+          <button
+            className={`tab-header ${activeTab === 'equipment' ? 'active' : ''}`}
+            onClick={() => setActiveTab('equipment')}
+          >
+            Equipment
+          </button>
+        </div>
+
+        <div className="tab-content">
+          {activeTab === 'skills' && (
             <CharacterModes
               character={character}
-              mode="unified"
+              mode="skills"
               onMessage={addMessage}
               abilities={character.abilities}
               onAbilityUse={handleAbilityClick}
             />
-          </div>
+          )}
 
-          <form className="chat-input" onSubmit={handleSendMessage}>
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Speak with the immortal warrior..."
-              id="messageInput"
+          {activeTab === 'abilities' && (
+            <CharacterModes
+              character={character}
+              mode="battle"
+              onMessage={addMessage}
+              abilities={character.abilities}
+              onAbilityUse={handleAbilityClick}
             />
-            <button type="submit" className="send-btn">Send</button>
-          </form>
+          )}
+
+          {activeTab === 'stats' && (
+            <div className="stats-tab">
+              <div className="stats-grid">
+                <div className="stat-block">
+                  <div className="stat-name">STR</div>
+                  <div className="stat-score">{character.stats?.str || 16}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.str || 16) - 10) / 2)}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-name">DEX</div>
+                  <div className="stat-score">{character.stats?.dex || 14}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.dex || 14) - 10) / 2)}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-name">CON</div>
+                  <div className="stat-score">{character.stats?.con || 15}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.con || 15) - 10) / 2)}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-name">INT</div>
+                  <div className="stat-score">{character.stats?.int || 10}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.int || 10) - 10) / 2)}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-name">WIS</div>
+                  <div className="stat-score">{character.stats?.wis || 12}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.wis || 12) - 10) / 2)}</div>
+                </div>
+                <div className="stat-block">
+                  <div className="stat-name">CHA</div>
+                  <div className="stat-score">{character.stats?.cha || 14}</div>
+                  <div className="stat-mod">+{Math.floor(((character.stats?.cha || 14) - 10) / 2)}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'spells' && (
+            <div className="spells-tab">
+              <div className="spell-list">
+                <div className="spell-item">
+                  <span className="spell-name">Cure Wounds</span>
+                  <span className="spell-level">Level 1</span>
+                </div>
+                <div className="spell-item">
+                  <span className="spell-name">Shield of Faith</span>
+                  <span className="spell-level">Level 1</span>
+                </div>
+                <div className="spell-item">
+                  <span className="spell-name">Hold Person</span>
+                  <span className="spell-level">Level 2</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'equipment' && (
+            <div className="equipment-tab">
+              <div className="equipment-list">
+                <div className="equipment-item equipped">
+                  <span className="equipment-icon">⚔️</span>
+                  <span className="equipment-name">Longsword</span>
+                  <span className="equipment-status">Equipped</span>
+                </div>
+                <div className="equipment-item equipped">
+                  <span className="equipment-icon">🛡️</span>
+                  <span className="equipment-name">Shield</span>
+                  <span className="equipment-status">Equipped</span>
+                </div>
+                <div className="equipment-item">
+                  <span className="equipment-icon">🎒</span>
+                  <span className="equipment-name">Backpack</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
