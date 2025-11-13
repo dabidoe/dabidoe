@@ -7,12 +7,15 @@ import CharacterModes from './CharacterModes'
 import SpellBrowser from './SpellBrowser'
 import AbilityBrowser from './AbilityBrowser'
 import EquipmentBrowser from './EquipmentBrowser'
+import InventoryManager from './inventory/InventoryManager'
+import EquipmentSlots from './inventory/EquipmentSlots'
 import './CharacterCard.css'
 
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('skills') // skills, abilities, stats, spells, equipment
+  const [equipmentView, setEquipmentView] = useState('inventory') // 'inventory' or 'slots'
   const [mood, setMood] = useState('Contemplative')
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
@@ -256,6 +259,71 @@ function CharacterCard() {
     addMessage(`🎒 Added to inventory: **${item.name}**`, 'system')
   }
 
+  // Handle equipping item
+  const handleEquipItem = (item) => {
+    setCharacter(prev => {
+      const updatedInventory = prev.inventory.map(i => {
+        if (i.id === item.id) {
+          // If item has a slot specified, use it; otherwise use item's default slot
+          return { ...i, equipped: true, slot: item.slot || i.slot }
+        }
+        // Unequip items in the same slot
+        if (item.slot && i.slot === item.slot && i.equipped) {
+          return { ...i, equipped: false }
+        }
+        return i
+      })
+      return { ...prev, inventory: updatedInventory }
+    })
+    addMessage(`✅ Equipped: **${item.name}**`, 'system')
+  }
+
+  // Handle unequipping item
+  const handleUnequipItem = (item) => {
+    setCharacter(prev => ({
+      ...prev,
+      inventory: prev.inventory.map(i =>
+        i.id === item.id ? { ...i, equipped: false } : i
+      )
+    }))
+    addMessage(`❌ Unequipped: **${item.name}**`, 'system')
+  }
+
+  // Handle using consumable item
+  const handleUseItem = (item) => {
+    addMessage(`🧪 Used: **${item.name}**`, 'system')
+    // TODO: Apply item effects and remove from inventory if quantity reaches 0
+    setCharacter(prev => ({
+      ...prev,
+      inventory: prev.inventory.map(i => {
+        if (i.id === item.id && i.quantity > 1) {
+          return { ...i, quantity: i.quantity - 1 }
+        }
+        return i
+      }).filter(i => !(i.id === item.id && i.quantity <= 1))
+    }))
+  }
+
+  // Handle dropping item
+  const handleDropItem = (item) => {
+    setCharacter(prev => ({
+      ...prev,
+      inventory: prev.inventory.filter(i => i.id !== item.id)
+    }))
+    addMessage(`🗑️ Dropped: **${item.name}**`, 'system')
+  }
+
+  // Refresh character data (reload from demo + populate)
+  const handleRefreshCharacter = () => {
+    const loadedCharacter = getDemoCharacter(characterId)
+    if (loadedCharacter) {
+      const populatedCharacter = populateCharacterData({ ...loadedCharacter })
+      setCharacter(populatedCharacter)
+      setCurrentHP(populatedCharacter.hp.current)
+      addMessage(`🔄 Character data refreshed`, 'system')
+    }
+  }
+
   return (
     <div className="character-card">
       {/* Compact Header with Portrait + Stats */}
@@ -331,6 +399,26 @@ function CharacterCard() {
             <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{character.speed || 30}<span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>ft</span></div>
           </div>
         </div>
+
+        <button
+          onClick={handleRefreshCharacter}
+          title="Refresh character data"
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '40px',
+            background: 'transparent',
+            border: 'none',
+            color: '#888',
+            fontSize: '18px',
+            cursor: 'pointer',
+            padding: '4px',
+            lineHeight: 1,
+            transition: 'color 0.2s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.color = '#d4af37'}
+          onMouseLeave={(e) => e.target.style.color = '#888'}
+        >🔄</button>
 
         <button
           onClick={() => navigate('/')}
@@ -673,13 +761,59 @@ function CharacterCard() {
 
           {activeTab === 'equipment' && (
             <div className="equipment-tab">
+              {/* View Toggle */}
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                marginBottom: '12px',
+                background: 'rgba(0,0,0,0.3)',
+                padding: '4px',
+                borderRadius: '8px'
+              }}>
+                <button
+                  onClick={() => setEquipmentView('inventory')}
+                  style={{
+                    flex: 1,
+                    padding: '8px',
+                    background: equipmentView === 'inventory' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
+                    border: equipmentView === 'inventory' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '6px',
+                    color: equipmentView === 'inventory' ? '#d4af37' : 'rgba(255,255,255,0.7)',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  🎒 Inventory
+                </button>
+                <button
+                  onClick={() => setEquipmentView('slots')}
+                  style={{
+                    flex: 1,
+                    padding: '8px',
+                    background: equipmentView === 'slots' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
+                    border: equipmentView === 'slots' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '6px',
+                    color: equipmentView === 'slots' ? '#d4af37' : 'rgba(255,255,255,0.7)',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  ⚔️ Equipment Slots
+                </button>
+              </div>
+
+              {/* Add Equipment Button */}
               <button
                 className="browse-equipment-btn"
                 onClick={() => setShowEquipmentBrowser(true)}
                 style={{
                   width: '100%',
                   padding: '12px',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                   background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
                   border: 'none',
                   borderRadius: '8px',
@@ -694,23 +828,23 @@ function CharacterCard() {
               >
                 🎒 Browse Equipment & Gear
               </button>
-              <div className="equipment-list">
-                {character.inventory?.map((item, index) => (
-                  <div key={index} className={`equipment-item ${item.equipped ? 'equipped' : ''}`}>
-                    <span className="equipment-icon">{getItemIcon(item.category)}</span>
-                    <span className="equipment-name">
-                      {item.name}
-                      {item.quantity > 1 && ` x${item.quantity}`}
-                    </span>
-                    {item.equipped && <span className="equipment-status">Equipped</span>}
-                  </div>
-                ))}
-                {(!character.inventory || character.inventory.length === 0) && (
-                  <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
-                    No equipment
-                  </div>
-                )}
-              </div>
+
+              {/* Render view based on selection */}
+              {equipmentView === 'inventory' ? (
+                <InventoryManager
+                  character={character}
+                  onEquipItem={handleEquipItem}
+                  onUnequipItem={handleUnequipItem}
+                  onUseItem={handleUseItem}
+                  onDropItem={handleDropItem}
+                  onUpdateCharacter={setCharacter}
+                />
+              ) : (
+                <EquipmentSlots
+                  character={character}
+                  onUnequipItem={handleUnequipItem}
+                />
+              )}
             </div>
           )}
         </div>
