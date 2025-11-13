@@ -16,6 +16,7 @@ export const demoCharacters = {
     initiative: 3,
     speed: 30,
     portrait: '🪓',
+    portraitUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=burlon&backgroundColor=1a1a1a&radius=10',
     stats: {
       str: 18,  // +2 from Half-Orc racial
       dex: 16,
@@ -233,6 +234,7 @@ export const demoCharacters = {
     hp: { current: 104, max: 104 },
     ac: 18,
     portrait: '🛡️',
+    portraitUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=achilles&backgroundColor=1a1a1a&radius=10',
     stats: {
       str: 20,
       dex: 16,
