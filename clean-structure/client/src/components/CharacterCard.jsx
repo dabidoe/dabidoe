@@ -95,12 +95,97 @@ function CharacterCard() {
     const abilityName = details.name || ability.name
     const actionType = details.actionType
 
-    // Handle spells with attack rolls
+    // Handle spells
     if (ability.category === 'spell') {
+      const spellcastingAbility = character.spellcasting?.ability || 'int'
+      const spellMod = Math.floor(((character.stats?.[spellcastingAbility] || 10) - 10) / 2)
+      const spellAttackBonus = character.proficiencyBonus + spellMod
+
       let message = `${icon} **Cast ${abilityName}**`
-      if (details.shortDescription) {
-        message += `\n\n${details.shortDescription}`
+
+      // Check if spell requires attack roll (look for "spell attack" in description)
+      const requiresAttack = details.description?.toLowerCase().includes('spell attack') ||
+                            details.description?.toLowerCase().includes('ranged spell attack') ||
+                            details.description?.toLowerCase().includes('melee spell attack')
+
+      if (requiresAttack) {
+        // Roll spell attack
+        const attackRoll = Math.floor(Math.random() * 20) + 1
+        const attackTotal = attackRoll + spellAttackBonus
+
+        message += `\n\n🎯 Spell Attack: d20(${attackRoll}) + ${spellAttackBonus} = **${attackTotal}**`
+
+        if (attackRoll === 20) {
+          message += ' 🎉 **CRITICAL HIT!**'
+        } else if (attackRoll === 1) {
+          message += ' 💀 *Critical miss...*'
+        }
+
+        // Try to extract damage from description
+        const damageMatch = details.description?.match(/(\d+d\d+(?:\s*\+\s*\d+)?)\s+(\w+)\s+damage/i)
+        if (damageMatch) {
+          const damageFormula = damageMatch[1]
+          const damageType = damageMatch[2]
+          const diceMatch = damageFormula.match(/(\d+)d(\d+)/)
+
+          if (diceMatch) {
+            const [_, numDice, diceSize] = diceMatch
+            let totalDamage = 0
+            const rolls = []
+
+            for (let i = 0; i < parseInt(numDice); i++) {
+              const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+              rolls.push(roll)
+              totalDamage += roll
+            }
+
+            // Check for modifier in formula
+            const modMatch = damageFormula.match(/\+\s*(\d+)/)
+            if (modMatch) {
+              totalDamage += parseInt(modMatch[1])
+            }
+
+            message += `\n💥 Damage: ${damageFormula} = **${totalDamage}** ${damageType} [${rolls.join(', ')}]`
+          }
+        }
+      } else if (details.description?.toLowerCase().includes('saving throw')) {
+        // Spell with saving throw
+        const saveDC = character.spellcasting?.spellSaveDC || (8 + character.proficiencyBonus + spellMod)
+        message += `\n\n🛡️ Save DC: **${saveDC}**`
+
+        // Try to extract damage
+        const damageMatch = details.description?.match(/(\d+d\d+(?:\s*\+\s*\d+)?)\s+(\w+)\s+damage/i)
+        if (damageMatch) {
+          const damageFormula = damageMatch[1]
+          const damageType = damageMatch[2]
+          const diceMatch = damageFormula.match(/(\d+)d(\d+)/)
+
+          if (diceMatch) {
+            const [_, numDice, diceSize] = diceMatch
+            let totalDamage = 0
+            const rolls = []
+
+            for (let i = 0; i < parseInt(numDice); i++) {
+              const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+              rolls.push(roll)
+              totalDamage += roll
+            }
+
+            const modMatch = damageFormula.match(/\+\s*(\d+)/)
+            if (modMatch) {
+              totalDamage += parseInt(modMatch[1])
+            }
+
+            message += `\n💥 Damage (on failed save): ${damageFormula} = **${totalDamage}** ${damageType} [${rolls.join(', ')}]`
+          }
+        }
+      } else {
+        // Utility spell - just show what it does
+        if (details.shortDescription) {
+          message += `\n\n${details.shortDescription}`
+        }
       }
+
       addMessage(message, 'character', 'Focused')
       return
     }
