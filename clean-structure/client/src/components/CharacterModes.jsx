@@ -254,6 +254,18 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
   )
 
   // Render current mode
+  if (mode === 'unified') {
+    // Unified mode: show everything at once
+    return (
+      <div className="unified-mode">
+        {renderBattleMode()}
+        {renderSkillsMode()}
+        {renderConversationMode()}
+      </div>
+    )
+  }
+
+  // Legacy mode switching (for backwards compatibility)
   switch (mode) {
     case 'conversation':
       return renderConversationMode()
@@ -281,7 +293,7 @@ CharacterModes.propTypes = {
     }),
     proficiencyBonus: PropTypes.number,
   }).isRequired,
-  mode: PropTypes.oneOf(['conversation', 'battle', 'skills']).isRequired,
+  mode: PropTypes.oneOf(['conversation', 'battle', 'skills', 'unified']).isRequired,
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
   onAbilityUse: PropTypes.func,

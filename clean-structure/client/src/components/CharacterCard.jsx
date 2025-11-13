@@ -235,30 +235,10 @@ function CharacterCard() {
           </div>
 
           <div className="interaction-modes">
-            <div className="mode-tabs">
-              <button
-                className={`mode-tab ${interactionMode === 'conversation' ? 'active' : ''}`}
-                onClick={() => setInteractionMode('conversation')}
-              >
-                💬 Conversation
-              </button>
-              <button
-                className={`mode-tab ${interactionMode === 'battle' ? 'active' : ''}`}
-                onClick={() => setInteractionMode('battle')}
-              >
-                ⚔️ Battle
-              </button>
-              <button
-                className={`mode-tab ${interactionMode === 'skills' ? 'active' : ''}`}
-                onClick={() => setInteractionMode('skills')}
-              >
-                🎲 Skills
-              </button>
-            </div>
-
+            {/* Unified interface - no tabs, everything visible */}
             <CharacterModes
               character={character}
-              mode={interactionMode}
+              mode="unified"
               onMessage={addMessage}
               abilities={character.abilities}
               onAbilityUse={handleAbilityClick}

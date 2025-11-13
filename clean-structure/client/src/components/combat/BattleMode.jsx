@@ -9,36 +9,23 @@ import PropTypes from 'prop-types';
 import { rollDice, rollAttack, getAbilityModifier, formatModifier } from '../../utils/5e-mechanics';
 import './BattleMode.css';
 
-function BattleMode({ character, onAttack, onDamage, onHeal, onRoll, onUpdateCharacter }) {
+function BattleMode({ character, onAttack, onDamage, onHeal, onRoll, onUpdateCharacter, onMessage }) {
   const [turnNumber, setTurnNumber] = useState(1);
-  const [battleLog, setBattleLog] = useState([]);
   const [selectedCantrip, setSelectedCantrip] = useState(null);
   const [showCantripPicker, setShowCantripPicker] = useState(false);
   const [hpEditMode, setHpEditMode] = useState(false);
   const [tempHP, setTempHP] = useState(character.hp?.current || 0);
-  const logEndRef = useRef(null);
-
-  // Auto-scroll battle log
-  useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [battleLog]);
 
   // Update temp HP when character changes
   useEffect(() => {
     setTempHP(character.hp?.current || 0);
   }, [character.hp?.current]);
 
-  // Add message to battle log
+  // Add message to unified feed (push to main messages, not separate battle log)
   const addLog = (message, type = 'action') => {
-    setBattleLog(prev => [
-      ...prev,
-      {
-        turn: turnNumber,
-        message,
-        type,
-        timestamp: Date.now()
-      }
-    ]);
+    if (onMessage) {
+      onMessage(`[Turn ${turnNumber}] ${message}`, 'character', 'Battle');
+    }
   };
 
   // Roll initiative
@@ -409,30 +396,7 @@ function BattleMode({ character, onAttack, onDamage, onHeal, onRoll, onUpdateCha
         </div>
       </div>
 
-      {/* Battle Log */}
-      <div className="battle-log-section">
-        <div className="log-header">
-          <h3>Battle Log</h3>
-          <button className="clear-log-btn" onClick={() => setBattleLog([])}>
-            Clear
-          </button>
-        </div>
-        <div className="battle-log">
-          {battleLog.length === 0 ? (
-            <div className="log-empty">Combat actions will appear here...</div>
-          ) : (
-            <>
-              {battleLog.map((entry, idx) => (
-                <div key={idx} className={`log-entry ${entry.type}`}>
-                  <span className="log-turn">T{entry.turn}</span>
-                  <span className="log-message">{entry.message}</span>
-                </div>
-              ))}
-              <div ref={logEndRef} />
-            </>
-          )}
-        </div>
-      </div>
+      {/* Battle actions now push to unified feed above */}
 
       {/* Turn Controls */}
       <div className="turn-controls">
@@ -473,7 +437,8 @@ BattleMode.propTypes = {
   onDamage: PropTypes.func,
   onHeal: PropTypes.func,
   onRoll: PropTypes.func,
-  onUpdateCharacter: PropTypes.func
+  onUpdateCharacter: PropTypes.func,
+  onMessage: PropTypes.func
 };
 
 export default BattleMode;
