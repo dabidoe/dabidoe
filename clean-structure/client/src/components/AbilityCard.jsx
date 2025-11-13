@@ -18,7 +18,11 @@ function AbilityCard({ ability, onUse, character, mode }) {
 
   // Check if ability is available to use
   const canUse = () => {
-    if (!equipped) return false
+    // Class features and spells don't need 'equipped' check
+    // Only items need to be equipped
+    if (ability.category === 'item' && !equipped) return false
+
+    // Check uses if applicable
     if (uses && uses.max !== null) {
       return uses.current > 0
     }
@@ -33,10 +37,23 @@ function AbilityCard({ ability, onUse, character, mode }) {
 
   // Get display icon text for button (emoji format)
   const getDisplayIcon = () => {
-    if (ability.category === 'attack') return '⚔️'
-    if (ability.category === 'item') return '🎒'
-    if (ability.category === 'social') return '💬'
-    return '⭐'
+    // Check if iconLayers has an emoji
+    if (details.iconLayers && details.iconLayers[0] && details.iconLayers[0][0]) {
+      const icon = details.iconLayers[0][0]
+      if (icon && icon.length <= 4) return icon // Emoji are typically 1-4 chars
+    }
+
+    // Category-based fallback icons
+    const categoryIcons = {
+      'attack': '⚔️',
+      'combat': '⚔️',
+      'item': '🎒',
+      'social': '💬',
+      'utility': '🔧',
+      'defensive': '🛡️',
+      'spell': '✨'
+    }
+    return categoryIcons[ability.category] || '⭐'
   }
 
   // Handle ability use
@@ -45,22 +62,18 @@ function AbilityCard({ ability, onUse, character, mode }) {
     onUse(ability)
   }
 
-  // Handle expand/collapse
-  const handleClick = (e) => {
-    // If clicking the button itself, use ability
-    if (e.target.classList.contains('action-btn')) {
-      handleUse()
-    } else {
-      // Otherwise toggle details
-      setExpanded(!expanded)
-    }
-  }
-
   return (
-    <div className={`ability-card ${expanded ? 'expanded' : ''} ${!canUse() ? 'disabled' : ''}`}>
+    <div
+      className={`ability-card ${expanded ? 'expanded' : ''} ${!canUse() ? 'disabled' : ''}`}
+      onClick={() => !expanded && setExpanded(true)}
+      style={{ cursor: expanded ? 'default' : 'pointer' }}
+    >
       <button
         className={`action-btn ${!canUse() ? 'disabled' : ''}`}
-        onClick={handleUse}
+        onClick={(e) => {
+          e.stopPropagation()
+          handleUse()
+        }}
         disabled={!canUse()}
         title={expanded ? details.longDescription : details.shortDescription}
       >

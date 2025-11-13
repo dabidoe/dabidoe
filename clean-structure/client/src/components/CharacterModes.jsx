@@ -175,26 +175,8 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
 
   const renderBattleMode = () => (
     <div className="battle-mode">
-      {/* Battle Macros */}
-      <div className="battle-macros">
-        <div className="macros-label">Quick Actions</div>
-        <div className="macros-grid">
-          {battleMacros.map((macro, index) => (
-            <button
-              key={index}
-              className="macro-btn"
-              onClick={macro.action}
-            >
-              <span className="macro-emoji">{macro.emoji}</span>
-              <span className="macro-name">{macro.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Combat Abilities */}
+      {/* Class Abilities & Features */}
       <div className="combat-abilities">
-        <div className="abilities-label">Class Abilities & Features</div>
         <div className="abilities-grid">
           {abilities
             .filter(a => a.category !== 'spell')
