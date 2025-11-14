@@ -10,6 +10,7 @@ import EquipmentBrowser from './EquipmentBrowser'
 import InventoryManager from './inventory/InventoryManager'
 import EquipmentSlots from './inventory/EquipmentSlots'
 import DiceRoller from './DiceRoller'
+import AbilityCard from './AbilityCard'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -34,6 +35,9 @@ function CharacterCard() {
   const [tabsCollapsed, setTabsCollapsed] = useState(false)
   const [showDiceRoller, setShowDiceRoller] = useState(false)
   const [expandedMessages, setExpandedMessages] = useState({}) // Track which messages are expanded
+  const [editingStats, setEditingStats] = useState(false)
+  const [tempStats, setTempStats] = useState({})
+  const [viewingAbility, setViewingAbility] = useState(null) // Ability/spell card to display as modal
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -370,15 +374,11 @@ function CharacterCard() {
           key={`${linkType}-${match.index}`}
           className={`${linkType.toLowerCase()}-link item-link`}
           onClick={() => {
-            if (linkType === 'SPELL') {
-              setSelectedSpellId(itemId)
-              setShowSpellBrowser(true)
-            } else if (linkType === 'ABILITY') {
-              setSelectedAbilityId(itemId)
-              setShowAbilityBrowser(true)
-            } else if (linkType === 'EQUIPMENT') {
-              setSelectedEquipmentId(itemId)
-              setShowEquipmentBrowser(true)
+            // Find the ability/spell/equipment by ID and show its card
+            const item = character.abilities?.find(a => a.abilityId === itemId) ||
+                        character.inventory?.find(i => i.id === itemId)
+            if (item) {
+              setViewingAbility(item)
             }
           }}
           title={`Click to view ${linkType.toLowerCase()}`}
@@ -778,10 +778,73 @@ function CharacterCard() {
 
           {activeTab === 'stats' && (
             <div className="stats-tab">
+              <button
+                className="edit-stats-btn"
+                onClick={() => {
+                  if (editingStats) {
+                    // Save changes
+                    setCharacter(prev => ({
+                      ...prev,
+                      stats: { ...prev.stats, ...tempStats }
+                    }))
+                    setEditingStats(false)
+                    setTempStats({})
+                  } else {
+                    // Enter edit mode
+                    setTempStats(character.stats)
+                    setEditingStats(true)
+                  }
+                }}
+                style={{
+                  marginBottom: '16px',
+                  padding: '8px 16px',
+                  background: editingStats ? 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)' : 'rgba(212, 175, 55, 0.2)',
+                  border: editingStats ? 'none' : '1px solid #d4af37',
+                  borderRadius: '6px',
+                  color: editingStats ? '#1a1a2e' : '#d4af37',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {editingStats ? '💾 Save Stats' : '✏️ Edit Stats'}
+              </button>
               <div className="stats-grid">
                 {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
-                  const statValue = character.stats?.[stat] || 10
+                  const statValue = editingStats ? (tempStats[stat] || character.stats?.[stat] || 10) : (character.stats?.[stat] || 10)
                   const modifier = Math.floor((statValue - 10) / 2)
+
+                  if (editingStats) {
+                    return (
+                      <div key={stat} className="stat-block editing">
+                        <div className="stat-name">{stat.toUpperCase()}</div>
+                        <input
+                          type="number"
+                          min="1"
+                          max="30"
+                          value={tempStats[stat] || character.stats?.[stat] || 10}
+                          onChange={(e) => setTempStats(prev => ({
+                            ...prev,
+                            [stat]: parseInt(e.target.value) || 10
+                          }))}
+                          className="stat-input"
+                          style={{
+                            width: '60px',
+                            padding: '8px',
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            background: 'rgba(0, 0, 0, 0.4)',
+                            border: '2px solid #d4af37',
+                            borderRadius: '6px',
+                            color: '#fff'
+                          }}
+                        />
+                        <div className="stat-mod">{modifier >= 0 ? '+' : ''}{modifier}</div>
+                      </div>
+                    )
+                  }
+
                   return (
                     <div
                       key={stat}
@@ -1088,6 +1151,38 @@ function CharacterCard() {
           onMessage={addMessage}
           onClose={() => setShowDiceRoller(false)}
         />
+      )}
+
+      {/* Ability/Spell Card Modal */}
+      {viewingAbility && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={() => setViewingAbility(null)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <AbilityCard
+              ability={viewingAbility}
+              character={character}
+              onUse={(ability) => {
+                handleAbilityClick(ability)
+                setViewingAbility(null)
+              }}
+              onClose={() => setViewingAbility(null)}
+            />
+          </div>
+        </div>
       )}
 
       {/* Floating Dice Roller Button */}
