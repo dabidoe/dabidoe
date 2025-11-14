@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import AbilityIcon from './AbilityIcon'
 import './AbilityCard.css'
 
-function AbilityCard({ ability, onUse, character, mode, initialExpanded = false }) {
+function AbilityCard({ ability, onUse, character, mode, initialExpanded = false, onClose }) {
   const [expanded, setExpanded] = useState(initialExpanded)
 
   const { details, uses, equipped } = ability
@@ -106,7 +106,12 @@ function AbilityCard({ ability, onUse, character, mode, initialExpanded = false 
               <AbilityIcon ability={ability} size="small" format="emoji" />
               <h4>{details.name}</h4>
             </div>
-            <button className="close-details" onClick={() => setExpanded(false)}>✕</button>
+            <button
+              className="close-details"
+              onClick={() => onClose ? onClose() : setExpanded(false)}
+            >
+              ✕
+            </button>
           </div>
 
           {/* Basic Info */}
@@ -265,6 +270,7 @@ AbilityCard.propTypes = {
   character: PropTypes.object,
   mode: PropTypes.string,
   initialExpanded: PropTypes.bool,
+  onClose: PropTypes.func,
 }
 
 export default AbilityCard

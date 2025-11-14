@@ -281,7 +281,7 @@ function CharacterCard() {
       return
     }
 
-    // Handle active abilities (action, bonus, reaction)
+    // Handle active abilities (action, bonus, reaction) with potential dice rolls
     let message = `${icon} **${abilityName}**`
 
     if (actionType === 'action') {
@@ -294,6 +294,60 @@ function CharacterCard() {
 
     if (details.shortDescription) {
       message += `\n\n${details.shortDescription}`
+    }
+
+    // Check for healing (like Second Wind)
+    if (details.healing || ability.healing) {
+      const healingData = details.healing || ability.healing
+      if (healingData.formula) {
+        const healingMatch = healingData.formula.match(/(\d+)d(\d+)/)
+        if (healingMatch) {
+          const [_, numDice, diceSize] = healingMatch
+          let totalHealing = 0
+          const rolls = []
+          for (let i = 0; i < parseInt(numDice); i++) {
+            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+            rolls.push(roll)
+            totalHealing += roll
+          }
+
+          // Add character level if specified
+          const levelBonus = healingData.addLevel ? (character.level || 0) : 0
+          totalHealing += levelBonus
+
+          const bonusText = levelBonus > 0 ? `+${levelBonus}` : ''
+          message += `\n💚 **Healing**: ${healingData.formula}${bonusText} = **${totalHealing} HP** [${rolls.join(', ')}]`
+
+          // Actually heal the character
+          setCurrentHP(prev => Math.min(prev + totalHealing, character.hp.max))
+        }
+      }
+    }
+
+    // Check for damage rolls (like special attacks)
+    if ((details.damage || ability.damage) && !ability.category === 'combat') {
+      const damageData = details.damage || ability.damage
+      if (damageData.formula) {
+        const damageMatch = damageData.formula.match(/(\d+)d(\d+)/)
+        if (damageMatch) {
+          const [_, numDice, diceSize] = damageMatch
+          let totalDamage = 0
+          const rolls = []
+          for (let i = 0; i < parseInt(numDice); i++) {
+            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+            rolls.push(roll)
+            totalDamage += roll
+          }
+          message += `\n💥 **Damage**: ${damageData.formula} = **${totalDamage}** ${damageData.type || ''} [${rolls.join(', ')}]`
+        }
+      }
+    }
+
+    // Check for saving throw DC
+    if (details.savingThrow || details.saveDC) {
+      const saveDC = details.saveDC || (8 + character.proficiencyBonus + Math.floor((character.stats?.str || 10 - 10) / 2))
+      const saveType = details.savingThrow || 'STR'
+      message += `\n🛡️ **Save DC**: ${saveDC} ${saveType}`
     }
 
     // Add flavor based on category
@@ -783,6 +837,7 @@ function CharacterCard() {
               onMessage={addMessage}
               abilities={character.abilities}
               onAbilityUse={handleAbilityClick}
+              onShowAbilityDetails={(ability) => setViewingAbility(ability)}
             />
           )}
 
@@ -815,6 +870,7 @@ function CharacterCard() {
                 onMessage={addMessage}
                 abilities={character.abilities}
                 onAbilityUse={handleAbilityClick}
+                onShowAbilityDetails={(ability) => setViewingAbility(ability)}
               />
             </div>
           )}
