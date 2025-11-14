@@ -1175,6 +1175,7 @@ function CharacterCard() {
             <AbilityCard
               ability={viewingAbility}
               character={character}
+              initialExpanded={true}
               onUse={(ability) => {
                 handleAbilityClick(ability)
                 setViewingAbility(null)

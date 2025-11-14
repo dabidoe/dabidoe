@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import AbilityIcon from './AbilityIcon'
 import './AbilityCard.css'
 
-function AbilityCard({ ability, onUse, character, mode }) {
-  const [expanded, setExpanded] = useState(false)
+function AbilityCard({ ability, onUse, character, mode, initialExpanded = false }) {
+  const [expanded, setExpanded] = useState(initialExpanded)
 
   const { details, uses, equipped } = ability
 
@@ -264,6 +264,7 @@ AbilityCard.propTypes = {
   onUse: PropTypes.func.isRequired,
   character: PropTypes.object,
   mode: PropTypes.string,
+  initialExpanded: PropTypes.bool,
 }
 
 export default AbilityCard
