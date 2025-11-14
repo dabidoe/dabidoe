@@ -17,6 +17,11 @@ function SpellBrowser({ character, onAddSpell, onClose }) {
 
   useEffect(() => {
     // Load all spells for this character's class
+    if (!character.class) {
+      setAllSpells([])
+      setFilteredSpells([])
+      return
+    }
     const spells = getSpellsByClass(character.class.toLowerCase())
     setAllSpells(spells)
     setFilteredSpells(spells)
@@ -66,7 +71,7 @@ function SpellBrowser({ character, onAddSpell, onClose }) {
       <div className="spell-browser" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="browser-header">
-          <h2>📚 Spell Library - {character.class}</h2>
+          <h2>📚 Spell Library{character.class ? ` - ${character.class}` : ''}</h2>
           <button className="close-browser" onClick={onClose}>✕</button>
         </div>
 
