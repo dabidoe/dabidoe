@@ -1,0 +1,409 @@
+{
+  "fighter": {
+    "weapons": [
+      {
+        "name": "Longsword",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d8",
+          "damageType": "slashing",
+          "properties": ["versatile"]
+        }
+      },
+      {
+        "name": "Shield",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "offHand",
+        "armor": {
+          "acBonus": 2,
+          "type": "shield"
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Chain Mail",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 16,
+          "type": "heavy"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Explorer's Pack", "category": "gear"},
+      {"name": "Crossbow, light", "category": "weapon"},
+      {"name": "Bolts (20)", "category": "ammunition"}
+    ]
+  },
+  "ranger": {
+    "weapons": [
+      {
+        "name": "Longbow",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d8",
+          "damageType": "piercing",
+          "properties": ["ammunition", "two-handed", "range 150/600"]
+        }
+      },
+      {
+        "name": "Shortsword",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "piercing",
+          "properties": ["finesse", "light"]
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Leather Armor",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 11,
+          "type": "light"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Explorer's Pack", "category": "gear"},
+      {"name": "Arrows (20)", "category": "ammunition"},
+      {"name": "Quiver", "category": "gear"}
+    ]
+  },
+  "wizard": {
+    "weapons": [
+      {
+        "name": "Quarterstaff",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "bludgeoning",
+          "properties": ["versatile"]
+        }
+      }
+    ],
+    "armor": [],
+    "gear": [
+      {"name": "Spellbook", "category": "gear"},
+      {"name": "Component Pouch", "category": "gear"},
+      {"name": "Scholar's Pack", "category": "gear"}
+    ]
+  },
+  "cleric": {
+    "weapons": [
+      {
+        "name": "Mace",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "bludgeoning"
+        }
+      },
+      {
+        "name": "Shield",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "offHand",
+        "armor": {
+          "acBonus": 2,
+          "type": "shield"
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Chain Mail",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 16,
+          "type": "heavy"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Holy Symbol", "category": "gear"},
+      {"name": "Priest's Pack", "category": "gear"}
+    ]
+  },
+  "paladin": {
+    "weapons": [
+      {
+        "name": "Longsword",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d8",
+          "damageType": "slashing",
+          "properties": ["versatile"]
+        }
+      },
+      {
+        "name": "Shield",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "offHand",
+        "armor": {
+          "acBonus": 2,
+          "type": "shield"
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Chain Mail",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 16,
+          "type": "heavy"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Holy Symbol", "category": "gear"},
+      {"name": "Explorer's Pack", "category": "gear"}
+    ]
+  },
+  "rogue": {
+    "weapons": [
+      {
+        "name": "Rapier",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d8",
+          "damageType": "piercing",
+          "properties": ["finesse"]
+        }
+      },
+      {
+        "name": "Dagger",
+        "category": "weapon",
+        "rarity": "common",
+        "weapon": {
+          "damage": "1d4",
+          "damageType": "piercing",
+          "properties": ["finesse", "light", "thrown"]
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Leather Armor",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 11,
+          "type": "light"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Thieves' Tools", "category": "gear"},
+      {"name": "Burglar's Pack", "category": "gear"}
+    ]
+  },
+  "barbarian": {
+    "weapons": [
+      {
+        "name": "Greataxe",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d12",
+          "damageType": "slashing",
+          "properties": ["heavy", "two-handed"]
+        }
+      },
+      {
+        "name": "Handaxe",
+        "category": "weapon",
+        "rarity": "common",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "slashing",
+          "properties": ["light", "thrown"]
+        }
+      }
+    ],
+    "armor": [],
+    "gear": [
+      {"name": "Explorer's Pack", "category": "gear"},
+      {"name": "Javelins (4)", "category": "weapon"}
+    ]
+  },
+  "monk": {
+    "weapons": [
+      {
+        "name": "Quarterstaff",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "bludgeoning",
+          "properties": ["versatile"]
+        }
+      },
+      {
+        "name": "Dart (10)", "category": "weapon",
+        "rarity": "common",
+        "weapon": {
+          "damage": "1d4",
+          "damageType": "piercing",
+          "properties": ["finesse", "thrown"]
+        }
+      }
+    ],
+    "armor": [],
+    "gear": [
+      {"name": "Explorer's Pack", "category": "gear"}
+    ]
+  },
+  "druid": {
+    "weapons": [
+      {
+        "name": "Quarterstaff",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d6",
+          "damageType": "bludgeoning",
+          "properties": ["versatile"]
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Leather Armor",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 11,
+          "type": "light"
+        }
+      },
+      {
+        "name": "Shield",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "offHand",
+        "armor": {
+          "acBonus": 2,
+          "type": "shield"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Druidic Focus", "category": "gear"},
+      {"name": "Explorer's Pack", "category": "gear"}
+    ]
+  },
+  "bard": {
+    "weapons": [
+      {
+        "name": "Rapier",
+        "category": "weapon",
+        "rarity": "common",
+        "slot": "mainHand",
+        "weapon": {
+          "damage": "1d8",
+          "damageType": "piercing",
+          "properties": ["finesse"]
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Leather Armor",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 11,
+          "type": "light"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Lute", "category": "gear"},
+      {"name": "Entertainer's Pack", "category": "gear"}
+    ]
+  },
+  "sorcerer": {
+    "weapons": [
+      {
+        "name": "Dagger",
+        "category": "weapon",
+        "rarity": "common",
+        "weapon": {
+          "damage": "1d4",
+          "damageType": "piercing",
+          "properties": ["finesse", "light", "thrown"]
+        }
+      }
+    ],
+    "armor": [],
+    "gear": [
+      {"name": "Arcane Focus", "category": "gear"},
+      {"name": "Explorer's Pack", "category": "gear"}
+    ]
+  },
+  "warlock": {
+    "weapons": [
+      {
+        "name": "Dagger",
+        "category": "weapon",
+        "rarity": "common",
+        "weapon": {
+          "damage": "1d4",
+          "damageType": "piercing",
+          "properties": ["finesse", "light", "thrown"]
+        }
+      }
+    ],
+    "armor": [
+      {
+        "name": "Leather Armor",
+        "category": "armor",
+        "rarity": "common",
+        "slot": "chest",
+        "armor": {
+          "ac": 11,
+          "type": "light"
+        }
+      }
+    ],
+    "gear": [
+      {"name": "Arcane Focus", "category": "gear"},
+      {"name": "Scholar's Pack", "category": "gear"}
+    ]
+  }
+}
