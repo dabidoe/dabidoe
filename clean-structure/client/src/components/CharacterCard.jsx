@@ -197,9 +197,39 @@ function CharacterCard() {
           }
         }
       } else {
-        // Utility spell - just show what it does
-        if (details.shortDescription) {
-          message += `\n\n${details.shortDescription}`
+        // Check for healing spells (like Cure Wounds)
+        const healingMatch = details.description?.match(/(\d+)d(\d+)\s*\+\s*your\s+spellcasting\s+ability\s+modifier/i)
+        if (healingMatch && (details.description?.toLowerCase().includes('regain') || details.description?.toLowerCase().includes('healing'))) {
+          const [_, numDice, diceSize] = healingMatch
+          let totalHealing = 0
+          const rolls = []
+
+          for (let i = 0; i < parseInt(numDice); i++) {
+            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+            rolls.push(roll)
+            totalHealing += roll
+          }
+
+          // Add spellcasting ability modifier
+          totalHealing += spellMod
+          const modText = spellMod >= 0 ? `+${spellMod}` : `${spellMod}`
+
+          message += `\n\n🎲 **Healing Roll**: ${numDice}d${diceSize}${modText} = [${rolls.join(', ')}] ${modText} = **${totalHealing}**`
+          message += `\n💚 **Healing**: ${totalHealing} HP restored!`
+
+          // Actually heal the character
+          const oldHP = currentHP
+          const newHP = Math.min(currentHP + totalHealing, character.hp.max)
+          setCurrentHP(newHP)
+
+          if (newHP > oldHP) {
+            message += `\n💗 HP: ${oldHP} → **${newHP}** / ${character.hp.max}`
+          }
+        } else {
+          // Utility spell - just show what it does
+          if (details.shortDescription) {
+            message += `\n\n${details.shortDescription}`
+          }
         }
       }
 
