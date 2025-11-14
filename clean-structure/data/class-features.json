@@ -28,6 +28,24 @@
       "category": "combat"
     },
     {
+      "level": 1,
+      "id": "fighting-style-defense",
+      "name": "Fighting Style: Defense",
+      "shortDescription": "+1 AC while wearing armor",
+      "description": "While you are wearing armor, you gain a +1 bonus to AC.",
+      "actionType": "passive",
+      "category": "defensive"
+    },
+    {
+      "level": 1,
+      "id": "fighting-style-great-weapon",
+      "name": "Fighting Style: Great Weapon Fighting",
+      "shortDescription": "Reroll 1s and 2s on damage dice",
+      "description": "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll. The weapon must have the two-handed or versatile property.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
       "level": 2,
       "id": "action-surge",
       "name": "Action Surge",
@@ -39,6 +57,38 @@
       "uses": {
         "max": 1,
         "per": "short rest"
+      }
+    },
+    {
+      "level": 3,
+      "id": "martial-archetype",
+      "name": "Martial Archetype",
+      "shortDescription": "Choose your fighter archetype",
+      "description": "You choose an archetype that you strive to emulate in your combat styles and techniques: Champion, Battle Master, or Eldritch Knight. Your archetype grants you features at 3rd level and again at 7th, 10th, 15th, and 18th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 5,
+      "id": "extra-attack",
+      "name": "Extra Attack",
+      "shortDescription": "Attack twice when you take the Attack action",
+      "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn. The number of attacks increases to three when you reach 11th level and to four when you reach 20th level.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 9,
+      "id": "indomitable",
+      "name": "Indomitable",
+      "shortDescription": "Reroll a failed saving throw",
+      "description": "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a long rest.",
+      "actionType": "reaction",
+      "category": "defensive",
+      "usable": true,
+      "uses": {
+        "max": 1,
+        "per": "long rest"
       }
     }
   ],
@@ -70,6 +120,79 @@
       "description": "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.",
       "actionType": "passive",
       "category": "defensive"
+    },
+    {
+      "level": 2,
+      "id": "reckless-attack",
+      "name": "Reckless Attack",
+      "shortDescription": "Gain advantage but give advantage to attackers",
+      "description": "You can throw aside all concern for defense to attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.",
+      "actionType": "action",
+      "category": "combat",
+      "usable": true
+    },
+    {
+      "level": 2,
+      "id": "danger-sense",
+      "name": "Danger Sense",
+      "shortDescription": "Advantage on DEX saves you can see",
+      "description": "You gain an uncanny sense of when things nearby aren't as they should be, giving you an edge when you dodge away from danger. You have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. To gain this benefit, you can't be blinded, deafened, or incapacitated.",
+      "actionType": "passive",
+      "category": "defensive"
+    },
+    {
+      "level": 3,
+      "id": "primal-path",
+      "name": "Primal Path",
+      "shortDescription": "Choose your barbarian path",
+      "description": "You choose a path that shapes the nature of your rage: Path of the Berserker or Path of the Totem Warrior. Your choice grants you features at 3rd level and again at 6th, 10th, and 14th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 5,
+      "id": "extra-attack",
+      "name": "Extra Attack",
+      "shortDescription": "Attack twice when you take the Attack action",
+      "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 5,
+      "id": "fast-movement",
+      "name": "Fast Movement",
+      "shortDescription": "+10 feet movement speed",
+      "description": "Your speed increases by 10 feet while you aren't wearing heavy armor.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 7,
+      "id": "feral-instinct",
+      "name": "Feral Instinct",
+      "shortDescription": "Advantage on initiative rolls",
+      "description": "Your instincts are so honed that you have advantage on initiative rolls. Additionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 9,
+      "id": "brutal-critical",
+      "name": "Brutal Critical",
+      "shortDescription": "Roll one additional weapon damage die on critical",
+      "description": "You can roll one additional weapon damage die when determining the extra damage for a critical hit with a melee attack.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 11,
+      "id": "relentless-rage",
+      "name": "Relentless Rage",
+      "shortDescription": "Stay conscious with 1 HP when raging",
+      "description": "Your rage can keep you fighting despite grievous wounds. If you drop to 0 hit points while you're raging and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead. Each time you use this feature after the first, the DC increases by 5.",
+      "actionType": "passive",
+      "category": "defensive"
     }
   ],
   "rogue": [
@@ -88,6 +211,15 @@
       }
     },
     {
+      "level": 1,
+      "id": "thieves-cant",
+      "name": "Thieves' Cant",
+      "shortDescription": "Secret language and code for rogues",
+      "description": "During your rogue training you learned thieves' cant, a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation. It takes four times longer to convey such a message than it does to speak the same idea plainly.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
       "level": 2,
       "id": "cunning-action",
       "name": "Cunning Action",
@@ -96,6 +228,84 @@
       "actionType": "bonus",
       "category": "utility",
       "usable": true
+    },
+    {
+      "level": 3,
+      "id": "roguish-archetype",
+      "name": "Roguish Archetype",
+      "shortDescription": "Choose your rogue archetype",
+      "description": "You choose an archetype that you emulate in the exercise of your rogue abilities: Thief, Assassin, or Arcane Trickster. Your archetype choice grants you features at 3rd level and then again at 9th, 13th, and 17th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 5,
+      "id": "uncanny-dodge",
+      "name": "Uncanny Dodge",
+      "shortDescription": "Halve damage from one attack",
+      "description": "When an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you.",
+      "actionType": "reaction",
+      "category": "defensive",
+      "usable": true
+    },
+    {
+      "level": 7,
+      "id": "evasion",
+      "name": "Evasion",
+      "shortDescription": "Take no damage on successful DEX saves",
+      "description": "When you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail.",
+      "actionType": "passive",
+      "category": "defensive"
+    },
+    {
+      "level": 11,
+      "id": "reliable-talent",
+      "name": "Reliable Talent",
+      "shortDescription": "Minimum 10 on proficient ability checks",
+      "description": "You have refined your chosen skills until they approach perfection. Whenever you make an ability check that lets you add your proficiency bonus, you can treat a d20 roll of 9 or lower as a 10.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 14,
+      "id": "blindsense",
+      "name": "Blindsense",
+      "shortDescription": "Detect hidden creatures within 10 feet",
+      "description": "If you are able to hear, you are aware of the location of any hidden or invisible creature within 10 feet of you.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 15,
+      "id": "slippery-mind",
+      "name": "Slippery Mind",
+      "shortDescription": "Proficiency in Wisdom saving throws",
+      "description": "You have acquired greater mental strength. You gain proficiency in Wisdom saving throws.",
+      "actionType": "passive",
+      "category": "defensive"
+    },
+    {
+      "level": 18,
+      "id": "elusive",
+      "name": "Elusive",
+      "shortDescription": "No attack has advantage against you",
+      "description": "You are so evasive that attackers rarely gain the upper hand against you. No attack roll has advantage against you while you aren't incapacitated.",
+      "actionType": "passive",
+      "category": "defensive"
+    },
+    {
+      "level": 20,
+      "id": "stroke-of-luck",
+      "name": "Stroke of Luck",
+      "shortDescription": "Turn a miss into a hit once per short rest",
+      "description": "You have an uncanny knack for succeeding when you need to. If your attack misses a target within range, you can turn the miss into a hit. Alternatively, if you fail an ability check, you can treat the d20 roll as a 20.",
+      "actionType": "reaction",
+      "category": "combat",
+      "usable": true,
+      "uses": {
+        "max": 1,
+        "per": "short rest"
+      }
     }
   ],
   "wizard": [
@@ -328,6 +538,267 @@
       "attack": {
         "bonus": 0
       }
+    },
+    {
+      "level": 1,
+      "id": "otherworldly-patron",
+      "name": "Otherworldly Patron",
+      "shortDescription": "Gain power from your patron",
+      "description": "You have struck a bargain with an otherworldly being of your choice: the Archfey, the Fiend, or the Great Old One. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "eldritch-invocations",
+      "name": "Eldritch Invocations",
+      "shortDescription": "Learn magical invocations",
+      "description": "In your study of occult lore, you have unearthed eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 3,
+      "id": "pact-boon",
+      "name": "Pact Boon",
+      "shortDescription": "Receive a gift from your patron",
+      "description": "Your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice: Pact of the Chain, Pact of the Blade, or Pact of the Tome.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 11,
+      "id": "mystic-arcanum-6",
+      "name": "Mystic Arcanum (6th level)",
+      "shortDescription": "Learn a 6th-level spell",
+      "description": "Your patron bestows upon you a magical secret called an arcanum. Choose one 6th-level spell from the warlock spell list as this arcanum. You can cast your arcanum spell once without expending a spell slot. You must finish a long rest before you can do so again.",
+      "actionType": "passive",
+      "category": "utility"
+    }
+  ],
+  "bard": [
+    {
+      "level": 1,
+      "id": "bardic-inspiration",
+      "name": "Bardic Inspiration",
+      "shortDescription": "Inspire allies with a d6 bonus",
+      "description": "You can inspire others through stirring words or music. As a bonus action, choose one creature other than yourself within 60 feet who can hear you. That creature gains one Bardic Inspiration die (d6). Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes.",
+      "actionType": "bonus",
+      "category": "utility",
+      "usable": true,
+      "uses": {
+        "max": 5,
+        "per": "long rest"
+      },
+      "damage": {
+        "formula": "1d6",
+        "type": "bonus"
+      }
+    },
+    {
+      "level": 1,
+      "id": "jack-of-all-trades",
+      "name": "Jack of All Trades",
+      "shortDescription": "Add half proficiency to any ability check",
+      "description": "You can add half your proficiency bonus, rounded down, to any ability check you make that doesn't already include your proficiency bonus.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "song-of-rest",
+      "name": "Song of Rest",
+      "shortDescription": "Heal allies during short rest",
+      "description": "You can use soothing music or oration to help revitalize your wounded allies during a short rest. If you or any friendly creatures who can hear your performance regain hit points by spending Hit Dice at the end of the short rest, each of those creatures regains an extra 1d6 hit points.",
+      "actionType": "action",
+      "category": "defensive",
+      "usable": true,
+      "damage": {
+        "formula": "1d6",
+        "type": "healing"
+      }
+    },
+    {
+      "level": 3,
+      "id": "expertise",
+      "name": "Expertise",
+      "shortDescription": "Double proficiency bonus for two skills",
+      "description": "Choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 5,
+      "id": "font-of-inspiration",
+      "name": "Font of Inspiration",
+      "shortDescription": "Regain Bardic Inspiration on short rest",
+      "description": "You regain all of your expended uses of Bardic Inspiration when you finish a short or long rest.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 6,
+      "id": "countercharm",
+      "name": "Countercharm",
+      "shortDescription": "Grant advantage against being frightened or charmed",
+      "description": "You can use musical notes or words of power to disrupt mind-influencing effects. As an action, you can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed.",
+      "actionType": "action",
+      "category": "defensive",
+      "usable": true
+    },
+    {
+      "level": 10,
+      "id": "magical-secrets",
+      "name": "Magical Secrets",
+      "shortDescription": "Learn spells from any class",
+      "description": "You have plundered magical knowledge from a wide spectrum of disciplines. Choose two spells from any classes, including this one. A spell you choose must be of a level you can cast, as shown on the Bard table, or a cantrip. The chosen spells count as bard spells for you.",
+      "actionType": "passive",
+      "category": "utility"
+    }
+  ],
+  "druid": [
+    {
+      "level": 1,
+      "id": "druidic",
+      "name": "Druidic",
+      "shortDescription": "Know the secret language of druids",
+      "description": "You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. You and others who know this language automatically spot such a message. Others spot the message's presence with a successful DC 15 Wisdom (Perception) check but can't decipher it without magic.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "wild-shape",
+      "name": "Wild Shape",
+      "shortDescription": "Transform into a beast",
+      "description": "You can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice. You regain expended uses when you finish a short or long rest. You can stay in a beast shape for a number of hours equal to half your druid level (rounded down).",
+      "actionType": "action",
+      "category": "utility",
+      "usable": true,
+      "uses": {
+        "max": 2,
+        "per": "short rest"
+      }
+    },
+    {
+      "level": 2,
+      "id": "circle-of-the-land",
+      "name": "Druid Circle",
+      "shortDescription": "Choose your druid circle",
+      "description": "You choose to identify with a circle of druids: the Circle of the Land or the Circle of the Moon. Your choice grants you features at 2nd level and again at 6th, 10th, and 14th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 4,
+      "id": "wild-shape-improvement",
+      "name": "Wild Shape Improvement",
+      "shortDescription": "Can transform into beasts with swimming speed",
+      "description": "You can use your Wild Shape to transform into a beast with a swimming speed.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 8,
+      "id": "wild-shape-flying",
+      "name": "Wild Shape (Flying)",
+      "shortDescription": "Can transform into beasts with flying speed",
+      "description": "You can use your Wild Shape to transform into a beast with a flying speed.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 18,
+      "id": "timeless-body",
+      "name": "Timeless Body",
+      "shortDescription": "Age slower and no longer need food or water",
+      "description": "The primal magic that you wield causes you to age more slowly. For every 10 years that pass, your body ages only 1 year.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 20,
+      "id": "archdruid",
+      "name": "Archdruid",
+      "shortDescription": "Unlimited Wild Shape uses",
+      "description": "You can use your Wild Shape an unlimited number of times. Additionally, you can ignore the verbal and somatic components of your druid spells, as well as any material components that lack a cost and aren't consumed by a spell.",
+      "actionType": "passive",
+      "category": "utility"
+    }
+  ],
+  "sorcerer": [
+    {
+      "level": 1,
+      "id": "sorcerous-origin",
+      "name": "Sorcerous Origin",
+      "shortDescription": "Choose the source of your magic",
+      "description": "Choose a sorcerous origin, which describes the source of your innate magical power: Draconic Bloodline or Wild Magic. Your choice grants you features when you select it at 1st level and again at 6th, 14th, and 18th level.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 2,
+      "id": "font-of-magic",
+      "name": "Font of Magic",
+      "shortDescription": "Tap into deep wellspring of magic",
+      "description": "You can tap into the wellspring of magic within yourself. You have 2 sorcery points. You can use your sorcery points to gain additional spell slots, or sacrifice spell slots to gain additional sorcery points.",
+      "actionType": "bonus",
+      "category": "utility",
+      "usable": true
+    },
+    {
+      "level": 3,
+      "id": "metamagic",
+      "name": "Metamagic",
+      "shortDescription": "Twist spells to suit your needs",
+      "description": "You gain the ability to twist your spells to suit your needs. You gain two Metamagic options of your choice. You gain another one at 10th and 17th level. You can use only one Metamagic option on a spell when you cast it, unless otherwise noted.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 3,
+      "id": "metamagic-careful",
+      "name": "Metamagic: Careful Spell",
+      "shortDescription": "Protect allies from your spells",
+      "description": "When you cast a spell that forces other creatures to make a saving throw, you can protect some of those creatures from the spell's full force. To do so, you spend 1 sorcery point and choose a number of those creatures up to your Charisma modifier (minimum of one creature). A chosen creature automatically succeeds on its saving throw against the spell.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 3,
+      "id": "metamagic-empowered",
+      "name": "Metamagic: Empowered Spell",
+      "shortDescription": "Reroll spell damage dice",
+      "description": "When you roll damage for a spell, you can spend 1 sorcery point to reroll a number of the damage dice up to your Charisma modifier (minimum of one). You must use the new rolls. You can use Empowered Spell even if you have already used a different Metamagic option during the casting of the spell.",
+      "actionType": "passive",
+      "category": "combat"
+    },
+    {
+      "level": 3,
+      "id": "metamagic-quickened",
+      "name": "Metamagic: Quickened Spell",
+      "shortDescription": "Cast spells as bonus action",
+      "description": "When you cast a spell that has a casting time of 1 action, you can spend 2 sorcery points to change the casting time to 1 bonus action for this casting.",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 3,
+      "id": "metamagic-twinned",
+      "name": "Metamagic: Twinned Spell",
+      "shortDescription": "Target two creatures with one spell",
+      "description": "When you cast a spell that targets only one creature and doesn't have a range of self, you can spend a number of sorcery points equal to the spell's level to target a second creature in range with the same spell (1 sorcery point if the spell is a cantrip).",
+      "actionType": "passive",
+      "category": "utility"
+    },
+    {
+      "level": 20,
+      "id": "sorcerous-restoration",
+      "name": "Sorcerous Restoration",
+      "shortDescription": "Regain sorcery points on short rest",
+      "description": "You regain 4 expended sorcery points whenever you finish a short rest.",
+      "actionType": "passive",
+      "category": "utility"
     }
   ]
 }

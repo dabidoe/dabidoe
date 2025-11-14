@@ -342,5 +342,605 @@
     "value": 2,
     "quantity": 1,
     "description": "A leather pack for carrying gear"
+  },
+  {
+    "id": "rapier",
+    "name": "Rapier",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 25,
+    "description": "An elegant finesse weapon favored by swashbucklers",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "piercing",
+      "properties": ["finesse"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "scimitar",
+    "name": "Scimitar",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 3,
+    "value": 25,
+    "description": "A curved blade favored by desert warriors",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "slashing",
+      "properties": ["finesse", "light"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "quarterstaff",
+    "name": "Quarterstaff",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 4,
+    "value": 0.2,
+    "description": "A simple wooden staff",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "bludgeoning",
+      "properties": ["versatile"],
+      "versatileDamage": "1d8",
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "mace",
+    "name": "Mace",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 4,
+    "value": 5,
+    "description": "A simple bludgeoning weapon with a heavy head",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "bludgeoning",
+      "properties": [],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "warhammer",
+    "name": "Warhammer",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 15,
+    "description": "A powerful hammer with a heavy head",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "bludgeoning",
+      "properties": ["versatile"],
+      "versatileDamage": "1d10",
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "battleaxe",
+    "name": "Battleaxe",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 4,
+    "value": 10,
+    "description": "A versatile one-handed axe",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "slashing",
+      "properties": ["versatile"],
+      "versatileDamage": "1d10",
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "light-crossbow",
+    "name": "Light Crossbow",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 5,
+    "value": 25,
+    "description": "A compact ranged weapon",
+    "weapon": {
+      "damage": "1d8",
+      "damageType": "piercing",
+      "properties": ["ammunition", "loading", "two-handed"],
+      "range": "80/320 ft"
+    }
+  },
+  {
+    "id": "heavy-crossbow",
+    "name": "Heavy Crossbow",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 18,
+    "value": 50,
+    "description": "A powerful but slow crossbow",
+    "weapon": {
+      "damage": "1d10",
+      "damageType": "piercing",
+      "properties": ["ammunition", "loading", "two-handed", "heavy"],
+      "range": "100/400 ft"
+    }
+  },
+  {
+    "id": "javelin",
+    "name": "Javelin",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 2,
+    "value": 0.5,
+    "description": "A throwable spear",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "piercing",
+      "properties": ["thrown"],
+      "range": "30/120 ft"
+    }
+  },
+  {
+    "id": "spear",
+    "name": "Spear",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 3,
+    "value": 1,
+    "description": "A versatile polearm",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "piercing",
+      "properties": ["thrown", "versatile"],
+      "versatileDamage": "1d8",
+      "range": "20/60 ft"
+    }
+  },
+  {
+    "id": "maul",
+    "name": "Maul",
+    "category": "weapon",
+    "rarity": "common",
+    "slot": "mainHand",
+    "weight": 10,
+    "value": 10,
+    "description": "A massive two-handed hammer",
+    "weapon": {
+      "damage": "2d6",
+      "damageType": "bludgeoning",
+      "properties": ["two-handed", "heavy"],
+      "range": "5 ft"
+    }
+  },
+  {
+    "id": "studded-leather",
+    "name": "Studded Leather",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 13,
+    "value": 45,
+    "description": "Leather armor reinforced with metal studs",
+    "armor": {
+      "ac": 12,
+      "type": "light",
+      "maxDexBonus": null,
+      "stealthDisadvantage": false
+    }
+  },
+  {
+    "id": "hide-armor",
+    "name": "Hide Armor",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 12,
+    "value": 10,
+    "description": "Armor made from thick furs and pelts",
+    "armor": {
+      "ac": 12,
+      "type": "medium",
+      "maxDexBonus": 2,
+      "stealthDisadvantage": false
+    }
+  },
+  {
+    "id": "scale-mail",
+    "name": "Scale Mail",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 45,
+    "value": 50,
+    "description": "Armor of overlapping metal scales",
+    "armor": {
+      "ac": 14,
+      "type": "medium",
+      "maxDexBonus": 2,
+      "stealthDisadvantage": true
+    }
+  },
+  {
+    "id": "breastplate",
+    "name": "Breastplate",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 20,
+    "value": 400,
+    "description": "Metal armor covering the chest",
+    "armor": {
+      "ac": 14,
+      "type": "medium",
+      "maxDexBonus": 2,
+      "stealthDisadvantage": false
+    }
+  },
+  {
+    "id": "half-plate",
+    "name": "Half Plate",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 40,
+    "value": 750,
+    "description": "Plate armor covering the torso and legs",
+    "armor": {
+      "ac": 15,
+      "type": "medium",
+      "maxDexBonus": 2,
+      "stealthDisadvantage": true
+    }
+  },
+  {
+    "id": "plate-armor",
+    "name": "Plate Armor",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 65,
+    "value": 1500,
+    "description": "Full suit of interlocking metal plates",
+    "armor": {
+      "ac": 18,
+      "type": "heavy",
+      "maxDexBonus": 0,
+      "stealthDisadvantage": true,
+      "strengthRequired": 15
+    }
+  },
+  {
+    "id": "splint-armor",
+    "name": "Splint Armor",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 60,
+    "value": 200,
+    "description": "Armor made of metal strips",
+    "armor": {
+      "ac": 17,
+      "type": "heavy",
+      "maxDexBonus": 0,
+      "stealthDisadvantage": true,
+      "strengthRequired": 15
+    }
+  },
+  {
+    "id": "ring-mail",
+    "name": "Ring Mail",
+    "category": "armor",
+    "rarity": "common",
+    "slot": "body",
+    "weight": 40,
+    "value": 30,
+    "description": "Leather armor with rings sewn into it",
+    "armor": {
+      "ac": 14,
+      "type": "heavy",
+      "maxDexBonus": 0,
+      "stealthDisadvantage": true
+    }
+  },
+  {
+    "id": "potion-superior-healing",
+    "name": "Potion of Superior Healing",
+    "category": "potion",
+    "rarity": "rare",
+    "weight": 0.5,
+    "value": 450,
+    "quantity": 1,
+    "description": "A superior healing potion that restores significant health",
+    "consumable": {
+      "effect": "Heal 8d4+8",
+      "duration": "Instant"
+    }
+  },
+  {
+    "id": "potion-supreme-healing",
+    "name": "Potion of Supreme Healing",
+    "category": "potion",
+    "rarity": "very-rare",
+    "weight": 0.5,
+    "value": 1350,
+    "quantity": 1,
+    "description": "The most powerful healing potion available",
+    "consumable": {
+      "effect": "Heal 10d4+20",
+      "duration": "Instant"
+    }
+  },
+  {
+    "id": "potion-invisibility",
+    "name": "Potion of Invisibility",
+    "category": "potion",
+    "rarity": "very-rare",
+    "weight": 0.5,
+    "value": 5000,
+    "quantity": 1,
+    "description": "Become invisible for 1 hour",
+    "consumable": {
+      "effect": "Invisibility for 1 hour or until you attack/cast",
+      "duration": "1 hour"
+    }
+  },
+  {
+    "id": "potion-flying",
+    "name": "Potion of Flying",
+    "category": "potion",
+    "rarity": "very-rare",
+    "weight": 0.5,
+    "value": 5000,
+    "quantity": 1,
+    "description": "Grants the ability to fly",
+    "consumable": {
+      "effect": "Flying speed of 60 feet for 1 hour",
+      "duration": "1 hour"
+    }
+  },
+  {
+    "id": "wand-magic-missiles",
+    "name": "Wand of Magic Missiles",
+    "category": "wand",
+    "rarity": "uncommon",
+    "weight": 1,
+    "value": 8000,
+    "requiresAttunement": false,
+    "description": "This wand has 7 charges and regains 1d6+1 expended charges daily at dawn",
+    "magic": {
+      "charges": 7,
+      "effects": [
+        {
+          "name": "Magic Missile",
+          "description": "While holding it, you can expend 1 or more of its charges to cast the magic missile spell. For 1 charge, you cast the 1st-level version. You can increase the spell slot by one for each additional charge."
+        }
+      ]
+    }
+  },
+  {
+    "id": "wand-fireballs",
+    "name": "Wand of Fireballs",
+    "category": "wand",
+    "rarity": "rare",
+    "weight": 1,
+    "value": 32000,
+    "requiresAttunement": true,
+    "description": "This wand has 7 charges and regains 1d6+1 expended charges daily at dawn",
+    "magic": {
+      "charges": 7,
+      "effects": [
+        {
+          "name": "Fireball",
+          "description": "While holding it, you can use an action to expend 1 or more of its charges to cast the fireball spell (save DC 15) from it. For 1 charge, you cast the 3rd-level version of the spell. You can increase the spell slot level by one for each additional charge you expend."
+        }
+      ]
+    }
+  },
+  {
+    "id": "staff-power",
+    "name": "Staff of Power",
+    "category": "wand",
+    "rarity": "very-rare",
+    "slot": "mainHand",
+    "weight": 4,
+    "value": 95500,
+    "requiresAttunement": true,
+    "description": "This staff can be wielded as a magic quarterstaff that grants a +2 bonus to attack and damage rolls. It has 20 charges for various powers.",
+    "weapon": {
+      "damage": "1d6",
+      "damageType": "bludgeoning",
+      "properties": ["versatile"],
+      "versatileDamage": "1d8",
+      "range": "5 ft",
+      "attackBonus": 2
+    },
+    "customProperties": {
+      "bonuses": {
+        "ac": 2
+      }
+    },
+    "magic": {
+      "bonus": 2,
+      "charges": 20,
+      "effects": [
+        {
+          "name": "Spellcasting",
+          "description": "Can cast various spells by expending charges"
+        }
+      ]
+    }
+  },
+  {
+    "id": "amulet-health",
+    "name": "Amulet of Health",
+    "category": "amulet",
+    "rarity": "rare",
+    "slot": "neck",
+    "weight": 0.5,
+    "value": 8000,
+    "requiresAttunement": true,
+    "description": "Your Constitution score is 19 while you wear this amulet",
+    "customProperties": {
+      "setStat": {
+        "con": 19
+      }
+    }
+  },
+  {
+    "id": "ring-spell-storing",
+    "name": "Ring of Spell Storing",
+    "category": "ring",
+    "rarity": "rare",
+    "slot": "ring",
+    "weight": 0,
+    "value": 24000,
+    "requiresAttunement": true,
+    "description": "This ring stores spells cast into it, holding them until the attuned wearer uses them",
+    "magic": {
+      "effects": [
+        {
+          "name": "Spell Storage",
+          "description": "Can contain up to 5 levels worth of spells at a time"
+        }
+      ]
+    }
+  },
+  {
+    "id": "boots-speed",
+    "name": "Boots of Speed",
+    "category": "gear",
+    "rarity": "rare",
+    "slot": "feet",
+    "weight": 1,
+    "value": 4000,
+    "requiresAttunement": true,
+    "description": "While you wear these boots, you can use a bonus action to double your walking speed",
+    "magic": {
+      "effects": [
+        {
+          "name": "Speed Boost",
+          "description": "Double walking speed for 10 minutes. Once used, cannot be used again until you rest."
+        }
+      ]
+    }
+  },
+  {
+    "id": "cloak-elvenkind",
+    "name": "Cloak of Elvenkind",
+    "category": "gear",
+    "rarity": "uncommon",
+    "slot": "back",
+    "weight": 1,
+    "value": 5000,
+    "requiresAttunement": true,
+    "description": "While you wear this cloak with its hood up, Wisdom (Perception) checks to see you have disadvantage, and you have advantage on Dexterity (Stealth) checks",
+    "magic": {
+      "effects": [
+        {
+          "name": "Enhanced Stealth",
+          "description": "Advantage on Stealth checks and disadvantage for others to perceive you"
+        }
+      ]
+    }
+  },
+  {
+    "id": "gloves-thievery",
+    "name": "Gloves of Thievery",
+    "category": "gear",
+    "rarity": "uncommon",
+    "slot": "hands",
+    "weight": 0.5,
+    "value": 5000,
+    "requiresAttunement": false,
+    "description": "These gloves are invisible while worn and grant +5 bonus to Sleight of Hand checks and Dexterity checks to pick locks",
+    "magic": {
+      "effects": [
+        {
+          "name": "Enhanced Dexterity",
+          "description": "+5 to Sleight of Hand and lockpicking checks"
+        }
+      ]
+    }
+  },
+  {
+    "id": "arrows",
+    "name": "Arrows (20)",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 1,
+    "value": 1,
+    "quantity": 20,
+    "description": "Standard ammunition for bows"
+  },
+  {
+    "id": "bolts",
+    "name": "Crossbow Bolts (20)",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 1.5,
+    "value": 1,
+    "quantity": 20,
+    "description": "Standard ammunition for crossbows"
+  },
+  {
+    "id": "tinderbox",
+    "name": "Tinderbox",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 1,
+    "value": 0.5,
+    "quantity": 1,
+    "description": "A small container with flint, fire steel, and tinder"
+  },
+  {
+    "id": "waterskin",
+    "name": "Waterskin",
+    "category": "gear",
+    "rarity": "common",
+    "weight": 5,
+    "value": 0.2,
+    "quantity": 1,
+    "description": "A leather container that holds 4 pints of liquid"
+  },
+  {
+    "id": "crowbar",
+    "name": "Crowbar",
+    "category": "tool",
+    "rarity": "common",
+    "weight": 5,
+    "value": 2,
+    "quantity": 1,
+    "description": "Grants advantage on Strength checks to force open doors or pry things"
+  },
+  {
+    "id": "thieves-tools",
+    "name": "Thieves' Tools",
+    "category": "tool",
+    "rarity": "common",
+    "weight": 1,
+    "value": 25,
+    "quantity": 1,
+    "description": "Tools for picking locks and disarming traps"
+  },
+  {
+    "id": "healer-kit",
+    "name": "Healer's Kit",
+    "category": "tool",
+    "rarity": "common",
+    "weight": 3,
+    "value": 5,
+    "quantity": 1,
+    "description": "Has 10 uses. Can stabilize a dying creature without a Medicine check"
   }
 ]
