@@ -35,7 +35,7 @@ const SKILLS = [
   { name: 'Survival', emoji: '🏕️', ability: 'WIS' }
 ]
 
-function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse }) {
+function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse, onShowAbilityDetails }) {
   const [selectedDialogue, setSelectedDialogue] = useState(null)
 
   // Calculate skill modifier
@@ -189,16 +189,85 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
         <div className="combat-abilities">
           <div className="abilities-grid">
             {usableAbilities.map((ability) => (
-              <AbilityCard
-                key={ability.abilityId}
-                ability={ability}
-                onUse={onAbilityUse || ((ab) => {
-                  // Handle ability use (fallback if no handler provided)
-                  onMessage(`Used: ${ab.details?.name || ab.name}`, 'character', 'Focused')
-                })}
-                character={character}
-                mode="battle"
-              />
+              <div key={ability.abilityId} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => onAbilityUse(ability)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: 'rgba(45, 45, 68, 0.6)',
+                    border: '1px solid rgba(212, 175, 55, 0.4)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    textAlign: 'left'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <span style={{ fontSize: '20px' }}>
+                    {ability.details?.iconLayers?.[0]?.[0] || (ability.category === 'combat' ? '⚔️' : '⭐')}
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '600', fontSize: '14px' }}>
+                      {ability.details?.name || ability.name}
+                    </div>
+                    {ability.details?.shortDescription && (
+                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '2px' }}>
+                        {ability.details.shortDescription.substring(0, 60)}
+                        {ability.details.shortDescription.length > 60 ? '...' : ''}
+                      </div>
+                    )}
+                  </div>
+                </button>
+                {/* Info button overlay */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (onShowAbilityDetails) {
+                      onShowAbilityDetails(ability)
+                    }
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    background: 'rgba(0,0,0,0.6)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: 'rgba(255,255,255,0.8)',
+                    fontSize: '12px',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(212, 175, 55, 0.8)'
+                    e.currentTarget.style.color = '#1a1a2e'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(0,0,0,0.6)'
+                    e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
+                  }}
+                  title="View details"
+                >
+                  ⓘ
+                </button>
+              </div>
             ))}
           </div>
           {usableAbilities.length === 0 && (
@@ -288,6 +357,7 @@ CharacterModes.propTypes = {
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
   onAbilityUse: PropTypes.func,
+  onShowAbilityDetails: PropTypes.func,
 }
 
 export default CharacterModes
