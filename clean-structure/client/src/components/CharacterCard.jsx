@@ -38,6 +38,9 @@ function CharacterCard() {
   const [editingStats, setEditingStats] = useState(false)
   const [tempStats, setTempStats] = useState({})
   const [viewingAbility, setViewingAbility] = useState(null) // Ability/spell card to display as modal
+  const [showAddItem, setShowAddItem] = useState(false)
+  const [newItemName, setNewItemName] = useState('')
+  const [goldAmount, setGoldAmount] = useState(0)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -444,6 +447,46 @@ function CharacterCard() {
       inventory: [...(prev.inventory || []), item]
     }))
     addMessage(`🎒 Added to inventory: **${item.name}**`, 'system')
+  }
+
+  // Handle adding custom item
+  const handleAddCustomItem = () => {
+    if (!newItemName.trim()) return
+
+    const customItem = {
+      id: `custom-${Date.now()}`,
+      name: newItemName.trim(),
+      category: 'item',
+      equipped: false,
+      details: {
+        name: newItemName.trim(),
+        shortDescription: 'Custom item',
+        rarity: 'common'
+      }
+    }
+
+    setCharacter(prev => ({
+      ...prev,
+      inventory: [...(prev.inventory || []), customItem]
+    }))
+    addMessage(`🎒 Added custom item: **${newItemName}**`, 'system')
+    setNewItemName('')
+    setShowAddItem(false)
+  }
+
+  // Handle adding/removing gold
+  const handleUpdateGold = (amount) => {
+    const numAmount = parseInt(amount) || 0
+    setCharacter(prev => ({
+      ...prev,
+      gold: (prev.gold || 0) + numAmount
+    }))
+    if (numAmount > 0) {
+      addMessage(`💰 Added **${numAmount} gold**`, 'system')
+    } else if (numAmount < 0) {
+      addMessage(`💰 Spent **${Math.abs(numAmount)} gold**`, 'system')
+    }
+    setGoldAmount(0)
   }
 
   // Handle equipping item
@@ -1082,6 +1125,135 @@ function CharacterCard() {
               >
                 🎒 Browse Equipment & Gear
               </button>
+
+              {/* Gold Management */}
+              <div style={{
+                marginBottom: '12px',
+                padding: '12px',
+                background: 'rgba(0,0,0,0.3)',
+                borderRadius: '8px',
+                border: '1px solid rgba(212, 175, 55, 0.2)'
+              }}>
+                <div style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#d4af37',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  💰 Gold: <span style={{color: '#ffd700'}}>{character.gold || 0}</span>
+                </div>
+                <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                  <input
+                    type="number"
+                    value={goldAmount}
+                    onChange={(e) => setGoldAmount(e.target.value)}
+                    placeholder="Amount"
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      background: 'rgba(0,0,0,0.4)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px'
+                    }}
+                  />
+                  <button
+                    onClick={() => handleUpdateGold(parseInt(goldAmount) || 0)}
+                    disabled={!goldAmount || goldAmount === 0}
+                    style={{
+                      padding: '8px 12px',
+                      background: 'rgba(76, 175, 80, 0.8)',
+                      border: '1px solid rgba(76, 175, 80, 0.4)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
+                      opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
+                    }}
+                  >
+                    ➕ Add
+                  </button>
+                  <button
+                    onClick={() => handleUpdateGold(-(parseInt(goldAmount) || 0))}
+                    disabled={!goldAmount || goldAmount === 0}
+                    style={{
+                      padding: '8px 12px',
+                      background: 'rgba(244, 67, 54, 0.8)',
+                      border: '1px solid rgba(244, 67, 54, 0.4)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
+                      opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
+                    }}
+                  >
+                    ➖ Spend
+                  </button>
+                </div>
+              </div>
+
+              {/* Add Custom Item */}
+              <div style={{
+                marginBottom: '12px',
+                padding: '12px',
+                background: 'rgba(0,0,0,0.3)',
+                borderRadius: '8px',
+                border: '1px solid rgba(212, 175, 55, 0.2)'
+              }}>
+                <div style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#d4af37',
+                  marginBottom: '8px'
+                }}>
+                  ✨ Add Custom Item
+                </div>
+                <div style={{display: 'flex', gap: '8px'}}>
+                  <input
+                    type="text"
+                    value={newItemName}
+                    onChange={(e) => setNewItemName(e.target.value)}
+                    placeholder="Item name"
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      background: 'rgba(0,0,0,0.4)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '13px'
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newItemName.trim()) {
+                        handleAddCustomItem()
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleAddCustomItem}
+                    disabled={!newItemName.trim()}
+                    style={{
+                      padding: '8px 12px',
+                      background: 'rgba(212, 175, 55, 0.8)',
+                      border: '1px solid rgba(212, 175, 55, 0.4)',
+                      borderRadius: '6px',
+                      color: '#1a1a2e',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: newItemName.trim() ? 'pointer' : 'not-allowed',
+                      opacity: newItemName.trim() ? 1 : 0.5
+                    }}
+                  >
+                    ➕ Add Item
+                  </button>
+                </div>
+              </div>
 
               {/* Render view based on selection */}
               {equipmentView === 'inventory' ? (
