@@ -125,6 +125,17 @@ function AbilityCard({ ability, onUse, character, mode, initialExpanded = false,
             {ability.category && (
               <span className="info-badge category">{ability.category}</span>
             )}
+            {details.actionType && (
+              <span className="info-badge action-type" style={{
+                background: details.actionType === 'bonus' ? '#9b59b6' :
+                           details.actionType === 'reaction' ? '#e74c3c' :
+                           details.actionType === 'passive' ? '#95a5a6' : '#3498db'
+              }}>
+                {details.actionType === 'bonus' ? 'Bonus Action' :
+                 details.actionType === 'reaction' ? 'Reaction' :
+                 details.actionType === 'passive' ? 'Passive' : 'Action'}
+              </span>
+            )}
           </div>
 
           {/* Spell Stats */}
@@ -149,13 +160,27 @@ function AbilityCard({ ability, onUse, character, mode, initialExpanded = false,
             </div>
           )}
 
-          {/* Attack Stats */}
-          {ability.category === 'attack' && (
+          {/* Class Feature / Ability Stats */}
+          {ability.category !== 'spell' && (
             <div className="ability-stats">
               {details.attackBonus && (
                 <div className="stat-row">
                   <span className="stat-label">Attack Bonus:</span>
                   <span>+{details.attackBonus}</span>
+                </div>
+              )}
+              {(details.damage || ability.damage) && (
+                <div className="stat-row">
+                  <span className="stat-label">
+                    {(details.damage?.type || ability.damage?.type) === 'healing' ? 'Healing:' : 'Damage:'}
+                  </span>
+                  <span>{(details.damage?.formula || ability.damage?.formula)}</span>
+                </div>
+              )}
+              {(details.damage?.type || ability.damage?.type) && (
+                <div className="stat-row">
+                  <span className="stat-label">Type:</span>
+                  <span style={{textTransform: 'capitalize'}}>{details.damage?.type || ability.damage?.type}</span>
                 </div>
               )}
               {details.damageFormula && (
@@ -170,27 +195,39 @@ function AbilityCard({ ability, onUse, character, mode, initialExpanded = false,
                   <span>{details.damageType}</span>
                 </div>
               )}
+              {(details.range || ability.range) && (
+                <div className="stat-row">
+                  <span className="stat-label">Range:</span>
+                  <span>{details.range || ability.range}</span>
+                </div>
+              )}
+              {(details.savingThrow || details.saveDC) && (
+                <div className="stat-row">
+                  <span className="stat-label">Save:</span>
+                  <span>{details.savingThrow || 'DC ' + details.saveDC}</span>
+                </div>
+              )}
             </div>
           )}
 
           {/* Description */}
-          {details.shortDescription && !details.description && (
+          {details.description && (
+            <div className="ability-description">
+              <strong>Description:</strong>
+              <p style={{whiteSpace: 'pre-wrap'}}>{details.description}</p>
+            </div>
+          )}
+
+          {/* Short Description (if no full description) */}
+          {!details.description && details.shortDescription && (
             <div className="ability-description">
               <strong>Description:</strong>
               <p>{details.shortDescription}</p>
             </div>
           )}
 
-          {/* Full Spell Description */}
-          {ability.category === 'spell' && details.description && (
-            <div className="ability-description spell-description">
-              <strong>Description:</strong>
-              <div className="spell-desc-content">{details.description}</div>
-            </div>
-          )}
-
-          {/* Non-spell Long Description */}
-          {ability.category !== 'spell' && details.longDescription && (
+          {/* Long Description (legacy field) */}
+          {!details.description && details.longDescription && (
             <div className="ability-description long">
               <pre>{details.longDescription}</pre>
             </div>
