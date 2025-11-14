@@ -11,6 +11,7 @@ import InventoryManager from './inventory/InventoryManager'
 import EquipmentSlots from './inventory/EquipmentSlots'
 import DiceRoller from './DiceRoller'
 import AbilityCard from './AbilityCard'
+import startingEquipment from '../../../data/starting-equipment.json'
 import './CharacterCard.css'
 
 function CharacterCard() {
@@ -638,14 +639,61 @@ function CharacterCard() {
     addMessage(`🗑️ Dropped: **${item.name}**`, 'system')
   }
 
-  // Refresh character data (reload from demo + populate)
+  // Update character data with class-appropriate equipment
   const handleRefreshCharacter = () => {
     const loadedCharacter = getDemoCharacter(characterId)
     if (loadedCharacter) {
       const populatedCharacter = populateCharacterData({ ...loadedCharacter })
+
+      // Load class-appropriate starting equipment
+      if (populatedCharacter.class) {
+        const className = populatedCharacter.class.toLowerCase()
+        const classEquipment = startingEquipment[className]
+
+        if (classEquipment) {
+          // Initialize inventory if needed
+          if (!populatedCharacter.inventory) {
+            populatedCharacter.inventory = []
+          }
+
+          // Add weapons
+          if (classEquipment.weapons) {
+            classEquipment.weapons.forEach(item => {
+              populatedCharacter.inventory.push({
+                ...item,
+                equipped: true // Auto-equip starting weapons
+              })
+            })
+          }
+
+          // Add armor
+          if (classEquipment.armor) {
+            classEquipment.armor.forEach(item => {
+              populatedCharacter.inventory.push({
+                ...item,
+                equipped: true // Auto-equip starting armor
+              })
+            })
+          }
+
+          // Add gear (not equipped by default)
+          if (classEquipment.gear) {
+            classEquipment.gear.forEach(item => {
+              populatedCharacter.inventory.push({
+                ...item,
+                equipped: false
+              })
+            })
+          }
+
+          addMessage(`🔄 Character updated with ${className} equipment`, 'system')
+        } else {
+          addMessage(`🔄 Character data refreshed (no equipment table for ${className})`, 'system')
+        }
+      }
+
       setCharacter(populatedCharacter)
       setCurrentHP(populatedCharacter.hp.current)
-      addMessage(`🔄 Character data refreshed`, 'system')
     }
   }
 
@@ -729,7 +777,7 @@ function CharacterCard() {
 
         <button
           onClick={handleRefreshCharacter}
-          title="Refresh character data"
+          title="Update character with class equipment"
           style={{
             position: 'absolute',
             top: '8px',
@@ -737,7 +785,7 @@ function CharacterCard() {
             background: 'transparent',
             border: 'none',
             color: '#888',
-            fontSize: '18px',
+            fontSize: '14px',
             cursor: 'pointer',
             padding: '4px',
             lineHeight: 1,
@@ -745,7 +793,7 @@ function CharacterCard() {
           }}
           onMouseEnter={(e) => e.target.style.color = '#d4af37'}
           onMouseLeave={(e) => e.target.style.color = '#888'}
-        >🔄</button>
+        >🔄 Update</button>
 
         <button
           onClick={() => navigate('/')}
