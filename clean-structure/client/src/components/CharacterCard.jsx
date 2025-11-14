@@ -296,50 +296,61 @@ function CharacterCard() {
       message += `\n\n${details.shortDescription}`
     }
 
-    // Check for healing (like Second Wind)
-    if (details.healing || ability.healing) {
-      const healingData = details.healing || ability.healing
-      if (healingData.formula) {
-        const healingMatch = healingData.formula.match(/(\d+)d(\d+)/)
-        if (healingMatch) {
-          const [_, numDice, diceSize] = healingMatch
-          let totalHealing = 0
-          const rolls = []
-          for (let i = 0; i < parseInt(numDice); i++) {
-            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
-            rolls.push(roll)
-            totalHealing += roll
-          }
+    // Check for healing (like Second Wind) - stored in damage.type = "healing"
+    const damageData = details.damage || ability.damage
+    if (damageData && damageData.type === 'healing') {
+      const healingMatch = damageData.formula.match(/(\d+)d(\d+)/)
+      if (healingMatch) {
+        const [_, numDice, diceSize] = healingMatch
+        let totalHealing = 0
+        const rolls = []
+        for (let i = 0; i < parseInt(numDice); i++) {
+          const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+          rolls.push(roll)
+          totalHealing += roll
+        }
 
-          // Add character level if specified
-          const levelBonus = healingData.addLevel ? (character.level || 0) : 0
-          totalHealing += levelBonus
+        // Add character level if description mentions it
+        const levelBonus = details.description?.includes('your fighter level') ||
+                          details.description?.includes('your character level') ||
+                          details.description?.includes('your level')
+                          ? (character.level || 0) : 0
+        totalHealing += levelBonus
 
-          const bonusText = levelBonus > 0 ? `+${levelBonus}` : ''
-          message += `\n💚 **Healing**: ${healingData.formula}${bonusText} = **${totalHealing} HP** [${rolls.join(', ')}]`
+        const bonusText = levelBonus > 0 ? ` + ${levelBonus}` : ''
+        message += `\n\n🎲 **Roll**: ${damageData.formula}${bonusText} = [${rolls.join(', ')}]${bonusText} = **${totalHealing}**`
+        message += `\n💚 **Healing**: ${totalHealing} HP restored!`
 
-          // Actually heal the character
-          setCurrentHP(prev => Math.min(prev + totalHealing, character.hp.max))
+        // Actually heal the character
+        const oldHP = currentHP
+        const newHP = Math.min(currentHP + totalHealing, character.hp.max)
+        setCurrentHP(newHP)
+
+        if (newHP > oldHP) {
+          message += `\n💗 HP: ${oldHP} → **${newHP}** / ${character.hp.max}`
         }
       }
     }
-
     // Check for damage rolls (like special attacks)
-    if ((details.damage || ability.damage) && !ability.category === 'combat') {
-      const damageData = details.damage || ability.damage
-      if (damageData.formula) {
-        const damageMatch = damageData.formula.match(/(\d+)d(\d+)/)
-        if (damageMatch) {
-          const [_, numDice, diceSize] = damageMatch
-          let totalDamage = 0
-          const rolls = []
-          for (let i = 0; i < parseInt(numDice); i++) {
-            const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
-            rolls.push(roll)
-            totalDamage += roll
-          }
-          message += `\n💥 **Damage**: ${damageData.formula} = **${totalDamage}** ${damageData.type || ''} [${rolls.join(', ')}]`
+    else if (damageData && damageData.type !== 'healing') {
+      const damageMatch = damageData.formula.match(/(\d+)d(\d+)([+\-]\d+)?/)
+      if (damageMatch) {
+        const [_, numDice, diceSize, bonus] = damageMatch
+        let totalDamage = 0
+        const rolls = []
+        for (let i = 0; i < parseInt(numDice); i++) {
+          const roll = Math.floor(Math.random() * parseInt(diceSize)) + 1
+          rolls.push(roll)
+          totalDamage += roll
         }
+
+        // Add any static bonus
+        const bonusValue = bonus ? parseInt(bonus) : 0
+        totalDamage += bonusValue
+
+        const bonusText = bonusValue !== 0 ? ` ${bonus}` : ''
+        message += `\n\n🎲 **Roll**: ${damageData.formula} = [${rolls.join(', ')}]${bonusText} = **${totalDamage}**`
+        message += `\n💥 **Damage**: ${totalDamage} ${damageData.type || ''} damage`
       }
     }
 
