@@ -213,11 +213,6 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
 
   const renderSkillsMode = () => (
     <div className="skills-mode">
-      <div className="skills-header">
-        <h4>Skill Checks</h4>
-        <p>Roll a d20 + your skill modifier</p>
-      </div>
-
       <div className="skills-grid">
         {SKILLS.map(skill => {
           const modifier = getSkillModifier(skill)

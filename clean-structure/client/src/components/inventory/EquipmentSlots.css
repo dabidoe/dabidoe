@@ -6,7 +6,46 @@
   gap: 16px;
   padding: 16px;
   background: var(--background-color, #0f0f0f);
-  min-height: 100vh;
+}
+
+/* 4-Column Card Grid */
+.equipment-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .equipment-grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .equipment-grid-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .equipment-grid-cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.equipment-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.equipment-card.empty {
+  opacity: 0.6;
+}
+
+.equipment-card.filled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 /* AC Display */
