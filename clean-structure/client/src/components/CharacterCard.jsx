@@ -1026,11 +1026,37 @@ function CharacterCard() {
                     const spellLevel = spell.type === 'cantrip' ? 'Cantrip' :
                                       `Level ${spell.level || spell.details?.level || '?'}`
 
-                    // Build brief description
-                    const descParts = []
-                    if (spell.details?.castingTime) descParts.push(spell.details.castingTime)
-                    if (spell.details?.range) descParts.push(spell.details.range)
-                    const briefDesc = descParts.join(' • ')
+                    // Build spell summary with key combat info
+                    const summaryParts = []
+
+                    // Add save DC if applicable
+                    if (spell.details?.savingThrow) {
+                      const saveAbility = spell.details.savingThrow.toUpperCase()
+                      summaryParts.push(`DC ${character.spellSaveDC || 15} ${saveAbility} save`)
+                    }
+
+                    // Add attack bonus if applicable
+                    if (spell.details?.attack || spell.details?.attackRoll) {
+                      summaryParts.push(`+${character.spellAttackBonus || character.proficiencyBonus + Math.floor(((character.stats?.int || 10) - 10) / 2) || 5} to hit`)
+                    }
+
+                    // Add damage if applicable
+                    if (spell.details?.damage) {
+                      const damageFormula = typeof spell.details.damage === 'object'
+                        ? spell.details.damage.formula
+                        : spell.details.damage
+                      const damageType = typeof spell.details.damage === 'object'
+                        ? spell.details.damage.type
+                        : (spell.details?.damageType || '')
+                      summaryParts.push(`${damageFormula} ${damageType}`.trim())
+                    }
+
+                    // Add healing if applicable
+                    if (spell.details?.healing) {
+                      summaryParts.push(`Heal ${spell.details.healing}`)
+                    }
+
+                    const spellSummary = summaryParts.length > 0 ? summaryParts.join(' • ') : null
 
                     return (
                       <button
@@ -1042,7 +1068,7 @@ function CharacterCard() {
                         <div className="spell-info">
                           <div className="spell-name">{spell.details?.name || spell.name}</div>
                           <div className="spell-meta">{spellLevel} • {spell.details?.school || 'Unknown'}</div>
-                          {briefDesc && <div className="spell-description">{briefDesc}</div>}
+                          {spellSummary && <div className="spell-summary" style={{fontSize: '11px', color: '#4a90e2', marginTop: '4px'}}>{spellSummary}</div>}
                         </div>
                       </button>
                     )

@@ -146,252 +146,178 @@ function EquipmentSlots({ character, onSlotClick, onUnequipItem }) {
 
   const totalAC = calculateAC();
 
+  // Define all slots for consistent display
+  const allSlots = [
+    { id: 'head', item: equipment.head },
+    { id: 'neck', item: equipment.neck },
+    { id: 'body', item: equipment.body },
+    { id: 'back', item: equipment.back },
+    { id: 'hands', item: equipment.hands },
+    { id: 'feet', item: equipment.feet },
+    { id: 'ring1', item: equipment.ring1 },
+    { id: 'ring2', item: equipment.ring2 },
+    { id: 'mainHand', item: equipment.mainHand },
+    { id: 'offHand', item: equipment.offHand }
+  ]
+
   return (
     <div className="equipment-slots">
-      {/* AC Display */}
-      <div className="ac-display">
-        <div className="ac-value">{totalAC}</div>
-        <div className="ac-label">Armor Class</div>
-      </div>
+      {/* Equipment Grid - 4 Column Cards */}
+      <div className="equipment-grid-cards">
+        {allSlots.map(({ id, item }) => {
+          // Build item details for key:value display
+          const details = []
 
-      {/* Equipment Grid */}
-      <div className="equipment-grid">
-        {/* Head Slot */}
-        <div className="equipment-row">
-          <button
-            className={`equipment-slot ${equipment.head ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('head', equipment.head)}
-          >
-            <div className="slot-icon">{equipment.head ? (equipment.head.image || getSlotIcon('head')) : getSlotIcon('head')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('head')}</div>
-              {equipment.head ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.head.rarity) }}>
-                  {equipment.head.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
-        </div>
+          if (item) {
+            // Add rarity
+            if (item.rarity) {
+              details.push({ key: 'Rarity', value: item.rarity, color: getRarityColor(item.rarity) })
+            }
 
-        {/* Neck Slot */}
-        <div className="equipment-row">
-          <button
-            className={`equipment-slot ${equipment.neck ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('neck', equipment.neck)}
-          >
-            <div className="slot-icon">{equipment.neck ? (equipment.neck.image || getSlotIcon('neck')) : getSlotIcon('neck')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('neck')}</div>
-              {equipment.neck ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.neck.rarity) }}>
-                  {equipment.neck.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
-        </div>
+            // Add armor AC
+            if (item.armor) {
+              details.push({ key: 'AC', value: item.armor.ac })
+            }
 
-        {/* Body Slot */}
-        <div className="equipment-row">
-          <button
-            className={`equipment-slot ${equipment.body ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('body', equipment.body)}
-          >
-            <div className="slot-icon">{equipment.body ? (equipment.body.image || getSlotIcon('body')) : getSlotIcon('body')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('body')}</div>
-              {equipment.body ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.body.rarity) }}>
-                  {equipment.body.name}
-                  {equipment.body.armor && <span className="slot-bonus"> (AC {equipment.body.armor.ac})</span>}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
-        </div>
+            // Add weapon damage
+            if (item.weapon) {
+              details.push({ key: 'Damage', value: `${item.weapon.damage} ${item.weapon.damageType}` })
+            }
 
-        {/* Hands/Feet Row */}
-        <div className="equipment-row two-column">
-          <button
-            className={`equipment-slot ${equipment.hands ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('hands', equipment.hands)}
-          >
-            <div className="slot-icon">{equipment.hands ? (equipment.hands.image || getSlotIcon('hands')) : getSlotIcon('hands')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('hands')}</div>
-              {equipment.hands ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.hands.rarity) }}>
-                  {equipment.hands.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
+            // Add shield AC bonus
+            if (item.shield) {
+              details.push({ key: 'AC Bonus', value: `+${item.shield.acBonus}` })
+            }
 
-          <button
-            className={`equipment-slot ${equipment.feet ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('feet', equipment.feet)}
-          >
-            <div className="slot-icon">{equipment.feet ? (equipment.feet.image || getSlotIcon('feet')) : getSlotIcon('feet')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('feet')}</div>
-              {equipment.feet ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.feet.rarity) }}>
-                  {equipment.feet.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
-        </div>
+            // Add magic bonus
+            if (item.magic?.bonus) {
+              details.push({ key: 'Magic', value: `+${item.magic.bonus}` })
+            }
 
-        {/* Rings Row */}
-        <div className="equipment-row two-column">
-          <button
-            className={`equipment-slot ${equipment.ring1 ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('ring1', equipment.ring1)}
-          >
-            <div className="slot-icon">{equipment.ring1 ? (equipment.ring1.image || getSlotIcon('ring1')) : getSlotIcon('ring1')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('ring1')}</div>
-              {equipment.ring1 ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.ring1.rarity) }}>
-                  {equipment.ring1.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
+            // Add weight
+            if (item.weight) {
+              details.push({ key: 'Weight', value: `${item.weight} lb` })
+            }
+          }
 
-          <button
-            className={`equipment-slot ${equipment.ring2 ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('ring2', equipment.ring2)}
-          >
-            <div className="slot-icon">{equipment.ring2 ? (equipment.ring2.image || getSlotIcon('ring2')) : getSlotIcon('ring2')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('ring2')}</div>
-              {equipment.ring2 ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.ring2.rarity) }}>
-                  {equipment.ring2.name}
-                </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
-              )}
-            </div>
-          </button>
-        </div>
-
-        {/* Main/Off Hand Row */}
-        <div className="equipment-row two-column">
-          <div className="slot-container">
-            <button
-              className={`equipment-slot ${equipment.mainHand ? 'filled' : 'empty'} ${selectedSlot === 'mainHand' ? 'selected' : ''}`}
-              onClick={() => handleSlotClick('mainHand', equipment.mainHand)}
+          return (
+            <div
+              key={id}
+              className={`equipment-card ${item ? 'filled' : 'empty'}`}
+              onClick={() => handleSlotClick(id, item)}
+              style={{
+                background: item ? 'rgba(45, 45, 68, 0.6)' : 'rgba(20, 20, 30, 0.4)',
+                border: `1px solid ${item ? 'rgba(212, 175, 55, 0.4)' : 'rgba(255,255,255,0.15)'}`,
+                borderRadius: '8px',
+                padding: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (item) e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = item ? 'rgba(212, 175, 55, 0.4)' : 'rgba(255,255,255,0.15)'
+              }}
             >
-              <div className="slot-icon">{equipment.mainHand ? (equipment.mainHand.image || getSlotIcon('mainHand')) : getSlotIcon('mainHand')}</div>
-              <div className="slot-info">
-                <div className="slot-label">{getSlotLabel('mainHand')}</div>
-                {equipment.mainHand ? (
-                  <div className="slot-item" style={{ color: getRarityColor(equipment.mainHand.rarity) }}>
-                    {equipment.mainHand.name}
-                    {equipment.mainHand.weapon && <span className="slot-bonus"> ({equipment.mainHand.weapon.damage})</span>}
+              {/* Card Header */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: item ? '8px' : '0',
+                paddingBottom: item ? '8px' : '0',
+                borderBottom: item ? '1px solid rgba(255,255,255,0.1)' : 'none'
+              }}>
+                <span style={{ fontSize: '20px' }}>
+                  {getSlotIcon(id)}
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontSize: '11px',
+                    color: 'rgba(255,255,255,0.5)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    {getSlotLabel(id)}
                   </div>
-                ) : (
-                  <div className="slot-empty">Empty</div>
-                )}
-              </div>
-            </button>
-            {selectedSlot === 'mainHand' && equipment.mainHand && (
-              <div className="slot-menu">
-                <button
-                  className="menu-btn unequip"
-                  onClick={() => handleUnequipFromMenu(equipment.mainHand)}
-                >
-                  ❌ Unequip
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="slot-container">
-            <button
-              className={`equipment-slot ${equipment.offHand ? 'filled' : 'empty'} ${selectedSlot === 'offHand' ? 'selected' : ''}`}
-              onClick={() => handleSlotClick('offHand', equipment.offHand)}
-            >
-              <div className="slot-icon">{equipment.offHand ? (equipment.offHand.image || getSlotIcon('offHand')) : getSlotIcon('offHand')}</div>
-              <div className="slot-info">
-                <div className="slot-label">{getSlotLabel('offHand')}</div>
-                {equipment.offHand ? (
-                  <div className="slot-item" style={{ color: getRarityColor(equipment.offHand.rarity) }}>
-                    {equipment.offHand.name}
-                    {equipment.offHand.shield && <span className="slot-bonus"> (+{equipment.offHand.shield.acBonus} AC)</span>}
-                    {equipment.offHand.weapon && <span className="slot-bonus"> ({equipment.offHand.weapon.damage})</span>}
-                  </div>
-                ) : (
-                  <div className="slot-empty">Empty</div>
-                )}
-              </div>
-            </button>
-            {selectedSlot === 'offHand' && equipment.offHand && (
-              <div className="slot-menu">
-                <button
-                  className="menu-btn unequip"
-                  onClick={() => handleUnequipFromMenu(equipment.offHand)}
-                >
-                  ❌ Unequip
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Back Slot */}
-        <div className="equipment-row">
-          <button
-            className={`equipment-slot ${equipment.back ? 'filled' : 'empty'}`}
-            onClick={() => handleSlotClick('back', equipment.back)}
-          >
-            <div className="slot-icon">{equipment.back ? (equipment.back.image || getSlotIcon('back')) : getSlotIcon('back')}</div>
-            <div className="slot-info">
-              <div className="slot-label">{getSlotLabel('back')}</div>
-              {equipment.back ? (
-                <div className="slot-item" style={{ color: getRarityColor(equipment.back.rarity) }}>
-                  {equipment.back.name}
+                  {item && (
+                    <div style={{
+                      fontSize: '13px',
+                      color: getRarityColor(item.rarity),
+                      fontWeight: '600',
+                      marginTop: '2px'
+                    }}>
+                      {item.name}
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="slot-empty">Empty</div>
+              </div>
+
+              {/* Item Details - Key:Value pairs */}
+              {item && details.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {details.map((detail, idx) => (
+                    <div key={idx} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '11px'
+                    }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>{detail.key}:</span>
+                      <span style={{
+                        color: detail.color || '#fff',
+                        fontWeight: '600'
+                      }}>
+                        {detail.value}
+                      </span>
+                    </div>
+                  ))}
+
+                  {/* Unequip button for equipped items */}
+                  {onUnequipItem && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onUnequipItem(item)
+                      }}
+                      style={{
+                        marginTop: '8px',
+                        padding: '4px 8px',
+                        background: 'rgba(244, 67, 54, 0.2)',
+                        border: '1px solid rgba(244, 67, 54, 0.4)',
+                        borderRadius: '4px',
+                        color: '#f44336',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(244, 67, 54, 0.3)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(244, 67, 54, 0.2)'
+                      }}
+                    >
+                      ❌ Unequip
+                    </button>
+                  )}
+                </div>
+              ) : !item && (
+                <div style={{
+                  textAlign: 'center',
+                  color: 'rgba(255,255,255,0.3)',
+                  fontSize: '11px',
+                  fontStyle: 'italic',
+                  padding: '8px 0'
+                }}>
+                  Empty
+                </div>
               )}
             </div>
-          </button>
-        </div>
+          )
+        })}
       </div>
-
-      {/* Bonuses Summary */}
-      {(equipment.ring1 || equipment.ring2 || equipment.neck || equipment.hands || equipment.feet) && (
-        <div className="bonuses-summary">
-          <h4>Active Bonuses</h4>
-          <div className="bonuses-list">
-            {[equipment.ring1, equipment.ring2, equipment.neck, equipment.hands, equipment.feet, equipment.back].filter(Boolean).map((item, i) => (
-              item.magic?.effects && item.magic.effects.length > 0 && (
-                <div key={i} className="bonus-item">
-                  <span className="bonus-source">{item.name}:</span>
-                  <span className="bonus-effect">{item.magic.effects.map(e => e.name).join(', ')}</span>
-                </div>
-              )
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
