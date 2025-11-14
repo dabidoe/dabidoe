@@ -18,6 +18,11 @@ function AbilityBrowser({ character, onAddAbility, onClose }) {
 
   useEffect(() => {
     // Load all class features for this character's class
+    if (!character.class) {
+      setAllAbilities([])
+      setFilteredAbilities([])
+      return
+    }
     const className = character.class.toLowerCase()
     const features = classFeatures[className] || []
     setAllAbilities(features)
@@ -95,7 +100,7 @@ function AbilityBrowser({ character, onAddAbility, onClose }) {
       <div className="ability-browser" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="browser-header">
-          <h2>⚔️ Class Features - {character.class}</h2>
+          <h2>⚔️ Class Features{character.class ? ` - ${character.class}` : ''}</h2>
           <button className="close-browser" onClick={onClose}>✕</button>
         </div>
 

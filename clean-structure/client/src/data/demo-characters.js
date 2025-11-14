@@ -49,8 +49,14 @@ export const demoCharacters = {
   achilles: {
     id: 'achilles',
     name: 'Achilles',
+    race: 'Human',
+    class: 'Fighter',
+    subclass: 'Champion',
+    level: 10,
     hp: { current: 104, max: 104 },
     ac: 18,
+    initiative: 3,
+    speed: 30,
     portrait: '🛡️',
     portraitUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=achilles&backgroundColor=1a1a1a&radius=10',
     stats: {
@@ -63,6 +69,8 @@ export const demoCharacters = {
     },
     proficiencyBonus: 4,
     proficiencies: ['Athletics', 'Intimidation', 'Perception', 'Survival'],
+    background: 'Soldier',
+    alignment: 'Chaotic Neutral',
     abilities: [
       {
         abilityId: 'sword-strike',
@@ -141,6 +149,15 @@ export const demoCharacters = {
       type: 'character',
       mood: 'Contemplative',
       text: "You find me in a moment of reflection. The weight of eight decades rests upon these shoulders, yet I appear as I did in my prime at Troy."
+    },
+    personality: {
+      traits: [
+        'Legendary warrior from the Trojan War',
+        'Immortal but contemplative of mortality',
+        'Haunted by glory and loss'
+      ],
+      background: 'Soldier',
+      alignment: 'Chaotic Neutral'
     }
   },
 
