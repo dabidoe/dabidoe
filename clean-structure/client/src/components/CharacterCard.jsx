@@ -821,37 +821,40 @@ function CharacterCard() {
 
           {activeTab === 'stats' && (
             <div className="stats-tab">
-              <button
-                className="edit-stats-btn"
-                onClick={() => {
-                  if (editingStats) {
-                    // Save changes
-                    setCharacter(prev => ({
-                      ...prev,
-                      stats: { ...prev.stats, ...tempStats }
-                    }))
-                    setEditingStats(false)
-                    setTempStats({})
-                  } else {
-                    // Enter edit mode
-                    setTempStats(character.stats)
-                    setEditingStats(true)
-                  }
-                }}
-                style={{
-                  marginBottom: '16px',
-                  padding: '8px 16px',
-                  background: editingStats ? 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)' : 'rgba(212, 175, 55, 0.2)',
-                  border: editingStats ? 'none' : '1px solid #d4af37',
-                  borderRadius: '6px',
-                  color: editingStats ? '#1a1a2e' : '#d4af37',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                {editingStats ? '💾 Save Stats' : '✏️ Edit Stats'}
-              </button>
+              <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px'}}>
+                <h3 style={{color: '#d4af37', fontSize: '16px', margin: 0}}>Ability Scores</h3>
+                <button
+                  className="edit-stats-btn"
+                  onClick={() => {
+                    if (editingStats) {
+                      // Save changes
+                      setCharacter(prev => ({
+                        ...prev,
+                        stats: { ...prev.stats, ...tempStats }
+                      }))
+                      setEditingStats(false)
+                      setTempStats({})
+                    } else {
+                      // Enter edit mode
+                      setTempStats(character.stats)
+                      setEditingStats(true)
+                    }
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    background: editingStats ? 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)' : 'rgba(212, 175, 55, 0.2)',
+                    border: editingStats ? 'none' : '1px solid #d4af37',
+                    borderRadius: '6px',
+                    color: editingStats ? '#1a1a2e' : '#d4af37',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {editingStats ? '💾 Save' : '✏️ Edit'}
+                </button>
+              </div>
               <div className="stats-grid">
                 {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
                   const statValue = editingStats ? (tempStats[stat] || character.stats?.[stat] || 10) : (character.stats?.[stat] || 10)
@@ -918,10 +921,14 @@ function CharacterCard() {
                 })}
               </div>
 
-              {/* Passive Traits Section */}
+              {/* Passive Traits Section - 4 Column Cards */}
               <div className="traits-section" style={{ marginTop: '24px' }}>
                 <h3 style={{ color: '#d4af37', marginBottom: '12px', fontSize: '16px' }}>Passive Traits</h3>
-                <div className="traits-list">
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '12px'
+                }}>
                   {character.abilities
                     ?.filter(a =>
                       a.details?.actionType === 'passive' &&
@@ -931,81 +938,189 @@ function CharacterCard() {
                     .map((trait, index) => (
                       <div
                         key={index}
-                        className="trait-item"
+                        className="trait-card"
                         style={{
                           background: 'rgba(45, 45, 68, 0.4)',
                           border: '1px solid rgba(212, 175, 55, 0.3)',
-                          borderRadius: '6px',
-                          padding: '10px 12px',
-                          marginBottom: '8px'
+                          borderRadius: '8px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
                         }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)'}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)'}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                          <span style={{ fontSize: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px', flexShrink: 0 }}>
                             {trait.category === 'combat' ? '⚔️' : trait.category === 'defensive' ? '🛡️' : '🔧'}
                           </span>
-                          <span style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
-                            {trait.name}
-                          </span>
-                        </div>
-                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', paddingLeft: '24px' }}>
-                          {trait.details?.shortDescription}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ color: '#fff', fontWeight: '600', fontSize: '13px', marginBottom: '4px' }}>
+                              {trait.name}
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', lineHeight: '1.4' }}>
+                              {trait.details?.shortDescription}
+                            </div>
+                          </div>
+                          <button
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: 'rgba(255,255,255,0.4)',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              padding: '2px'
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setViewingAbility(trait)
+                            }}
+                            title="View details"
+                          >
+                            ⓘ
+                          </button>
                         </div>
                       </div>
                     ))}
-                  {(!character.abilities || character.abilities.filter(a => a.details?.actionType === 'passive' && a.category !== 'spell').length === 0) && (
-                    <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
-                      No passive traits
-                    </div>
-                  )}
                 </div>
+                {(!character.abilities || character.abilities.filter(a => a.details?.actionType === 'passive' && a.category !== 'spell' && !a.usable && !a.details?.usable).length === 0) && (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                    No passive traits
+                  </div>
+                )}
+              </div>
+
+              {/* Feats Section - 4 Column Cards */}
+              <div className="feats-section" style={{ marginTop: '24px' }}>
+                <h3 style={{ color: '#d4af37', marginBottom: '12px', fontSize: '16px' }}>Feats</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '12px'
+                }}>
+                  {character.abilities
+                    ?.filter(a => a.type === 'feat' || a.category === 'feat')
+                    .map((feat, index) => (
+                      <div
+                        key={index}
+                        className="feat-card"
+                        style={{
+                          background: 'rgba(45, 45, 68, 0.4)',
+                          border: '1px solid rgba(139, 69, 19, 0.5)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(205, 133, 63, 0.8)'}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(139, 69, 19, 0.5)'}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '18px', flexShrink: 0 }}>🏆</span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ color: '#fff', fontWeight: '600', fontSize: '13px', marginBottom: '4px' }}>
+                              {feat.name}
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', lineHeight: '1.4' }}>
+                              {feat.details?.shortDescription}
+                            </div>
+                          </div>
+                          <button
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: 'rgba(255,255,255,0.4)',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              padding: '2px'
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setViewingAbility(feat)
+                            }}
+                            title="View details"
+                          >
+                            ⓘ
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                {(!character.abilities || character.abilities.filter(a => a.type === 'feat' || a.category === 'feat').length === 0) && (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                    No feats
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {activeTab === 'spells' && (
             <div className="spells-tab">
+              {/* Compact Spell Slots Header */}
               {character.spellSlots && (
-                <div className="spell-slots-display" style={{marginBottom: '20px'}}>
-                  <h4 style={{marginBottom: '10px', color: 'rgba(255,255,255,0.9)'}}>Spell Slots:</h4>
-                  <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                    {Object.entries(character.spellSlots).map(([level, slots]) => (
-                      <div key={level} style={{
-                        padding: '8px 12px',
-                        background: 'rgba(30,30,30,0.8)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        borderRadius: '8px'
-                      }}>
-                        <span style={{color: 'rgba(255,255,255,0.7)', fontSize: '12px'}}>Level {level}:</span>
-                        <span style={{color: '#fff', marginLeft: '6px', fontWeight: 'bold'}}>
-                          {slots.current}/{slots.max}
-                        </span>
-                      </div>
-                    ))}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px',
+                  padding: '10px 12px',
+                  background: 'rgba(0,0,0,0.3)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(212, 175, 55, 0.2)'
+                }}>
+                  <span style={{color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: '600', whiteSpace: 'nowrap'}}>
+                    Spell Slots:
+                  </span>
+                  <div style={{flex: 1, display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap'}}>
+                    {Object.entries(character.spellSlots).map(([level, slots]) => {
+                      const percentage = slots.max > 0 ? (slots.current / slots.max) * 100 : 0
+                      return (
+                        <div key={level} style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                          <span style={{color: 'rgba(255,255,255,0.5)', fontSize: '11px'}}>L{level}</span>
+                          <div style={{
+                            width: '40px',
+                            height: '6px',
+                            background: 'rgba(0,0,0,0.5)',
+                            borderRadius: '3px',
+                            overflow: 'hidden',
+                            border: '1px solid rgba(255,255,255,0.15)'
+                          }}>
+                            <div style={{
+                              width: `${percentage}%`,
+                              height: '100%',
+                              background: percentage > 50 ? '#4caf50' : percentage > 0 ? '#ff9800' : '#f44336',
+                              transition: 'width 0.3s ease'
+                            }} />
+                          </div>
+                          <span style={{color: '#fff', fontSize: '11px', fontWeight: '600'}}>
+                            {slots.current}/{slots.max}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
+                  <button
+                    onClick={() => setShowSpellBrowser(true)}
+                    style={{
+                      padding: '6px 12px',
+                      background: 'rgba(212, 175, 55, 0.8)',
+                      border: '1px solid #d4af37',
+                      borderRadius: '6px',
+                      color: '#1a1a2e',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      whiteSpace: 'nowrap'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = '#d4af37'}
+                    onMouseLeave={(e) => e.target.style.background = 'rgba(212, 175, 55, 0.8)'}
+                  >
+                    📚 Browse
+                  </button>
                 </div>
               )}
-              <button
-                className="browse-spells-btn"
-                onClick={() => setShowSpellBrowser(true)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '16px',
-                  background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#1a1a2e',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-              >
-                📚 Browse Spell Library
-              </button>
               <div className="spells-grid">
                 {character.abilities
                   ?.filter(ability => ability.category === 'spell')
@@ -1084,202 +1199,223 @@ function CharacterCard() {
 
           {activeTab === 'equipment' && (
             <div className="equipment-tab">
-              {/* View Toggle */}
+              {/* Consolidated Top UI - View Toggle + Browse on Right */}
               <div style={{
                 display: 'flex',
-                gap: '8px',
+                alignItems: 'center',
+                gap: '12px',
                 marginBottom: '12px',
-                background: 'rgba(0,0,0,0.3)',
-                padding: '4px',
-                borderRadius: '8px'
-              }}>
-                <button
-                  onClick={() => setEquipmentView('inventory')}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    background: equipmentView === 'inventory' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
-                    border: equipmentView === 'inventory' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '6px',
-                    color: equipmentView === 'inventory' ? '#d4af37' : 'rgba(255,255,255,0.7)',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  🎒 Inventory
-                </button>
-                <button
-                  onClick={() => setEquipmentView('slots')}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    background: equipmentView === 'slots' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
-                    border: equipmentView === 'slots' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '6px',
-                    color: equipmentView === 'slots' ? '#d4af37' : 'rgba(255,255,255,0.7)',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  ⚔️ Equipment Slots
-                </button>
-              </div>
-
-              {/* Add Equipment Button */}
-              <button
-                className="browse-equipment-btn"
-                onClick={() => setShowEquipmentBrowser(true)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '12px',
-                  background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#1a1a2e',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-              >
-                🎒 Browse Equipment & Gear
-              </button>
-
-              {/* Gold Management */}
-              <div style={{
-                marginBottom: '12px',
-                padding: '12px',
+                padding: '8px 12px',
                 background: 'rgba(0,0,0,0.3)',
                 borderRadius: '8px',
                 border: '1px solid rgba(212, 175, 55, 0.2)'
               }}>
+                {/* View Toggle */}
+                <div style={{display: 'flex', gap: '6px', flexShrink: 0}}>
+                  <button
+                    onClick={() => setEquipmentView('inventory')}
+                    style={{
+                      padding: '6px 12px',
+                      background: equipmentView === 'inventory' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
+                      border: equipmentView === 'inventory' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '6px',
+                      color: equipmentView === 'inventory' ? '#d4af37' : 'rgba(255,255,255,0.7)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    🎒 Inventory
+                  </button>
+                  <button
+                    onClick={() => setEquipmentView('slots')}
+                    style={{
+                      padding: '6px 12px',
+                      background: equipmentView === 'slots' ? 'rgba(212, 175, 55, 0.3)' : 'transparent',
+                      border: equipmentView === 'slots' ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '6px',
+                      color: equipmentView === 'slots' ? '#d4af37' : 'rgba(255,255,255,0.7)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    ⚔️ Slots
+                  </button>
+                </div>
+
+                {/* Gold Display */}
                 <div style={{
-                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '13px',
+                  color: 'rgba(255,255,255,0.7)'
+                }}>
+                  <span>💰</span>
+                  <span style={{color: '#ffd700', fontWeight: '600'}}>{character.gold || 0}</span>
+                  <span style={{color: 'rgba(255,255,255,0.5)'}}>gp</span>
+                </div>
+
+                {/* Spacer */}
+                <div style={{flex: 1}} />
+
+                {/* Browse Button - Right Aligned */}
+                <button
+                  onClick={() => setShowEquipmentBrowser(true)}
+                  style={{
+                    padding: '6px 12px',
+                    background: 'rgba(212, 175, 55, 0.8)',
+                    border: '1px solid #d4af37',
+                    borderRadius: '6px',
+                    color: '#1a1a2e',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#d4af37'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(212, 175, 55, 0.8)'}
+                >
+                  🎒 Browse
+                </button>
+              </div>
+
+              {/* Quick Actions - Collapsible */}
+              <details style={{marginBottom: '12px'}}>
+                <summary style={{
+                  padding: '8px 12px',
+                  background: 'rgba(0,0,0,0.2)',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '12px',
                   fontWeight: '600',
-                  color: '#d4af37',
-                  marginBottom: '8px',
+                  listStyle: 'none',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px'
                 }}>
-                  💰 Gold: <span style={{color: '#ffd700'}}>{character.gold || 0}</span>
-                </div>
-                <div style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
-                  <input
-                    type="number"
-                    value={goldAmount}
-                    onChange={(e) => setGoldAmount(e.target.value)}
-                    placeholder="Amount"
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      background: 'rgba(0,0,0,0.4)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '13px'
-                    }}
-                  />
-                  <button
-                    onClick={() => handleUpdateGold(parseInt(goldAmount) || 0)}
-                    disabled={!goldAmount || goldAmount === 0}
-                    style={{
-                      padding: '8px 12px',
-                      background: 'rgba(76, 175, 80, 0.8)',
-                      border: '1px solid rgba(76, 175, 80, 0.4)',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
-                      opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
-                    }}
-                  >
-                    ➕ Add
-                  </button>
-                  <button
-                    onClick={() => handleUpdateGold(-(parseInt(goldAmount) || 0))}
-                    disabled={!goldAmount || goldAmount === 0}
-                    style={{
-                      padding: '8px 12px',
-                      background: 'rgba(244, 67, 54, 0.8)',
-                      border: '1px solid rgba(244, 67, 54, 0.4)',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
-                      opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
-                    }}
-                  >
-                    ➖ Spend
-                  </button>
-                </div>
-              </div>
-
-              {/* Add Custom Item */}
-              <div style={{
-                marginBottom: '12px',
-                padding: '12px',
-                background: 'rgba(0,0,0,0.3)',
-                borderRadius: '8px',
-                border: '1px solid rgba(212, 175, 55, 0.2)'
-              }}>
+                  <span>⚙️</span>
+                  <span>Quick Actions</span>
+                </summary>
                 <div style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#d4af37',
-                  marginBottom: '8px'
+                  padding: '12px',
+                  background: 'rgba(0,0,0,0.2)',
+                  borderRadius: '6px',
+                  marginTop: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
                 }}>
-                  ✨ Add Custom Item
+                  {/* Gold Management */}
+                  <div>
+                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px'}}>
+                      💰 Manage Gold
+                    </div>
+                    <div style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
+                      <input
+                        type="number"
+                        value={goldAmount}
+                        onChange={(e) => setGoldAmount(e.target.value)}
+                        placeholder="Amount"
+                        style={{
+                          flex: 1,
+                          padding: '6px 8px',
+                          background: 'rgba(0,0,0,0.4)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '4px',
+                          color: '#fff',
+                          fontSize: '12px'
+                        }}
+                      />
+                      <button
+                        onClick={() => handleUpdateGold(parseInt(goldAmount) || 0)}
+                        disabled={!goldAmount || goldAmount === 0}
+                        style={{
+                          padding: '6px 10px',
+                          background: 'rgba(76, 175, 80, 0.8)',
+                          border: '1px solid rgba(76, 175, 80, 0.4)',
+                          borderRadius: '4px',
+                          color: '#fff',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
+                          opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
+                        }}
+                      >
+                        ➕
+                      </button>
+                      <button
+                        onClick={() => handleUpdateGold(-(parseInt(goldAmount) || 0))}
+                        disabled={!goldAmount || goldAmount === 0}
+                        style={{
+                          padding: '6px 10px',
+                          background: 'rgba(244, 67, 54, 0.8)',
+                          border: '1px solid rgba(244, 67, 54, 0.4)',
+                          borderRadius: '4px',
+                          color: '#fff',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
+                          opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
+                        }}
+                      >
+                        ➖
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Add Custom Item */}
+                  <div>
+                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px'}}>
+                      ✨ Add Custom Item
+                    </div>
+                    <div style={{display: 'flex', gap: '6px'}}>
+                      <input
+                        type="text"
+                        value={newItemName}
+                        onChange={(e) => setNewItemName(e.target.value)}
+                        placeholder="Item name"
+                        style={{
+                          flex: 1,
+                          padding: '6px 8px',
+                          background: 'rgba(0,0,0,0.4)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '4px',
+                          color: '#fff',
+                          fontSize: '12px'
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && newItemName.trim()) {
+                            handleAddCustomItem()
+                          }
+                        }}
+                      />
+                      <button
+                        onClick={handleAddCustomItem}
+                        disabled={!newItemName.trim()}
+                        style={{
+                          padding: '6px 10px',
+                          background: 'rgba(212, 175, 55, 0.8)',
+                          border: '1px solid rgba(212, 175, 55, 0.4)',
+                          borderRadius: '4px',
+                          color: '#1a1a2e',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: newItemName.trim() ? 'pointer' : 'not-allowed',
+                          opacity: newItemName.trim() ? 1 : 0.5
+                        }}
+                      >
+                        ➕
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div style={{display: 'flex', gap: '8px'}}>
-                  <input
-                    type="text"
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    placeholder="Item name"
-                    style={{
-                      flex: 1,
-                      padding: '8px',
-                      background: 'rgba(0,0,0,0.4)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '6px',
-                      color: '#fff',
-                      fontSize: '13px'
-                    }}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && newItemName.trim()) {
-                        handleAddCustomItem()
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={handleAddCustomItem}
-                    disabled={!newItemName.trim()}
-                    style={{
-                      padding: '8px 12px',
-                      background: 'rgba(212, 175, 55, 0.8)',
-                      border: '1px solid rgba(212, 175, 55, 0.4)',
-                      borderRadius: '6px',
-                      color: '#1a1a2e',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      cursor: newItemName.trim() ? 'pointer' : 'not-allowed',
-                      opacity: newItemName.trim() ? 1 : 0.5
-                    }}
-                  >
-                    ➕ Add Item
-                  </button>
-                </div>
-              </div>
+              </details>
 
               {/* Render view based on selection */}
               {equipmentView === 'inventory' ? (
@@ -1297,6 +1433,132 @@ function CharacterCard() {
                   onUnequipItem={handleUnequipItem}
                 />
               )}
+
+              {/* Attuned Items Section */}
+              <div style={{ marginTop: '24px' }}>
+                <h3 style={{ color: '#d4af37', marginBottom: '12px', fontSize: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>⚡</span>
+                  <span>Attuned Items</span>
+                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 'normal' }}>
+                    ({character.inventory?.filter(i => i.attuned).length || 0}/3)
+                  </span>
+                </h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: '12px'
+                }}>
+                  {character.inventory
+                    ?.filter(item => item.attuned)
+                    .map((item, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'rgba(45, 45, 68, 0.4)',
+                          border: '2px solid rgba(138, 43, 226, 0.5)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          position: 'relative'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(138, 43, 226, 0.8)'}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(138, 43, 226, 0.5)'}
+                      >
+                        {/* Attunement Indicator */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '8px',
+                          height: '8px',
+                          background: 'rgba(138, 43, 226, 0.8)',
+                          borderRadius: '50%',
+                          boxShadow: '0 0 8px rgba(138, 43, 226, 0.6)'
+                        }} />
+
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                          <span style={{ fontSize: '20px', flexShrink: 0 }}>
+                            {getItemIcon(item.category)}
+                          </span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ color: '#fff', fontWeight: '600', fontSize: '13px', marginBottom: '4px' }}>
+                              {item.name}
+                            </div>
+                            {item.details?.shortDescription && (
+                              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', lineHeight: '1.4', marginBottom: '6px' }}>
+                                {item.details.shortDescription}
+                              </div>
+                            )}
+                            {/* Item Properties */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '10px' }}>
+                              {item.rarity && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'rgba(255,255,255,0.5)' }}>Rarity:</span>
+                                  <span style={{ color: '#fff', fontWeight: '600' }}>{item.rarity}</span>
+                                </div>
+                              )}
+                              {item.equipped && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span style={{ color: 'rgba(255,255,255,0.5)' }}>Status:</span>
+                                  <span style={{ color: '#4caf50', fontWeight: '600' }}>Equipped</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Unattune Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setCharacter(prev => ({
+                              ...prev,
+                              inventory: prev.inventory.map(i =>
+                                i.id === item.id ? { ...i, attuned: false } : i
+                              )
+                            }))
+                            addMessage(`⚡ Unattuned from **${item.name}**`, 'system')
+                          }}
+                          style={{
+                            marginTop: '8px',
+                            width: '100%',
+                            padding: '4px 8px',
+                            background: 'rgba(138, 43, 226, 0.2)',
+                            border: '1px solid rgba(138, 43, 226, 0.4)',
+                            borderRadius: '4px',
+                            color: '#ba55d3',
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(138, 43, 226, 0.3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(138, 43, 226, 0.2)'}
+                        >
+                          ⚡ Unattune
+                        </button>
+                      </div>
+                    ))}
+                </div>
+                {(!character.inventory || character.inventory.filter(i => i.attuned).length === 0) && (
+                  <div style={{
+                    padding: '30px',
+                    textAlign: 'center',
+                    color: 'rgba(255,255,255,0.5)',
+                    fontSize: '14px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    border: '1px dashed rgba(138, 43, 226, 0.3)'
+                  }}>
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>⚡</div>
+                    <div>No attuned items</div>
+                    <div style={{ fontSize: '11px', marginTop: '4px', color: 'rgba(255,255,255,0.4)' }}>
+                      You can attune to up to 3 magical items
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
           </div>
