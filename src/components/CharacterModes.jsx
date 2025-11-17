@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { rollD20 } from '../utils/dice'
 import AbilityCard from './AbilityCard'
@@ -38,10 +38,20 @@ const SKILLS = [
   { name: 'Survival', emoji: '🏕️', ability: 'WIS' }
 ]
 
-function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse }) {
+function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse, initialAdventureId }) {
   const [selectedDialogue, setSelectedDialogue] = useState(null)
   const [selectedAdventure, setSelectedAdventure] = useState(null)
   const [availableAdventures] = useState(getAvailableAdventures())
+
+  // Auto-select adventure if initialAdventureId is provided
+  useEffect(() => {
+    if (initialAdventureId && mode === 'adventure' && !selectedAdventure) {
+      const adventure = availableAdventures.find(adv => adv.id === initialAdventureId)
+      if (adventure) {
+        setSelectedAdventure(adventure)
+      }
+    }
+  }, [initialAdventureId, mode, availableAdventures, selectedAdventure])
 
   // Calculate skill modifier
   const getSkillModifier = (skill) => {
@@ -360,6 +370,7 @@ CharacterModes.propTypes = {
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
   onAbilityUse: PropTypes.func,
+  initialAdventureId: PropTypes.string,
 }
 
 export default CharacterModes
