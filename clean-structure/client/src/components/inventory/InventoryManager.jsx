@@ -141,49 +141,84 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
 
   return (
     <div className="inventory-manager">
-      {/* Filter Tabs */}
-      <div className="inventory-filters">
-        <button
-          className={`filter-tab ${filterCategory === 'all' ? 'active' : ''}`}
-          onClick={() => setFilterCategory('all')}
-        >
-          All
-        </button>
-        <button
-          className={`filter-tab ${filterCategory === 'weapons' ? 'active' : ''}`}
-          onClick={() => setFilterCategory('weapons')}
-        >
-          ⚔️ Weapons
-        </button>
-        <button
-          className={`filter-tab ${filterCategory === 'armor' ? 'active' : ''}`}
-          onClick={() => setFilterCategory('armor')}
-        >
-          🛡️ Armor
-        </button>
-        <button
-          className={`filter-tab ${filterCategory === 'consumables' ? 'active' : ''}`}
-          onClick={() => setFilterCategory('consumables')}
-        >
-          🧪 Consumables
-        </button>
-        <button
-          className={`filter-tab ${filterCategory === 'gear' ? 'active' : ''}`}
-          onClick={() => setFilterCategory('gear')}
-        >
-          📦 Gear
-        </button>
-      </div>
+      {/* Sort & Filter */}
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        marginBottom: '12px',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          flex: '1',
+          minWidth: '150px'
+        }}>
+          <label style={{
+            fontSize: '12px',
+            color: 'rgba(255,255,255,0.7)',
+            whiteSpace: 'nowrap'
+          }}>
+            Filter:
+          </label>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '6px',
+              color: '#fff',
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="all">All Items</option>
+            <option value="weapons">⚔️ Weapons</option>
+            <option value="armor">🛡️ Armor</option>
+            <option value="consumables">🧪 Consumables</option>
+            <option value="gear">📦 Gear</option>
+          </select>
+        </div>
 
-      {/* Sort Options */}
-      <div className="sort-options">
-        <label>Sort by:</label>
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="name">Name</option>
-          <option value="weight">Weight</option>
-          <option value="value">Value</option>
-          <option value="rarity">Rarity</option>
-        </select>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          flex: '1',
+          minWidth: '150px'
+        }}>
+          <label style={{
+            fontSize: '12px',
+            color: 'rgba(255,255,255,0.7)',
+            whiteSpace: 'nowrap'
+          }}>
+            Sort:
+          </label>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '6px',
+              color: '#fff',
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="name">Name</option>
+            <option value="weight">Weight</option>
+            <option value="value">Value</option>
+            <option value="rarity">Rarity</option>
+          </select>
+        </div>
       </div>
 
       {/* Inventory Grid - 4 Columns */}

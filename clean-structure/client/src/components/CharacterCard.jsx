@@ -1577,6 +1577,28 @@ function CharacterCard() {
                   </div>
                 </div>
 
+                {/* Add New Item Button */}
+                <button
+                  onClick={() => setShowAddItem(!showAddItem)}
+                  style={{
+                    padding: '6px 12px',
+                    background: showAddItem ? 'rgba(76, 175, 80, 0.3)' : 'rgba(76, 175, 80, 0.8)',
+                    border: '1px solid rgba(76, 175, 80, 0.6)',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(76, 175, 80, 1)'}
+                  onMouseLeave={(e) => e.target.style.background = showAddItem ? 'rgba(76, 175, 80, 0.3)' : 'rgba(76, 175, 80, 0.8)'}
+                >
+                  {showAddItem ? '✕ Cancel' : '➕ New'}
+                </button>
+
                 {/* Browse Button - Right Aligned */}
                 <button
                   onClick={() => setShowEquipmentBrowser(true)}
@@ -1600,80 +1622,64 @@ function CharacterCard() {
                 </button>
               </div>
 
-              {/* Quick Actions - Collapsible */}
-              <details style={{marginBottom: '12px'}}>
-                <summary style={{
-                  padding: '8px 12px',
-                  background: 'rgba(0,0,0,0.2)',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  listStyle: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span>⚙️</span>
-                  <span>Quick Actions</span>
-                </summary>
+              {/* Add Custom Item - Inline Form */}
+              {showAddItem && (
                 <div style={{
                   padding: '12px',
-                  background: 'rgba(0,0,0,0.2)',
-                  borderRadius: '6px',
-                  marginTop: '8px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px'
+                  background: 'rgba(0,0,0,0.3)',
+                  borderRadius: '8px',
+                  marginBottom: '12px',
+                  border: '1px solid rgba(76, 175, 80, 0.3)'
                 }}>
-                  {/* Add Custom Item */}
-                  <div>
-                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px'}}>
-                      ✨ Add Custom Item
-                    </div>
-                    <div style={{display: 'flex', gap: '6px'}}>
-                      <input
-                        type="text"
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
-                        placeholder="Item name"
-                        style={{
-                          flex: 1,
-                          padding: '6px 8px',
-                          background: 'rgba(0,0,0,0.4)',
-                          border: '1px solid rgba(255,255,255,0.2)',
-                          borderRadius: '4px',
-                          color: '#fff',
-                          fontSize: '12px'
-                        }}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter' && newItemName.trim()) {
-                            handleAddCustomItem()
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={handleAddCustomItem}
-                        disabled={!newItemName.trim()}
-                        style={{
-                          padding: '6px 10px',
-                          background: 'rgba(212, 175, 55, 0.8)',
-                          border: '1px solid rgba(212, 175, 55, 0.4)',
-                          borderRadius: '4px',
-                          color: '#1a1a2e',
-                          fontSize: '11px',
-                          fontWeight: '600',
-                          cursor: newItemName.trim() ? 'pointer' : 'not-allowed',
-                          opacity: newItemName.trim() ? 1 : 0.5
-                        }}
-                      >
-                        ➕
-                      </button>
-                    </div>
+                  <div style={{fontSize: '13px', color: 'rgba(255,255,255,0.8)', marginBottom: '8px', fontWeight: '600'}}>
+                    ✨ Add Custom Item
+                  </div>
+                  <div style={{display: 'flex', gap: '8px'}}>
+                    <input
+                      type="text"
+                      value={newItemName}
+                      onChange={(e) => setNewItemName(e.target.value)}
+                      placeholder="Item name..."
+                      autoFocus
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '6px',
+                        color: '#fff',
+                        fontSize: '13px'
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && newItemName.trim()) {
+                          handleAddCustomItem()
+                          setShowAddItem(false)
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        handleAddCustomItem()
+                        setShowAddItem(false)
+                      }}
+                      disabled={!newItemName.trim()}
+                      style={{
+                        padding: '8px 16px',
+                        background: newItemName.trim() ? 'rgba(76, 175, 80, 0.8)' : 'rgba(76, 175, 80, 0.3)',
+                        border: '1px solid rgba(76, 175, 80, 0.6)',
+                        borderRadius: '6px',
+                        color: '#fff',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: newItemName.trim() ? 'pointer' : 'not-allowed',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Add Item
+                    </button>
                   </div>
                 </div>
-              </details>
+              )}
 
               {/* Render view based on selection */}
               {equipmentView === 'inventory' ? (
