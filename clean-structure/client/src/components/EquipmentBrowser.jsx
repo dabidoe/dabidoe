@@ -1,7 +1,71 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import itemsData from '../../../data/items-srd.json' with { type: 'json' }
+import itemsData from '../../../data/items-srd.json'
 import './EquipmentBrowser.css'
+
+// Category definitions
+const mainCategories = {
+    weapons: {
+      label: 'Weapons',
+      icon: '⚔️',
+      subcategories: {
+        all: 'All Weapons',
+        swords: 'Swords',
+        axes: 'Axes',
+        bows: 'Bows',
+        daggers: 'Daggers',
+        hammers: 'Hammers & Maces',
+        polearms: 'Polearms',
+        other: 'Other Weapons'
+      }
+    },
+    armor: {
+      label: 'Armor',
+      icon: '🛡️',
+      subcategories: {
+        all: 'All Armor',
+        light: 'Light Armor',
+        medium: 'Medium Armor',
+        heavy: 'Heavy Armor',
+        shields: 'Shields'
+      }
+    },
+    consumables: {
+      label: 'Consumables',
+      icon: '🧪',
+      subcategories: {
+        all: 'All Consumables',
+        potions: 'Potions',
+        scrolls: 'Scrolls',
+        wands: 'Wands',
+        throwables: 'Throwables'
+      }
+    },
+    gear: {
+      label: 'Gear & Items',
+      icon: '🎒',
+      subcategories: {
+        all: 'All Gear',
+        tools: 'Tools',
+        kits: 'Kits',
+        accessories: 'Accessories',
+        other: 'Other'
+      }
+    }
+  }
+
+// Available traits/enchantments
+const availableTraits = [
+    { id: 'flaming', name: 'Flaming', icon: '🔥', bonus: '+1d6 fire' },
+    { id: 'frost', name: 'Frost', icon: '❄️', bonus: '+1d6 cold' },
+    { id: 'shocking', name: 'Shocking', icon: '⚡', bonus: '+1d6 lightning' },
+    { id: 'venomous', name: 'Venomous', icon: '☠️', bonus: '+1d6 poison' },
+    { id: 'keen', name: 'Keen', icon: '🗡️', bonus: 'Crit on 19-20' },
+    { id: 'vorpal', name: 'Vorpal', icon: '💀', bonus: 'Crit decapitation' },
+    { id: 'holy', name: 'Holy', icon: '✨', bonus: '+2d6 vs undead/fiends' },
+    { id: 'defending', name: 'Defending', icon: '🛡️', bonus: '+1 AC' },
+    { id: 'returning', name: 'Returning', icon: '🔄', bonus: 'Returns when thrown' }
+]
 
 /**
  * EquipmentBrowser Component
@@ -11,24 +75,93 @@ import './EquipmentBrowser.css'
 function EquipmentBrowser({ character, onAddEquipment, onClose }) {
   const [allItems, setAllItems] = useState([])
   const [filteredItems, setFilteredItems] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedMainCategory, setSelectedMainCategory] = useState('weapons')
+  const [selectedSubCategory, setSelectedSubCategory] = useState('all')
   const [selectedItem, setSelectedItem] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Modifier and enchantment state
+  const [selectedModifier, setSelectedModifier] = useState(0) // +0 through +9
+  const [selectedTraits, setSelectedTraits] = useState([]) // array of trait names
 
   useEffect(() => {
     // Load all items
     setAllItems(itemsData)
-    setFilteredItems(itemsData)
   }, [])
+
+  useEffect(() => {
+    // Reset subcategory when main category changes
+    setSelectedSubCategory('all')
+    setSelectedItem(null)
+  }, [selectedMainCategory])
 
   useEffect(() => {
     // Filter items by category and search query
     let filtered = allItems
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(i => i.category === selectedCategory)
+    // Filter by main category
+    if (selectedMainCategory === 'weapons') {
+      filtered = filtered.filter(i => i.category === 'weapon')
+    } else if (selectedMainCategory === 'armor') {
+      filtered = filtered.filter(i => i.category === 'armor' || i.category === 'shield')
+    } else if (selectedMainCategory === 'consumables') {
+      filtered = filtered.filter(i =>
+        i.category === 'potion' || i.category === 'scroll' || i.category === 'wand'
+      )
+    } else if (selectedMainCategory === 'gear') {
+      filtered = filtered.filter(i =>
+        !['weapon', 'armor', 'shield', 'potion', 'scroll', 'wand'].includes(i.category)
+      )
     }
 
+    // Filter by subcategory
+    if (selectedSubCategory !== 'all') {
+      filtered = filtered.filter(i => {
+        const itemName = i.name.toLowerCase()
+
+        // Weapon subcategories
+        if (selectedSubCategory === 'swords') {
+          return itemName.includes('sword') || itemName.includes('rapier') || itemName.includes('scimitar')
+        } else if (selectedSubCategory === 'axes') {
+          return itemName.includes('axe')
+        } else if (selectedSubCategory === 'bows') {
+          return itemName.includes('bow') || itemName.includes('crossbow')
+        } else if (selectedSubCategory === 'daggers') {
+          return itemName.includes('dagger') || itemName.includes('knife')
+        } else if (selectedSubCategory === 'hammers') {
+          return itemName.includes('hammer') || itemName.includes('mace') || itemName.includes('maul') || itemName.includes('club')
+        } else if (selectedSubCategory === 'polearms') {
+          return itemName.includes('spear') || itemName.includes('pike') || itemName.includes('halberd') || itemName.includes('glaive') || itemName.includes('lance')
+        }
+
+        // Armor subcategories
+        else if (selectedSubCategory === 'light') {
+          return i.armor?.type === 'light'
+        } else if (selectedSubCategory === 'medium') {
+          return i.armor?.type === 'medium'
+        } else if (selectedSubCategory === 'heavy') {
+          return i.armor?.type === 'heavy'
+        } else if (selectedSubCategory === 'shields') {
+          return i.category === 'shield'
+        }
+
+        // Consumable subcategories
+        else if (selectedSubCategory === 'potions') {
+          return i.category === 'potion'
+        } else if (selectedSubCategory === 'scrolls') {
+          return i.category === 'scroll'
+        } else if (selectedSubCategory === 'wands') {
+          return i.category === 'wand'
+        } else if (selectedSubCategory === 'throwables') {
+          return i.weapon?.properties?.includes('thrown') ||
+                 itemName.includes('fire') || itemName.includes('holy water')
+        }
+
+        return true
+      })
+    }
+
+    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(i =>
@@ -38,21 +171,115 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
     }
 
     setFilteredItems(filtered)
-  }, [selectedCategory, searchQuery, allItems])
+  }, [selectedMainCategory, selectedSubCategory, searchQuery, allItems])
 
   // Check if character already has this item
   const hasItem = (itemId) => {
     return character.inventory?.some(i => i.id === itemId)
   }
 
+  // Toggle trait selection
+  const toggleTrait = (traitId) => {
+    setSelectedTraits(prev =>
+      prev.includes(traitId)
+        ? prev.filter(t => t !== traitId)
+        : [...prev, traitId]
+    )
+  }
+
+  // Apply modifiers and traits to item
+  const applyEnhancements = (item) => {
+    let enhancedItem = { ...item }
+    let namePrefix = ''
+    let bonuses = []
+
+    // Apply modifier
+    if (selectedModifier > 0) {
+      namePrefix = `+${selectedModifier} `
+      enhancedItem.modifier = selectedModifier
+
+      // Apply to weapon
+      if (enhancedItem.weapon) {
+        enhancedItem.weapon = {
+          ...enhancedItem.weapon,
+          attackBonus: selectedModifier,
+          damageBonus: selectedModifier
+        }
+      }
+
+      // Apply to armor
+      if (enhancedItem.armor) {
+        enhancedItem.armor = {
+          ...enhancedItem.armor,
+          ac: enhancedItem.armor.ac + selectedModifier
+        }
+      }
+
+      // Adjust value and rarity
+      enhancedItem.value = (enhancedItem.value || 0) * (1 + selectedModifier * 2)
+      if (selectedModifier >= 1 && enhancedItem.rarity === 'common') enhancedItem.rarity = 'uncommon'
+      if (selectedModifier >= 3 && enhancedItem.rarity === 'uncommon') enhancedItem.rarity = 'rare'
+      if (selectedModifier >= 5) enhancedItem.rarity = 'very-rare'
+      if (selectedModifier >= 7) enhancedItem.rarity = 'legendary'
+    }
+
+    // Apply traits
+    if (selectedTraits.length > 0) {
+      const traitObjects = selectedTraits.map(traitId =>
+        availableTraits.find(t => t.id === traitId)
+      ).filter(Boolean)
+
+      enhancedItem.traits = traitObjects
+      enhancedItem.magic = {
+        effects: traitObjects.map(t => ({
+          name: t.name,
+          description: t.bonus
+        }))
+      }
+
+      // Add trait names to item name
+      const traitNames = traitObjects.map(t => t.name).join(', ')
+      namePrefix += traitNames + ' '
+
+      // Increase value based on traits
+      enhancedItem.value = (enhancedItem.value || 0) * (1 + selectedTraits.length)
+
+      // Upgrade rarity
+      if (selectedTraits.length >= 1 && enhancedItem.rarity === 'common') enhancedItem.rarity = 'uncommon'
+      if (selectedTraits.length >= 2) enhancedItem.rarity = 'rare'
+      if (selectedTraits.length >= 3) enhancedItem.rarity = 'very-rare'
+    }
+
+    // Update item name
+    if (namePrefix) {
+      enhancedItem.name = namePrefix + enhancedItem.name
+    }
+
+    // Mark as requiring attunement if enhanced
+    if (selectedModifier >= 3 || selectedTraits.length >= 2) {
+      enhancedItem.requiresAttunement = true
+    }
+
+    return enhancedItem
+  }
+
   const handleAddEquipment = (item) => {
+    // Apply enhancements
+    const enhancedItem = applyEnhancements(item)
+
     // Create inventory item
     const inventoryItem = {
-      ...item,
+      ...enhancedItem,
+      id: `${item.id}-${Date.now()}`, // Unique ID for enhanced items
       equipped: false,
       quantity: 1
     }
+
     onAddEquipment(inventoryItem)
+
+    // Reset modifiers and traits
+    setSelectedModifier(0)
+    setSelectedTraits([])
   }
 
   // Group items by category for count display
@@ -88,38 +315,116 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
           <button className="close-browser" onClick={onClose}>✕</button>
         </div>
 
-        {/* Search Bar */}
-        <div className="browser-search">
-          <input
-            type="text"
-            placeholder="Search equipment..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </div>
+        {/* Main Layout with Sidebar */}
+        <div style={{ display: 'flex', gap: '16px', height: 'calc(100% - 60px)' }}>
+          {/* Left Sidebar - Main Categories */}
+          <div style={{
+            width: '180px',
+            background: 'rgba(0,0,0,0.3)',
+            borderRadius: '8px',
+            padding: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+          }}>
+            <div style={{
+              fontSize: '11px',
+              fontWeight: '600',
+              color: 'rgba(255,255,255,0.5)',
+              textTransform: 'uppercase',
+              marginBottom: '4px'
+            }}>
+              Categories
+            </div>
+            {Object.entries(mainCategories).map(([key, cat]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedMainCategory(key)}
+                style={{
+                  padding: '10px 12px',
+                  background: selectedMainCategory === key ? 'rgba(212, 175, 55, 0.3)' : 'rgba(0,0,0,0.3)',
+                  border: selectedMainCategory === key ? '2px solid rgba(212, 175, 55, 0.6)' : '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '6px',
+                  color: selectedMainCategory === key ? '#d4af37' : '#fff',
+                  fontSize: '13px',
+                  fontWeight: selectedMainCategory === key ? '600' : '400',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedMainCategory !== key) {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.3)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedMainCategory !== key) {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.1)'
+                  }
+                }}
+              >
+                <span style={{ fontSize: '18px' }}>{cat.icon}</span>
+                <span>{cat.label}</span>
+              </button>
+            ))}
+          </div>
 
-        {/* Category Filter */}
-        <div className="level-filter">
-          <button
-            className={`level-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedCategory('all')}
-          >
-            All ({allItems.length})
-          </button>
-          {availableCategories.map(category => (
-            <button
-              key={category}
-              className={`level-btn ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {getCategoryIcon(category)} {category.charAt(0).toUpperCase() + category.slice(1)} ({itemCounts[category] || 0})
-            </button>
-          ))}
-        </div>
+          {/* Main Content Area */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* Search Bar */}
+            <div className="browser-search">
+              <input
+                type="text"
+                placeholder="Search equipment..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
 
-        {/* Content Area */}
-        <div className="browser-content">
+            {/* Subcategory Filter */}
+            <div style={{
+              display: 'flex',
+              gap: '8px',
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              {Object.entries(mainCategories[selectedMainCategory].subcategories).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedSubCategory(key)}
+                  style={{
+                    padding: '6px 12px',
+                    background: selectedSubCategory === key ? 'rgba(100, 150, 255, 0.3)' : 'rgba(0,0,0,0.3)',
+                    border: selectedSubCategory === key ? '1px solid rgba(100, 150, 255, 0.6)' : '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '6px',
+                    color: selectedSubCategory === key ? '#6496ff' : 'rgba(255,255,255,0.8)',
+                    fontSize: '12px',
+                    fontWeight: selectedSubCategory === key ? '600' : '400',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedSubCategory !== key) {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.4)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedSubCategory !== key) {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.2)'
+                    }
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Content Area */}
+            <div className="browser-content">
           {/* Item List */}
           <div className="equipment-list-panel">
             <div className="equipment-list-header">
@@ -243,12 +548,128 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
                   </div>
                 )}
 
+                {/* Enhancements Section */}
+                <div style={{
+                  background: 'rgba(100, 150, 255, 0.1)',
+                  border: '1px solid rgba(100, 150, 255, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginTop: '16px'
+                }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#6496ff' }}>
+                    ✨ Enhancements
+                  </h4>
+
+                  {/* Modifier Selector */}
+                  <div style={{ marginBottom: '12px' }}>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.8)',
+                      marginBottom: '6px',
+                      fontWeight: '600'
+                    }}>
+                      Modifier (+0 to +9)
+                    </label>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                        <button
+                          key={num}
+                          onClick={() => setSelectedModifier(num)}
+                          style={{
+                            padding: '6px 12px',
+                            background: selectedModifier === num ? 'rgba(212, 175, 55, 0.4)' : 'rgba(0,0,0,0.3)',
+                            border: selectedModifier === num ? '2px solid #d4af37' : '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '4px',
+                            color: selectedModifier === num ? '#d4af37' : '#fff',
+                            fontSize: '12px',
+                            fontWeight: selectedModifier === num ? '700' : '400',
+                            cursor: 'pointer',
+                            minWidth: '36px'
+                          }}
+                        >
+                          {num > 0 ? `+${num}` : '0'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Traits Selector */}
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.8)',
+                      marginBottom: '6px',
+                      fontWeight: '600'
+                    }}>
+                      Magical Traits
+                    </label>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {availableTraits.map(trait => (
+                        <button
+                          key={trait.id}
+                          onClick={() => toggleTrait(trait.id)}
+                          style={{
+                            padding: '6px 10px',
+                            background: selectedTraits.includes(trait.id) ? 'rgba(156, 39, 176, 0.4)' : 'rgba(0,0,0,0.3)',
+                            border: selectedTraits.includes(trait.id) ? '2px solid #9c27b0' : '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '4px',
+                            color: selectedTraits.includes(trait.id) ? '#ce93d8' : 'rgba(255,255,255,0.8)',
+                            fontSize: '11px',
+                            fontWeight: selectedTraits.includes(trait.id) ? '600' : '400',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          title={trait.bonus}
+                        >
+                          <span>{trait.icon}</span>
+                          <span>{trait.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Enhancement Preview */}
+                  {(selectedModifier > 0 || selectedTraits.length > 0) && (
+                    <div style={{
+                      marginTop: '12px',
+                      padding: '8px',
+                      background: 'rgba(0,0,0,0.3)',
+                      borderRadius: '4px',
+                      fontSize: '11px'
+                    }}>
+                      <div style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>
+                        Preview:
+                      </div>
+                      <div style={{ color: '#d4af37', fontWeight: '600', fontSize: '13px' }}>
+                        {selectedModifier > 0 && `+${selectedModifier} `}
+                        {selectedTraits.map(id => availableTraits.find(t => t.id === id)?.name).join(', ')}
+                        {selectedTraits.length > 0 && ' '}
+                        {selectedItem.name}
+                      </div>
+                      {selectedModifier > 0 && selectedItem.weapon && (
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginTop: '4px' }}>
+                          Attack: +{selectedModifier}, Damage: {selectedItem.weapon.damage} + {selectedModifier}
+                        </div>
+                      )}
+                      {selectedModifier > 0 && selectedItem.armor && (
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginTop: '4px' }}>
+                          AC: {selectedItem.armor.ac + selectedModifier}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <button
                   className="add-equipment-btn"
                   onClick={() => handleAddEquipment(selectedItem)}
-                  disabled={hasItem(selectedItem.id)}
+                  style={{ marginTop: '12px' }}
                 >
-                  {hasItem(selectedItem.id) ? '✓ Already Owned' : '+ Add to Inventory'}
+                  ✅ Add to Inventory
                 </button>
               </>
             ) : (
@@ -256,10 +677,12 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
                 <p>Select an item to view details</p>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
