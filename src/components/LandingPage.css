@@ -97,6 +97,132 @@
   font-size: 24px;
 }
 
+/* Adventures Section */
+.adventures-section {
+  background: linear-gradient(145deg, #3d2020 0%, #2a1a1a 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 2px solid #8b4513;
+  box-shadow: 0 8px 32px rgba(139, 69, 19, 0.3);
+  text-align: center;
+}
+
+.adventures-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.adventure-card-landing {
+  background: linear-gradient(135deg, #2d2416 0%, #1a1410 100%);
+  border: 2px solid #8b7355;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.adventure-card-landing:hover {
+  border-color: #d4af37;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  background: linear-gradient(135deg, #3d3020 0%, #2d2416 100%);
+}
+
+.adventure-header-landing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.adventure-header-landing h3 {
+  color: #ffd700;
+  font-size: 20px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.difficulty-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.difficulty-badge.easy {
+  background: #2a5a2a;
+  color: #90ee90;
+  border: 1px solid #90ee90;
+}
+
+.difficulty-badge.medium {
+  background: #5a5a2a;
+  color: #ffeb3b;
+  border: 1px solid #ffeb3b;
+}
+
+.difficulty-badge.hard {
+  background: #5a2a2a;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.adventure-description-landing {
+  color: #d4d4aa;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.adventure-meta-landing {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.meta-item {
+  color: #8b7355;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adventure-cta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #3d3020;
+  color: #d4af37;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.cta-icon {
+  font-size: 18px;
+  animation: bounceRight 2s ease-in-out infinite;
+}
+
+@keyframes bounceRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.cta-text {
+  letter-spacing: 0.5px;
+}
+
 /* Browse Section */
 .browse-section {
   background: linear-gradient(145deg, #2d2d44 0%, #1a1a2e 100%);
