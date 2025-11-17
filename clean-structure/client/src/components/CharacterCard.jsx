@@ -17,7 +17,7 @@ import './CharacterCard.css'
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('skills') // skills, abilities, stats, spells, equipment
+  const [activeTab, setActiveTab] = useState('stats') // stats, skills, abilities, spells, equipment
   const [equipmentView, setEquipmentView] = useState('inventory') // 'inventory' or 'slots'
   const [mood, setMood] = useState('Contemplative')
   const [messages, setMessages] = useState([])
@@ -28,6 +28,7 @@ function CharacterCard() {
   const [showSpellBrowser, setShowSpellBrowser] = useState(false)
   const [showAbilityBrowser, setShowAbilityBrowser] = useState(false)
   const [showEquipmentBrowser, setShowEquipmentBrowser] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false)
   const [selectedSpellId, setSelectedSpellId] = useState(null)
   const [selectedAbilityId, setSelectedAbilityId] = useState(null)
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(null)
@@ -42,6 +43,9 @@ function CharacterCard() {
   const [showAddItem, setShowAddItem] = useState(false)
   const [newItemName, setNewItemName] = useState('')
   const [goldAmount, setGoldAmount] = useState(0)
+  const [editingProfile, setEditingProfile] = useState(false)
+  const [tempBackstory, setTempBackstory] = useState('')
+  const [tempBehavior, setTempBehavior] = useState('')
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -710,14 +714,28 @@ function CharacterCard() {
         position: 'relative'
       }}>
         {/* Portrait */}
-        <div className="character-portrait-compact" style={{
-          width: '60px',
-          height: '60px',
-          borderRadius: '8px',
-          overflow: 'hidden',
-          border: '2px solid #d4af37',
-          flexShrink: 0
-        }}>
+        <div
+          className="character-portrait-compact"
+          onClick={() => setShowProfileModal(true)}
+          style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            border: '2px solid #d4af37',
+            flexShrink: 0,
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05)'
+            e.currentTarget.style.boxShadow = '0 0 15px rgba(212, 175, 55, 0.5)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+        >
           {character.portraitUrl ? (
             <img src={character.portraitUrl} alt={character.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
@@ -886,6 +904,12 @@ function CharacterCard() {
             {tabsCollapsed ? '▼' : '▲'}
           </button>
           <button
+            className={`tab-header ${activeTab === 'stats' ? 'active' : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            Stats
+          </button>
+          <button
             className={`tab-header ${activeTab === 'skills' ? 'active' : ''}`}
             onClick={() => setActiveTab('skills')}
           >
@@ -896,12 +920,6 @@ function CharacterCard() {
             onClick={() => setActiveTab('abilities')}
           >
             Abilities
-          </button>
-          <button
-            className={`tab-header ${activeTab === 'stats' ? 'active' : ''}`}
-            onClick={() => setActiveTab('stats')}
-          >
-            Stats
           </button>
           <button
             className={`tab-header ${activeTab === 'spells' ? 'active' : ''}`}
@@ -1787,6 +1805,293 @@ function CharacterCard() {
               }}
               onClose={() => setViewingAbility(null)}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '20px'
+          }}
+          onClick={() => {
+            setShowProfileModal(false)
+            setEditingProfile(false)
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(22, 33, 62, 0.98) 100%)',
+              borderRadius: '16px',
+              border: '2px solid rgba(212, 175, 55, 0.5)',
+              maxWidth: '600px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setShowProfileModal(false)
+                setEditingProfile(false)
+              }}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                zIndex: 1
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(212, 175, 55, 0.3)'
+                e.target.style.transform = 'scale(1.1)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.target.style.transform = 'scale(1)'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Large portrait */}
+            <div style={{ padding: '40px 40px 20px' }}>
+              <div style={{
+                width: '100%',
+                maxWidth: '400px',
+                margin: '0 auto',
+                aspectRatio: '1',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                border: '3px solid #d4af37',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
+              }}>
+                {character.portraitUrl ? (
+                  <img
+                    src={character.portraitUrl}
+                    alt={character.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '120px',
+                    background: 'rgba(0,0,0,0.3)'
+                  }}>
+                    {character.portrait || '🎭'}
+                  </div>
+                )}
+              </div>
+
+              {/* Character name and title */}
+              <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <h2 style={{ color: '#d4af37', fontSize: '28px', margin: '0 0 8px 0' }}>
+                  {character.name}
+                </h2>
+                <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>
+                  {character.race} {character.class} • Level {character.level}
+                </div>
+              </div>
+            </div>
+
+            {/* Backstory section */}
+            <div style={{ padding: '0 40px 20px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '12px'
+              }}>
+                <h3 style={{ color: '#d4af37', fontSize: '18px', margin: 0 }}>
+                  📜 Backstory
+                </h3>
+                {!editingProfile && (
+                  <button
+                    onClick={() => {
+                      setEditingProfile(true)
+                      setTempBackstory(character.background || '')
+                      setTempBehavior(character.personality?.traits?.join('\n') || '')
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      background: 'rgba(212, 175, 55, 0.2)',
+                      border: '1px solid #d4af37',
+                      borderRadius: '6px',
+                      color: '#d4af37',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+                )}
+              </div>
+              {editingProfile ? (
+                <textarea
+                  value={tempBackstory}
+                  onChange={(e) => setTempBackstory(e.target.value)}
+                  placeholder="Enter character backstory..."
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    padding: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              ) : (
+                <p style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  margin: 0,
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {character.background || 'No backstory yet. Click Edit to add one!'}
+                </p>
+              )}
+            </div>
+
+            {/* Behavior/Personality section */}
+            <div style={{ padding: '0 40px 40px' }}>
+              <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
+                🎭 Behavior & Personality
+              </h3>
+              {editingProfile ? (
+                <textarea
+                  value={tempBehavior}
+                  onChange={(e) => setTempBehavior(e.target.value)}
+                  placeholder="Describe personality traits, mannerisms, quirks..."
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    padding: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              ) : (
+                <div style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '14px',
+                  lineHeight: '1.6'
+                }}>
+                  {character.personality?.traits ? (
+                    <ul style={{ margin: 0, paddingLeft: '20px' }}>
+                      {character.personality.traits.map((trait, i) => (
+                        <li key={i} style={{ marginBottom: '8px' }}>{trait}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p style={{ margin: 0 }}>No personality traits yet. Click Edit to add some!</p>
+                  )}
+                </div>
+              )}
+
+              {/* Save/Cancel buttons when editing */}
+              {editingProfile && (
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginTop: '16px',
+                  justifyContent: 'flex-end'
+                }}>
+                  <button
+                    onClick={() => {
+                      setEditingProfile(false)
+                      setTempBackstory('')
+                      setTempBehavior('')
+                    }}
+                    style={{
+                      padding: '10px 20px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCharacter(prev => ({
+                        ...prev,
+                        background: tempBackstory,
+                        personality: {
+                          ...prev.personality,
+                          traits: tempBehavior.split('\n').filter(t => t.trim())
+                        }
+                      }))
+                      setEditingProfile(false)
+                      setTempBackstory('')
+                      setTempBehavior('')
+                    }}
+                    style={{
+                      padding: '10px 20px',
+                      background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#1a1a2e',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    💾 Save Changes
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
