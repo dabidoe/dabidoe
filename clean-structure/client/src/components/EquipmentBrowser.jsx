@@ -30,26 +30,60 @@ const mainCategories = {
         shields: 'Shields'
       }
     },
+    magic: {
+      label: 'Magic Items',
+      icon: '✨',
+      subcategories: {
+        all: 'All Magic Items',
+        rings: 'Rings',
+        amulets: 'Amulets & Necklaces',
+        wands: 'Wands & Staffs',
+        scrolls: 'Scrolls',
+        wondrous: 'Wondrous Items'
+      }
+    },
     consumables: {
-      label: 'Consumables',
+      label: 'Potions',
       icon: '🧪',
       subcategories: {
-        all: 'All Consumables',
-        potions: 'Potions',
-        scrolls: 'Scrolls',
-        wands: 'Wands',
-        throwables: 'Throwables'
+        all: 'All Potions',
+        healing: 'Healing',
+        buff: 'Buffs & Enhancements',
+        utility: 'Utility',
+        poison: 'Poisons'
+      }
+    },
+    tools: {
+      label: 'Tools & Kits',
+      icon: '🔧',
+      subcategories: {
+        all: 'All Tools',
+        artisan: 'Artisan Tools',
+        gaming: 'Gaming Sets',
+        instruments: 'Musical Instruments',
+        kits: 'Kits'
       }
     },
     gear: {
-      label: 'Gear & Items',
+      label: 'Gear',
       icon: '🎒',
       subcategories: {
         all: 'All Gear',
-        tools: 'Tools',
-        kits: 'Kits',
-        accessories: 'Accessories',
+        adventuring: 'Adventuring Gear',
+        containers: 'Containers',
+        clothing: 'Clothing',
         other: 'Other'
+      }
+    },
+    treasure: {
+      label: 'Treasure',
+      icon: '💎',
+      subcategories: {
+        all: 'All Treasure',
+        gems: 'Gems',
+        art: 'Art Objects',
+        jewelry: 'Jewelry',
+        trinkets: 'Trinkets'
       }
     }
   }
@@ -127,13 +161,27 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
       filtered = filtered.filter(i => i.category === 'weapon')
     } else if (selectedMainCategory === 'armor') {
       filtered = filtered.filter(i => i.category === 'armor' || i.category === 'shield')
-    } else if (selectedMainCategory === 'consumables') {
+    } else if (selectedMainCategory === 'magic') {
       filtered = filtered.filter(i =>
-        i.category === 'potion' || i.category === 'scroll' || i.category === 'wand'
+        i.category === 'ring' || i.category === 'amulet' || i.category === 'wand' ||
+        i.category === 'scroll' || i.category === 'wondrous' || i.rarity !== 'common'
+      )
+    } else if (selectedMainCategory === 'consumables') {
+      filtered = filtered.filter(i => i.category === 'potion')
+    } else if (selectedMainCategory === 'tools') {
+      filtered = filtered.filter(i =>
+        i.category === 'tool' || i.name?.toLowerCase().includes('tool') ||
+        i.name?.toLowerCase().includes('kit') || i.name?.toLowerCase().includes('instrument')
       )
     } else if (selectedMainCategory === 'gear') {
       filtered = filtered.filter(i =>
-        !['weapon', 'armor', 'shield', 'potion', 'scroll', 'wand'].includes(i.category)
+        !['weapon', 'armor', 'shield', 'potion', 'ring', 'amulet', 'wand', 'scroll', 'wondrous', 'treasure'].includes(i.category) &&
+        !i.name?.toLowerCase().includes('tool') && !i.name?.toLowerCase().includes('kit')
+      )
+    } else if (selectedMainCategory === 'treasure') {
+      filtered = filtered.filter(i =>
+        i.category === 'treasure' || i.category === 'gem' || i.name?.toLowerCase().includes('gem') ||
+        i.name?.toLowerCase().includes('art') || i.name?.toLowerCase().includes('jewelry')
       )
     }
 
@@ -168,16 +216,59 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
           return i.category === 'shield'
         }
 
-        // Consumable subcategories
-        else if (selectedSubCategory === 'potions') {
-          return i.category === 'potion'
+        // Magic item subcategories
+        else if (selectedSubCategory === 'rings') {
+          return i.category === 'ring'
+        } else if (selectedSubCategory === 'amulets') {
+          return i.category === 'amulet' || itemName.includes('amulet') || itemName.includes('necklace')
+        } else if (selectedSubCategory === 'wands') {
+          return i.category === 'wand' || itemName.includes('wand') || itemName.includes('staff')
         } else if (selectedSubCategory === 'scrolls') {
           return i.category === 'scroll'
-        } else if (selectedSubCategory === 'wands') {
-          return i.category === 'wand'
-        } else if (selectedSubCategory === 'throwables') {
-          return i.weapon?.properties?.includes('thrown') ||
-                 itemName.includes('fire') || itemName.includes('holy water')
+        } else if (selectedSubCategory === 'wondrous') {
+          return i.category === 'wondrous'
+        }
+
+        // Potion subcategories
+        else if (selectedSubCategory === 'healing') {
+          return i.category === 'potion' && itemName.includes('healing')
+        } else if (selectedSubCategory === 'buff') {
+          return i.category === 'potion' && (itemName.includes('strength') || itemName.includes('heroism') || itemName.includes('giant'))
+        } else if (selectedSubCategory === 'utility') {
+          return i.category === 'potion' && !itemName.includes('healing') && !itemName.includes('poison')
+        } else if (selectedSubCategory === 'poison') {
+          return i.category === 'potion' && itemName.includes('poison')
+        }
+
+        // Tool subcategories
+        else if (selectedSubCategory === 'artisan') {
+          return itemName.includes("'s tools") || itemName.includes('artisan')
+        } else if (selectedSubCategory === 'gaming') {
+          return itemName.includes('dice') || itemName.includes('cards') || itemName.includes('gaming')
+        } else if (selectedSubCategory === 'instruments') {
+          return itemName.includes('lute') || itemName.includes('flute') || itemName.includes('horn') || itemName.includes('instrument')
+        } else if (selectedSubCategory === 'kits') {
+          return itemName.includes('kit')
+        }
+
+        // Gear subcategories
+        else if (selectedSubCategory === 'adventuring') {
+          return itemName.includes('rope') || itemName.includes('torch') || itemName.includes('ration') || itemName.includes('backpack')
+        } else if (selectedSubCategory === 'containers') {
+          return itemName.includes('bag') || itemName.includes('pouch') || itemName.includes('chest') || itemName.includes('barrel')
+        } else if (selectedSubCategory === 'clothing') {
+          return itemName.includes('robe') || itemName.includes('clothes') || itemName.includes('outfit')
+        }
+
+        // Treasure subcategories
+        else if (selectedSubCategory === 'gems') {
+          return i.category === 'gem' || itemName.includes('gem') || itemName.includes('diamond') || itemName.includes('ruby')
+        } else if (selectedSubCategory === 'art') {
+          return itemName.includes('art') || itemName.includes('painting') || itemName.includes('statue')
+        } else if (selectedSubCategory === 'jewelry') {
+          return itemName.includes('jewelry') || itemName.includes('crown') || itemName.includes('tiara')
+        } else if (selectedSubCategory === 'trinkets') {
+          return i.category === 'trinket'
         }
 
         return true
@@ -340,10 +431,18 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
       'armor': '🛡️',
       'shield': '🛡️',
       'potion': '🧪',
-      'gear': '🎒',
-      'ring': '💍',
       'scroll': '📜',
-      'wondrous': '✨'
+      'wand': '🪄',
+      'ring': '💍',
+      'amulet': '📿',
+      'wondrous': '✨',
+      'tool': '🔧',
+      'gear': '🎒',
+      'treasure': '💎',
+      'gem': '💎',
+      'trinket': '🎲',
+      'clothing': '👔',
+      'container': '🎒'
     }
     return icons[category] || '📦'
   }
@@ -509,6 +608,63 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
                     {selectedItem.category}
                   </span>
                 </div>
+
+                {/* Item Image */}
+                {selectedItem.image && (
+                  <div style={{
+                    width: '100%',
+                    height: '200px',
+                    background: 'rgba(0,0,0,0.3)',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.1)'
+                  }}>
+                    <img
+                      src={selectedItem.image}
+                      alt={selectedItem.name}
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        objectFit: 'contain'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Placeholder for image if no image exists */}
+                {!selectedItem.image && (
+                  <div style={{
+                    width: '100%',
+                    height: '200px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px dashed rgba(255,255,255,0.1)',
+                    gap: '8px'
+                  }}>
+                    <div style={{ fontSize: '48px', opacity: 0.3 }}>
+                      {getCategoryIcon(selectedItem.category)}
+                    </div>
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'rgba(255,255,255,0.3)',
+                      fontStyle: 'italic'
+                    }}>
+                      No image available
+                    </div>
+                  </div>
+                )}
 
                 <div className="equipment-detail-meta">
                   {/* Weapon Stats */}
