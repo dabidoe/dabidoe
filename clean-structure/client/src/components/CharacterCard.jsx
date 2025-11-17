@@ -46,6 +46,9 @@ function CharacterCard() {
   const [editingProfile, setEditingProfile] = useState(false)
   const [tempBackstory, setTempBackstory] = useState('')
   const [tempBehavior, setTempBehavior] = useState('')
+  const [tempAIBehavior, setTempAIBehavior] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Load character data
@@ -1944,6 +1947,7 @@ function CharacterCard() {
                       setEditingProfile(true)
                       setTempBackstory(character.background || '')
                       setTempBehavior(character.personality?.traits?.join('\n') || '')
+                      setTempAIBehavior(character.aiBehavior || '')
                     }}
                     style={{
                       padding: '6px 12px',
@@ -2032,8 +2036,123 @@ function CharacterCard() {
                   )}
                 </div>
               )}
+            </div>
 
-              {/* Save/Cancel buttons when editing */}
+            {/* AI Behavior Instructions section */}
+            <div style={{ padding: '0 40px 20px' }}>
+              <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
+                🤖 AI Behavior Instructions
+              </h3>
+              {editingProfile ? (
+                <textarea
+                  value={tempAIBehavior}
+                  onChange={(e) => setTempAIBehavior(e.target.value)}
+                  placeholder="Instructions for AI conversation (e.g., 'Speak in old English', 'Always rhyme', 'Be mysterious')..."
+                  style={{
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              ) : (
+                <p style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  margin: 0,
+                  whiteSpace: 'pre-wrap',
+                  fontStyle: character.aiBehavior ? 'normal' : 'italic'
+                }}>
+                  {character.aiBehavior || 'No AI behavior instructions set. Click Edit to add instructions for how this character should respond in conversations.'}
+                </p>
+              )}
+            </div>
+
+            {/* Voice Chat section */}
+            {!editingProfile && (
+              <div style={{ padding: '0 40px 20px', borderTop: '1px solid rgba(212, 175, 55, 0.2)', paddingTop: '20px' }}>
+                <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
+                  🎤 Voice Chat
+                </h3>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <button
+                    onClick={() => {
+                      if (isRecording) {
+                        setIsRecording(false)
+                        // TODO: Stop recording and send to ElevenLabs API
+                        console.log('Stop recording and send to server')
+                      } else {
+                        setIsRecording(true)
+                        // TODO: Start recording
+                        console.log('Start recording')
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '12px 20px',
+                      background: isRecording
+                        ? 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'
+                        : 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#1a1a2e',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {isRecording ? (
+                      <>
+                        <span style={{ animation: 'pulse 1s ease infinite' }}>⏺</span>
+                        Stop Recording
+                      </>
+                    ) : (
+                      <>
+                        🎤 Start Voice Chat
+                      </>
+                    )}
+                  </button>
+                  {isPlaying && (
+                    <div style={{
+                      padding: '12px',
+                      background: 'rgba(212, 175, 55, 0.2)',
+                      borderRadius: '8px',
+                      color: '#d4af37',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <span style={{ animation: 'pulse 1s ease infinite' }}>🔊</span>
+                      Playing...
+                    </div>
+                  )}
+                </div>
+                <p style={{
+                  color: 'rgba(255,255,255,0.5)',
+                  fontSize: '12px',
+                  marginTop: '8px',
+                  marginBottom: 0
+                }}>
+                  Uses ElevenLabs for voice synthesis. Configure API key in server settings.
+                </p>
+              </div>
+            )}
+
+            {/* Save/Cancel buttons when editing */}
+            <div style={{ padding: '0 40px 40px' }}>
               {editingProfile && (
                 <div style={{
                   display: 'flex',
@@ -2046,6 +2165,7 @@ function CharacterCard() {
                       setEditingProfile(false)
                       setTempBackstory('')
                       setTempBehavior('')
+                      setTempAIBehavior('')
                     }}
                     style={{
                       padding: '10px 20px',
@@ -2069,11 +2189,13 @@ function CharacterCard() {
                         personality: {
                           ...prev.personality,
                           traits: tempBehavior.split('\n').filter(t => t.trim())
-                        }
+                        },
+                        aiBehavior: tempAIBehavior
                       }))
                       setEditingProfile(false)
                       setTempBackstory('')
                       setTempBehavior('')
+                      setTempAIBehavior('')
                     }}
                     style={{
                       padding: '10px 20px',
