@@ -11,6 +11,7 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
   const [selectedItem, setSelectedItem] = useState(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all'); // all, weapons, armor, consumables, gear
+  const [sortBy, setSortBy] = useState('name'); // name, weight, value, rarity
 
   const inventory = character.inventory || [];
   const currency = character.currency || { cp: 0, sp: 0, gp: 0, pp: 0 };
@@ -35,7 +36,7 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
   const encumbranceStatus = getEncumbranceStatus();
 
   // Filter items
-  const filteredInventory = filterCategory === 'all'
+  let filteredInventory = filterCategory === 'all'
     ? inventory
     : inventory.filter(item => {
         if (filterCategory === 'weapons') return item.category === 'weapon';
@@ -44,6 +45,21 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
         if (filterCategory === 'gear') return !['weapon', 'armor', 'shield', 'potion', 'scroll'].includes(item.category);
         return true;
       });
+
+  // Sort items
+  filteredInventory = [...filteredInventory].sort((a, b) => {
+    if (sortBy === 'name') {
+      return a.name.localeCompare(b.name);
+    } else if (sortBy === 'weight') {
+      return (b.weight || 0) - (a.weight || 0); // Heaviest first
+    } else if (sortBy === 'value') {
+      return (b.value || 0) - (a.value || 0); // Most valuable first
+    } else if (sortBy === 'rarity') {
+      const rarityOrder = { 'common': 0, 'uncommon': 1, 'rare': 2, 'very-rare': 3, 'legendary': 4, 'artifact': 5 };
+      return (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0); // Rarest first
+    }
+    return 0;
+  });
 
   // Get item icon
   const getItemIcon = (item) => {
@@ -128,40 +144,85 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
 
   return (
     <div className="inventory-manager">
-      {/* Filter */}
+      {/* Top Bar with Filter and Sort */}
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: '12px',
         marginBottom: '12px',
         alignItems: 'center'
       }}>
-        <label style={{
-          fontSize: '12px',
-          color: 'rgba(255,255,255,0.7)',
-          whiteSpace: 'nowrap'
+        {/* Filter Dropdown */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'center',
+          flex: 1
         }}>
-          Filter:
-        </label>
-        <select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '6px 10px',
-            background: 'rgba(0,0,0,0.3)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: '6px',
-            color: '#fff',
+          <label style={{
             fontSize: '12px',
-            cursor: 'pointer'
-          }}
-        >
-          <option value="all">All Items</option>
-          <option value="weapons">⚔️ Weapons</option>
-          <option value="armor">🛡️ Armor</option>
-          <option value="consumables">🧪 Consumables</option>
-          <option value="gear">📦 Gear</option>
-        </select>
+            color: 'rgba(255,255,255,0.7)',
+            whiteSpace: 'nowrap',
+            fontWeight: '600'
+          }}>
+            Filter:
+          </label>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '6px',
+              color: '#fff',
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="all">All Items</option>
+            <option value="weapons">⚔️ Weapons</option>
+            <option value="armor">🛡️ Armor</option>
+            <option value="consumables">🧪 Consumables</option>
+            <option value="gear">📦 Gear</option>
+          </select>
+        </div>
+
+        {/* Sort Dropdown */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'center',
+          flex: 1
+        }}>
+          <label style={{
+            fontSize: '12px',
+            color: 'rgba(255,255,255,0.7)',
+            whiteSpace: 'nowrap',
+            fontWeight: '600'
+          }}>
+            Sort:
+          </label>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '6px 10px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '6px',
+              color: '#fff',
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="name">📝 Name (A-Z)</option>
+            <option value="weight">⚖️ Weight (Heavy → Light)</option>
+            <option value="value">💰 Value (High → Low)</option>
+            <option value="rarity">✨ Rarity (Rare → Common)</option>
+          </select>
+        </div>
       </div>
 
       {/* Inventory Grid - 4 Columns */}
