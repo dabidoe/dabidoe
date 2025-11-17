@@ -304,6 +304,16 @@ function CharacterCard() {
               >
                 <span aria-hidden="true">🎲</span> Skills
               </button>
+              <button
+                className={`mode-tab ${interactionMode === 'adventure' ? 'active' : ''}`}
+                onClick={() => setInteractionMode('adventure')}
+                role="tab"
+                aria-selected={interactionMode === 'adventure'}
+                aria-controls="character-modes-panel"
+                aria-label="Adventure mode"
+              >
+                <span aria-hidden="true">🗺️</span> Adventure
+              </button>
             </div>
 
             <div

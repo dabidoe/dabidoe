@@ -250,3 +250,161 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* Adventure Select Mode */
+.adventure-select {
+  padding: 1rem;
+}
+
+.adventure-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.adventure-header h4 {
+  color: #ffd700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.adventure-header p {
+  color: #cbd5e0;
+  font-size: 0.95rem;
+}
+
+.adventures-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.adventure-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adventure-card:hover {
+  border-color: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.adventure-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+}
+
+.adventure-card h3 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.difficulty-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.difficulty-badge.easy {
+  background: rgba(52, 211, 153, 0.2);
+  border: 1px solid #34d399;
+  color: #34d399;
+}
+
+.difficulty-badge.medium {
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid #fbbf24;
+  color: #fbbf24;
+}
+
+.difficulty-badge.hard {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.adventure-description {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.adventure-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.meta-item {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.adventure-start {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffd700;
+  font-weight: bold;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.start-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.adventure-card:hover .start-arrow {
+  transform: translateX(5px);
+}
+
+.adventure-info {
+  background: rgba(255, 215, 0, 0.1);
+  border-left: 3px solid #ffd700;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.info-text {
+  color: #cbd5e0;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+  .adventure-header h4 {
+    font-size: 1.3rem;
+  }
+
+  .adventure-card {
+    padding: 1.25rem;
+  }
+
+  .adventure-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .difficulty-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+}
