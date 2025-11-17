@@ -46,7 +46,12 @@ function CharacterCard() {
   const [editingProfile, setEditingProfile] = useState(false)
   const [tempBackstory, setTempBackstory] = useState('')
   const [tempBehavior, setTempBehavior] = useState('')
+  const [tempAIBehavior, setTempAIBehavior] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [autoSpeak, setAutoSpeak] = useState(false) // Toggle for auto-speaking character responses
   const messagesEndRef = useRef(null)
+  const audioRef = useRef(null) // For playing ElevenLabs audio
 
   // Load character data
   useEffect(() => {
@@ -69,6 +74,17 @@ function CharacterCard() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // Stop audio playback when auto-speak is disabled
+  useEffect(() => {
+    if (!autoSpeak && audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      setIsPlaying(false)
+      // Also stop browser speech synthesis if active
+      window.speechSynthesis.cancel()
+    }
+  }, [autoSpeak])
 
   if (loading || !character) {
     return <div className="character-loading">Loading character...</div>
@@ -418,6 +434,77 @@ function CharacterCard() {
 
     if (type === 'character' && messageMood) {
       setMood(messageMood)
+    }
+
+    // Auto-speak character responses if enabled
+    if (type === 'character' && autoSpeak) {
+      speakText(text)
+    }
+  }
+
+  // Convert text to speech using ElevenLabs API
+  const speakText = async (text) => {
+    try {
+      setIsPlaying(true)
+
+      // Clean text: remove markdown formatting and emojis for better speech
+      const cleanText = text
+        .replace(/\*\*/g, '') // Remove bold
+        .replace(/\*/g, '') // Remove italics
+        .replace(/#{1,6}\s/g, '') // Remove headers
+        .replace(/\[.*?\]\(.*?\)/g, '') // Remove links
+        .replace(/[⚔️🛡️💚🎲✨🎒💰✅❌🧪🗑️🔄📖📜🎭🤖🎤⏺🔊💪👁️🏥🌿👀🖐️🥷🏕️🎭🗣️⛪🔍📚😠💬🤸🐴]/g, '') // Remove common emojis
+        .trim()
+
+      // TODO: Call your server's ElevenLabs endpoint
+      // For now, using browser's built-in speech synthesis as fallback
+      // Replace this with actual ElevenLabs API call
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/tts/speak`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: cleanText,
+          characterId: character.id,
+          voice: character.voiceId || 'default' // Can be set in character profile
+        })
+      })
+
+      if (response.ok) {
+        // Get audio blob from response
+        const audioBlob = await response.blob()
+        const audioUrl = URL.createObjectURL(audioBlob)
+
+        // Play audio
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl
+          audioRef.current.play()
+
+          audioRef.current.onended = () => {
+            setIsPlaying(false)
+            URL.revokeObjectURL(audioUrl) // Clean up
+          }
+        }
+      } else {
+        // Fallback to browser speech synthesis
+        console.warn('ElevenLabs API not available, using browser TTS')
+        const utterance = new SpeechSynthesisUtterance(cleanText)
+        utterance.onend = () => setIsPlaying(false)
+        window.speechSynthesis.speak(utterance)
+      }
+    } catch (error) {
+      console.error('Error speaking text:', error)
+      setIsPlaying(false)
+
+      // Fallback to browser speech synthesis
+      try {
+        const utterance = new SpeechSynthesisUtterance(text.replace(/\*\*/g, '').replace(/\*/g, ''))
+        utterance.onend = () => setIsPlaying(false)
+        window.speechSynthesis.speak(utterance)
+      } catch (fallbackError) {
+        console.error('Fallback speech synthesis also failed:', fallbackError)
+      }
     }
   }
 
@@ -1944,6 +2031,7 @@ function CharacterCard() {
                       setEditingProfile(true)
                       setTempBackstory(character.background || '')
                       setTempBehavior(character.personality?.traits?.join('\n') || '')
+                      setTempAIBehavior(character.aiBehavior || '')
                     }}
                     style={{
                       padding: '6px 12px',
@@ -2032,8 +2120,120 @@ function CharacterCard() {
                   )}
                 </div>
               )}
+            </div>
 
-              {/* Save/Cancel buttons when editing */}
+            {/* AI Behavior Instructions section */}
+            <div style={{ padding: '0 40px 20px' }}>
+              <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
+                🤖 AI Behavior Instructions
+              </h3>
+              {editingProfile ? (
+                <textarea
+                  value={tempAIBehavior}
+                  onChange={(e) => setTempAIBehavior(e.target.value)}
+                  placeholder="Instructions for AI conversation (e.g., 'Speak in old English', 'Always rhyme', 'Be mysterious')..."
+                  style={{
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: '8px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    resize: 'vertical'
+                  }}
+                />
+              ) : (
+                <p style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '14px',
+                  lineHeight: '1.6',
+                  margin: 0,
+                  whiteSpace: 'pre-wrap',
+                  fontStyle: character.aiBehavior ? 'normal' : 'italic'
+                }}>
+                  {character.aiBehavior || 'No AI behavior instructions set. Click Edit to add instructions for how this character should respond in conversations.'}
+                </p>
+              )}
+            </div>
+
+            {/* Voice Chat section */}
+            {!editingProfile && (
+              <div style={{ padding: '0 40px 20px', borderTop: '1px solid rgba(212, 175, 55, 0.2)', paddingTop: '20px' }}>
+                <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
+                  🎤 Voice Response
+                </h3>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => setAutoSpeak(!autoSpeak)}
+                    style={{
+                      flex: 1,
+                      minWidth: '200px',
+                      padding: '12px 20px',
+                      background: autoSpeak
+                        ? 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'
+                        : 'linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%)',
+                      border: autoSpeak ? 'none' : '1px solid rgba(212, 175, 55, 0.5)',
+                      borderRadius: '8px',
+                      color: autoSpeak ? '#fff' : '#d4af37',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {autoSpeak ? (
+                      <>
+                        <span>🔊</span>
+                        Auto-Speak: ON
+                      </>
+                    ) : (
+                      <>
+                        <span>🔇</span>
+                        Auto-Speak: OFF
+                      </>
+                    )}
+                  </button>
+                  {isPlaying && (
+                    <div style={{
+                      padding: '12px 20px',
+                      background: 'rgba(39, 174, 96, 0.2)',
+                      borderRadius: '8px',
+                      color: '#27ae60',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      border: '1px solid rgba(39, 174, 96, 0.4)'
+                    }}>
+                      <span style={{ animation: 'pulse 1s ease infinite' }}>🔊</span>
+                      Speaking...
+                    </div>
+                  )}
+                </div>
+                <p style={{
+                  color: 'rgba(255,255,255,0.5)',
+                  fontSize: '12px',
+                  marginTop: '8px',
+                  marginBottom: 0
+                }}>
+                  {autoSpeak
+                    ? '🟢 Character will speak all responses using ElevenLabs voice synthesis'
+                    : '⚪ Character responses will be text-only. Click to enable voice.'
+                  }
+                </p>
+              </div>
+            )}
+
+            {/* Save/Cancel buttons when editing */}
+            <div style={{ padding: '0 40px 40px' }}>
               {editingProfile && (
                 <div style={{
                   display: 'flex',
@@ -2046,6 +2246,7 @@ function CharacterCard() {
                       setEditingProfile(false)
                       setTempBackstory('')
                       setTempBehavior('')
+                      setTempAIBehavior('')
                     }}
                     style={{
                       padding: '10px 20px',
@@ -2069,11 +2270,13 @@ function CharacterCard() {
                         personality: {
                           ...prev.personality,
                           traits: tempBehavior.split('\n').filter(t => t.trim())
-                        }
+                        },
+                        aiBehavior: tempAIBehavior
                       }))
                       setEditingProfile(false)
                       setTempBackstory('')
                       setTempBehavior('')
+                      setTempAIBehavior('')
                     }}
                     style={{
                       padding: '10px 20px',
@@ -2104,6 +2307,9 @@ function CharacterCard() {
       >
         🎲
       </button>
+
+      {/* Hidden audio element for ElevenLabs playback */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
   )
 }
