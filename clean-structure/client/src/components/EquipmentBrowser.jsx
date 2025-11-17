@@ -54,17 +54,34 @@ const mainCategories = {
     }
   }
 
-// Available traits/enchantments
-const availableTraits = [
-    { id: 'flaming', name: 'Flaming', icon: '🔥', bonus: '+1d6 fire' },
-    { id: 'frost', name: 'Frost', icon: '❄️', bonus: '+1d6 cold' },
-    { id: 'shocking', name: 'Shocking', icon: '⚡', bonus: '+1d6 lightning' },
-    { id: 'venomous', name: 'Venomous', icon: '☠️', bonus: '+1d6 poison' },
-    { id: 'keen', name: 'Keen', icon: '🗡️', bonus: 'Crit on 19-20' },
-    { id: 'vorpal', name: 'Vorpal', icon: '💀', bonus: 'Crit decapitation' },
-    { id: 'holy', name: 'Holy', icon: '✨', bonus: '+2d6 vs undead/fiends' },
-    { id: 'defending', name: 'Defending', icon: '🛡️', bonus: '+1 AC' },
-    { id: 'returning', name: 'Returning', icon: '🔄', bonus: 'Returns when thrown' }
+// Available traits/enchantments for weapons
+const weaponTraits = [
+    { id: 'flaming', name: 'Flaming', icon: '🔥', bonus: '+1d6 fire damage' },
+    { id: 'frost', name: 'Frost', icon: '❄️', bonus: '+1d6 cold damage' },
+    { id: 'shocking', name: 'Shocking', icon: '⚡', bonus: '+1d6 lightning damage' },
+    { id: 'venomous', name: 'Venomous', icon: '☠️', bonus: '+1d6 poison damage' },
+    { id: 'keen', name: 'Keen', icon: '🗡️', bonus: 'Critical hits on 19-20' },
+    { id: 'vorpal', name: 'Vorpal', icon: '💀', bonus: 'Critical decapitation' },
+    { id: 'holy', name: 'Holy', icon: '✨', bonus: '+2d6 radiant vs undead/fiends' },
+    { id: 'defending', name: 'Defending', icon: '🛡️', bonus: '+1 AC while wielding' },
+    { id: 'returning', name: 'Returning', icon: '🔄', bonus: 'Returns when thrown' },
+    { id: 'vicious', name: 'Vicious', icon: '💢', bonus: '+2d6 on critical hit' },
+    { id: 'lifestealing', name: 'Lifestealing', icon: '💀', bonus: 'Heal for damage dealt' }
+]
+
+// Available traits/enchantments for armor
+const armorTraits = [
+    { id: 'resistance-fire', name: 'Fire Resistance', icon: '🔥', bonus: 'Resistance to fire damage' },
+    { id: 'resistance-cold', name: 'Cold Resistance', icon: '❄️', bonus: 'Resistance to cold damage' },
+    { id: 'resistance-lightning', name: 'Lightning Resistance', icon: '⚡', bonus: 'Resistance to lightning damage' },
+    { id: 'resistance-poison', name: 'Poison Resistance', icon: '☠️', bonus: 'Resistance to poison damage' },
+    { id: 'adamantine', name: 'Adamantine', icon: '💎', bonus: 'Immune to critical hits' },
+    { id: 'mithral', name: 'Mithral', icon: '⭐', bonus: 'No stealth disadvantage, no Str requirement' },
+    { id: 'glamoured', name: 'Glamoured', icon: '✨', bonus: 'Change appearance as bonus action' },
+    { id: 'shadow', name: 'Shadow', icon: '🌑', bonus: 'Advantage on Stealth checks in dim light' },
+    { id: 'spellguard', name: 'Spellguard', icon: '🔮', bonus: 'Advantage on saves vs spells' },
+    { id: 'absorbing', name: 'Absorbing', icon: '🌀', bonus: 'Absorb spell energy' },
+    { id: 'animated', name: 'Animated', icon: '🤖', bonus: 'Armor animates and fights alongside you' }
 ]
 
 /**
@@ -94,6 +111,12 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
     setSelectedSubCategory('all')
     setSelectedItem(null)
   }, [selectedMainCategory])
+
+  useEffect(() => {
+    // Reset modifiers and traits when selected item changes
+    setSelectedModifier(0)
+    setSelectedTraits([])
+  }, [selectedItem])
 
   useEffect(() => {
     // Filter items by category and search query
@@ -178,6 +201,24 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
     return character.inventory?.some(i => i.id === itemId)
   }
 
+  // Get available traits for an item based on its type
+  const getAvailableTraits = (item) => {
+    if (!item) return []
+
+    // Check if it's a weapon
+    if (item.category === 'weapon') {
+      return weaponTraits
+    }
+
+    // Check if it's armor or shield
+    if (item.category === 'armor' || item.category === 'shield') {
+      return armorTraits
+    }
+
+    // No traits for other items
+    return []
+  }
+
   // Toggle trait selection
   const toggleTrait = (traitId) => {
     setSelectedTraits(prev =>
@@ -225,6 +266,7 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
 
     // Apply traits
     if (selectedTraits.length > 0) {
+      const availableTraits = getAvailableTraits(item)
       const traitObjects = selectedTraits.map(traitId =>
         availableTraits.find(t => t.id === traitId)
       ).filter(Boolean)
@@ -603,10 +645,10 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
                       marginBottom: '6px',
                       fontWeight: '600'
                     }}>
-                      Magical Traits
+                      Magical Traits {selectedItem.category === 'weapon' ? '(Weapon)' : selectedItem.category === 'armor' || selectedItem.category === 'shield' ? '(Armor)' : ''}
                     </label>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {availableTraits.map(trait => (
+                      {getAvailableTraits(selectedItem).map(trait => (
                         <button
                           key={trait.id}
                           onClick={() => toggleTrait(trait.id)}
@@ -646,7 +688,7 @@ function EquipmentBrowser({ character, onAddEquipment, onClose }) {
                       </div>
                       <div style={{ color: '#d4af37', fontWeight: '600', fontSize: '13px' }}>
                         {selectedModifier > 0 && `+${selectedModifier} `}
-                        {selectedTraits.map(id => availableTraits.find(t => t.id === id)?.name).join(', ')}
+                        {selectedTraits.map(id => getAvailableTraits(selectedItem).find(t => t.id === id)?.name).join(', ')}
                         {selectedTraits.length > 0 && ' '}
                         {selectedItem.name}
                       </div>
