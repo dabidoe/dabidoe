@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import { getDemoCharacter } from '../data/demo-characters'
 import CharacterModes from './CharacterModes'
 import './CharacterCard.css'
+
+// Performance: Limit message history to prevent unbounded growth
+const MAX_MESSAGES = 100
 
 function CharacterCard() {
   const { characterId } = useParams()
@@ -42,30 +45,47 @@ function CharacterCard() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (loading || !character) {
-    return <div className="character-loading">Loading character...</div>
-  }
-
-  // Get HP display class based on current HP
-  const getHPClass = () => {
+  // Get HP display class based on current HP (memoized)
+  const hpClass = useMemo(() => {
+    if (!character) return ''
     const percentage = currentHP / character.hp.max
     if (percentage <= 0.25) return 'critical'
     if (percentage <= 0.6) return 'damaged'
     return ''
-  }
+  }, [currentHP, character])
 
-  // Handle scene/mode switching
-  const handleModeChange = (newMode) => {
+  // Add message to chat (memoized callback)
+  const addMessage = useCallback((text, type = 'character', messageMood = mood) => {
+    const newMessage = {
+      type,
+      mood: messageMood,
+      text,
+      timestamp: new Date()
+    }
+    setMessages(prev => {
+      const updated = [...prev, newMessage]
+      // Keep only the most recent MAX_MESSAGES for performance
+      return updated.length > MAX_MESSAGES ? updated.slice(-MAX_MESSAGES) : updated
+    })
+
+    // Update the mood display when a character message with a mood is added
+    if (type === 'character' && messageMood) {
+      setMood(messageMood)
+    }
+  }, [mood])
+
+  // Handle scene/mode switching (memoized callback)
+  const handleModeChange = useCallback((newMode) => {
     setMode(newMode)
     if (newMode === 'battle') {
       setMood('Battle Ready')
     } else {
       setMood('Contemplative')
     }
-  }
+  }, [])
 
-  // Handle combat abilities
-  const handleAbilityClick = (ability) => {
+  // Handle combat abilities (memoized callback)
+  const handleAbilityClick = useCallback((ability) => {
     const abilityData = {
       'Sword Strike': { modifier: 9, damageCount: 1, damageSides: 8, damageBonus: 6, icon: '⚔️' },
       'Divine Fury': { modifier: 8, damageCount: 2, damageSides: 6, damageBonus: 8, icon: '🔥' },
@@ -133,25 +153,9 @@ function CharacterCard() {
 
     // TODO: Send ability use to API
     // await useAbility(characterId, ability.name, { mode, currentHP })
-  }
+  }, [mode, addMessage, handleModeChange])
 
-  // Add message to chat
-  const addMessage = (text, type = 'character', messageMood = mood) => {
-    const newMessage = {
-      type,
-      mood: messageMood,
-      text,
-      timestamp: new Date()
-    }
-    setMessages(prev => [...prev, newMessage])
-
-    // Update the mood display when a character message with a mood is added
-    if (type === 'character' && messageMood) {
-      setMood(messageMood)
-    }
-  }
-
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = useCallback(async (e) => {
     e.preventDefault()
     if (inputMessage.trim()) {
       addMessage(inputMessage, 'player')
@@ -167,24 +171,42 @@ function CharacterCard() {
         addMessage("Your words reach me across the ages...", 'character', 'Thoughtful')
       }, 1000)
     }
+  }, [inputMessage, characterId, addMessage])
+
+  if (loading || !character) {
+    return <div className="character-loading">Loading character...</div>
   }
 
   return (
     <div className="character-card">
       <div className="character-header">
         <div className="character-info">
-          <div className="character-name">{character.name.toUpperCase()}</div>
+          <div className="character-name" role="heading" aria-level="1">
+            {character.name.toUpperCase()}
+          </div>
           <div className="stats-line">
-            <div className={`hp-display ${getHPClass()}`}>
+            <div
+              className={`hp-display ${hpClass}`}
+              role="status"
+              aria-label={`Hit points: ${currentHP} out of ${character.hp.max}${hpClass === 'critical' ? ', critical health' : hpClass === 'damaged' ? ', damaged' : ''}`}
+            >
               {currentHP}/{character.hp.max} HP
             </div>
-            <div className="ac-display">AC {character.ac}</div>
-            <div className="scene-indicator">
+            <div className="ac-display" aria-label={`Armor class: ${character.ac}`}>
+              AC {character.ac}
+            </div>
+            <div className="scene-indicator" role="status" aria-live="polite">
               {mode === 'portrait' ? 'Portrait Mode' : 'Red Sea Battle'}
             </div>
           </div>
         </div>
-        <button className="close-btn" onClick={() => navigate('/')}>✕</button>
+        <button
+          className="close-btn"
+          onClick={() => navigate('/')}
+          aria-label="Close character view and return to home"
+        >
+          ✕
+        </button>
       </div>
 
       <div className="character-body">
@@ -192,16 +214,20 @@ function CharacterCard() {
           <div className={`character-image ${mode !== 'portrait' ? 'hidden' : ''}`} id="portraitImage"></div>
           <div className={`character-image ${mode !== 'battle' ? 'hidden' : ''}`} id="battleImage"></div>
 
-          <div className="scene-switcher">
+          <div className="scene-switcher" role="group" aria-label="Scene selection">
             <button
               className={`scene-btn ${mode === 'portrait' ? 'active' : ''}`}
               onClick={() => handleModeChange('portrait')}
+              aria-pressed={mode === 'portrait'}
+              aria-label="Switch to portrait scene"
             >
               Portrait
             </button>
             <button
               className={`scene-btn ${mode === 'battle' ? 'active' : ''}`}
               onClick={() => handleModeChange('battle')}
+              aria-pressed={mode === 'battle'}
+              aria-label="Switch to battle scene"
             >
               Battle
             </button>
@@ -211,16 +237,28 @@ function CharacterCard() {
         <div className="chat-section">
           <div className="chat-header">
             <span>⚔️ Speaking with {character.name}</span>
-            <span className="mood-indicator">{mood}</span>
+            <span className="mood-indicator" role="status" aria-live="polite" aria-label={`Current mood: ${mood}`}>
+              {mood}
+            </span>
           </div>
 
-          <div className="chat-messages">
+          <div
+            className="chat-messages"
+            role="log"
+            aria-live="polite"
+            aria-label="Conversation history"
+          >
             {messages.map((message, index) => (
-              <div key={index} className={`message ${message.type}`}>
+              <div
+                key={index}
+                className={`message ${message.type}`}
+                role="article"
+                aria-label={`Message from ${message.type === 'character' ? character.name : 'you'}`}
+              >
                 {message.type === 'character' && (
                   <div className="author">
                     <span>{character.name}</span>
-                    <span>{mode === 'battle' ? '⚔️' : character.portrait}</span>
+                    <span aria-hidden="true">{mode === 'battle' ? '⚔️' : character.portrait}</span>
                   </div>
                 )}
                 {message.type === 'player' && (
@@ -235,45 +273,69 @@ function CharacterCard() {
           </div>
 
           <div className="interaction-modes">
-            <div className="mode-tabs">
+            <div className="mode-tabs" role="tablist" aria-label="Interaction modes">
               <button
                 className={`mode-tab ${interactionMode === 'conversation' ? 'active' : ''}`}
                 onClick={() => setInteractionMode('conversation')}
+                role="tab"
+                aria-selected={interactionMode === 'conversation'}
+                aria-controls="character-modes-panel"
+                aria-label="Conversation mode"
               >
-                💬 Conversation
+                <span aria-hidden="true">💬</span> Conversation
               </button>
               <button
                 className={`mode-tab ${interactionMode === 'battle' ? 'active' : ''}`}
                 onClick={() => setInteractionMode('battle')}
+                role="tab"
+                aria-selected={interactionMode === 'battle'}
+                aria-controls="character-modes-panel"
+                aria-label="Battle mode"
               >
-                ⚔️ Battle
+                <span aria-hidden="true">⚔️</span> Battle
               </button>
               <button
                 className={`mode-tab ${interactionMode === 'skills' ? 'active' : ''}`}
                 onClick={() => setInteractionMode('skills')}
+                role="tab"
+                aria-selected={interactionMode === 'skills'}
+                aria-controls="character-modes-panel"
+                aria-label="Skills mode"
               >
-                🎲 Skills
+                <span aria-hidden="true">🎲</span> Skills
               </button>
             </div>
 
-            <CharacterModes
-              character={character}
-              mode={interactionMode}
-              onMessage={addMessage}
-              abilities={character.abilities}
-              onAbilityUse={handleAbilityClick}
-            />
+            <div
+              role="tabpanel"
+              id="character-modes-panel"
+              aria-label={`${interactionMode} mode panel`}
+            >
+              <CharacterModes
+                character={character}
+                mode={interactionMode}
+                onMessage={addMessage}
+                abilities={character.abilities}
+                onAbilityUse={handleAbilityClick}
+              />
+            </div>
           </div>
 
           <form className="chat-input" onSubmit={handleSendMessage}>
+            <label htmlFor="messageInput" className="sr-only">
+              Message input
+            </label>
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Speak with the immortal warrior..."
               id="messageInput"
+              aria-label="Type your message to the character"
             />
-            <button type="submit" className="send-btn">Send</button>
+            <button type="submit" className="send-btn" aria-label="Send message">
+              Send
+            </button>
           </form>
         </div>
       </div>
