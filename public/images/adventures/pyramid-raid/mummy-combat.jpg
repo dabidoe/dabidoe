@@ -1,0 +1,69 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="combat-glow">
+      <stop offset="0%" style="stop-color:#8b0000;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#3d0000;stop-opacity:0.2" />
+    </radialGradient>
+  </defs>
+
+  <!-- Dark dramatic background -->
+  <rect width="1920" height="1080" fill="#0a0806"/>
+
+  <!-- Combat energy glow -->
+  <ellipse cx="960" cy="540" rx="600" ry="400" fill="url(#combat-glow)"/>
+
+  <!-- Mummy silhouettes (simplified) -->
+  <g id="mummies" opacity="0.8">
+    <!-- Front row -->
+    <g transform="translate(600, 400)">
+      <ellipse cx="0" cy="40" rx="40" ry="50" fill="#8b7355"/>
+      <rect x="-25" y="90" width="50" height="120" fill="#5a4a3a"/>
+      <rect x="-30" y="80" width="20" height="80" fill="#5a4a3a"/>
+      <rect x="10" y="80" width="20" height="80" fill="#5a4a3a"/>
+    </g>
+
+    <g transform="translate(1320, 400)">
+      <ellipse cx="0" cy="40" rx="40" ry="50" fill="#8b7355"/>
+      <rect x="-25" y="90" width="50" height="120" fill="#5a4a3a"/>
+      <rect x="-30" y="80" width="20" height="80" fill="#5a4a3a"/>
+      <rect x="10" y="80" width="20" height="80" fill="#5a4a3a"/>
+    </g>
+
+    <!-- Back row -->
+    <g transform="translate(400, 300)" opacity="0.6">
+      <ellipse cx="0" cy="30" rx="30" ry="40" fill="#8b7355"/>
+      <rect x="-20" y="70" width="40" height="100" fill="#5a4a3a"/>
+    </g>
+
+    <g transform="translate(960, 280)" opacity="0.6">
+      <ellipse cx="0" cy="30" rx="30" ry="40" fill="#8b7355"/>
+      <rect x="-20" y="70" width="40" height="100" fill="#5a4a3a"/>
+    </g>
+
+    <g transform="translate(1520, 300)" opacity="0.6">
+      <ellipse cx="0" cy="30" rx="30" ry="40" fill="#8b7355"/>
+      <rect x="-20" y="70" width="40" height="100" fill="#5a4a3a"/>
+    </g>
+  </g>
+
+  <!-- Bandage strips floating -->
+  <rect x="500" y="250" width="80" height="8" fill="#d4d4aa" opacity="0.6" transform="rotate(-15 540 254)"/>
+  <rect x="1340" y="250" width="80" height="8" fill="#d4d4aa" opacity="0.6" transform="rotate(15 1380 254)"/>
+
+  <!-- Glowing eyes -->
+  <circle cx="600" cy="430" r="8" fill="#00ff00" opacity="0.9"/>
+  <circle cx="630" cy="430" r="8" fill="#00ff00" opacity="0.9"/>
+  <circle cx="1320" cy="430" r="8" fill="#00ff00" opacity="0.9"/>
+  <circle cx="1350" cy="430" r="8" fill="#00ff00" opacity="0.9"/>
+
+  <!-- Combat effects -->
+  <line x1="800" y1="500" x2="900" y2="450" stroke="#ff4444" stroke-width="6" opacity="0.7"/>
+  <line x1="1100" y1="500" x2="1020" y2="450" stroke="#ff4444" stroke-width="6" opacity="0.7"/>
+
+  <text x="960" y="950" font-family="serif" font-size="48" fill="#8b0000" text-anchor="middle" font-weight="bold">
+    ⚔️ COMBAT ⚔️
+  </text>
+  <text x="960" y="1000" font-family="serif" font-size="24" fill="#5a4a3a" text-anchor="middle">
+    Guardian Mummies Attack!
+  </text>
+</svg>

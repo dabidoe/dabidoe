@@ -1,0 +1,7 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#1a1410"/>
+  <polygon points="400,300 960,540 1520,300 1520,780 960,540 400,780" fill="#3d3020" opacity="0.6"/>
+  <text x="960" y="540" font-family="serif" font-size="64" fill="#8b7355" text-anchor="middle" opacity="0.4">
+    CORRIDOR
+  </text>
+</svg>
