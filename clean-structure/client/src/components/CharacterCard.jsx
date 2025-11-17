@@ -1493,7 +1493,7 @@ function CharacterCard() {
                       transition: 'all 0.2s ease'
                     }}
                   >
-                    ⚔️ Slots
+                    ⚔️ Equipped
                   </button>
                 </div>
 
