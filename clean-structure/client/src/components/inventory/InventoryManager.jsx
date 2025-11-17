@@ -141,34 +141,6 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
 
   return (
     <div className="inventory-manager">
-      {/* Currency Display */}
-      <div className="currency-display">
-        <div className="currency-icon">💰</div>
-        <div className="currency-amount">{formatCurrency()}</div>
-      </div>
-
-      {/* Encumbrance Bar */}
-      <div className="encumbrance-section">
-        <div className="encumbrance-header">
-          <span className="encumbrance-label">Carrying Capacity</span>
-          <span className="encumbrance-value">
-            {totalWeight.toFixed(1)} / {maxWeight} lbs
-          </span>
-        </div>
-        <div className="encumbrance-bar">
-          <div
-            className="encumbrance-fill"
-            style={{
-              width: `${Math.min(encumbrancePercent, 100)}%`,
-              backgroundColor: encumbranceStatus.color
-            }}
-          />
-        </div>
-        <div className="encumbrance-status" style={{ color: encumbranceStatus.color }}>
-          {encumbranceStatus.label}
-        </div>
-      </div>
-
       {/* Filter Tabs */}
       <div className="inventory-filters">
         <button
@@ -214,47 +186,127 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
         </select>
       </div>
 
-      {/* Inventory List */}
-      <div className="inventory-list">
+      {/* Inventory Grid - 4 Columns */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gap: '12px',
+        marginTop: '16px'
+      }}>
         {sortedInventory.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🎒</div>
-            <h3>Empty Inventory</h3>
-            <p>You don't have any {filterCategory !== 'all' ? filterCategory : 'items'} yet.</p>
+          <div style={{
+            gridColumn: '1 / -1',
+            textAlign: 'center',
+            padding: '40px 20px',
+            color: 'rgba(255,255,255,0.5)'
+          }}>
+            <div style={{fontSize: '48px', marginBottom: '12px'}}>🎒</div>
+            <h3 style={{margin: '0 0 8px 0', fontSize: '18px'}}>Empty Inventory</h3>
+            <p style={{margin: 0, fontSize: '14px'}}>You don't have any {filterCategory !== 'all' ? filterCategory : 'items'} yet.</p>
           </div>
         ) : (
           sortedInventory.map(item => (
-            <button
+            <div
               key={item.id}
-              className={`inventory-item ${item.equipped ? 'equipped' : ''}`}
               onClick={() => openItemDetails(item)}
+              style={{
+                background: item.equipped ? 'rgba(212, 175, 55, 0.15)' : 'rgba(45, 45, 68, 0.4)',
+                border: item.equipped ? '2px solid rgba(212, 175, 55, 0.5)' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '8px',
+                padding: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                position: 'relative'
+              }}
+              onMouseEnter={(e) => {
+                if (item.equipped) {
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.8)'
+                } else {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (item.equipped) {
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.5)'
+                } else {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+                }
+              }}
             >
-              <div className="item-icon">{getItemIcon(item)}</div>
-
-              <div className="item-info">
-                <div className="item-header">
-                  <h4 className="item-name" style={{ color: getRarityColor(item.rarity) }}>
-                    {item.name}
-                    {item.requiresAttunement && <span className="attunement-icon" title="Requires Attunement">⚡</span>}
-                  </h4>
-                  {item.equipped && <span className="equipped-badge">Equipped</span>}
+              {/* Equipped Badge */}
+              {item.equipped && (
+                <div style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  background: 'rgba(212, 175, 55, 0.9)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  color: '#1a1a2e',
+                  textTransform: 'uppercase'
+                }}>
+                  Equipped
                 </div>
+              )}
 
-                <p className="item-details">
-                  {item.weapon && <span>⚔️ {item.weapon.damage} {item.weapon.damageType}</span>}
-                  {item.armor && <span>🛡️ AC {item.armor.ac}</span>}
-                  {item.shield && <span>🛡️ +{item.shield.acBonus} AC</span>}
-                  {item.quantity > 1 && <span>×{item.quantity}</span>}
-                </p>
+              {/* Item Icon & Name */}
+              <div style={{display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px'}}>
+                <span style={{fontSize: '24px', flexShrink: 0}}>{getItemIcon(item)}</span>
+                <div style={{flex: 1, minWidth: 0}}>
+                  <div style={{
+                    color: getRarityColor(item.rarity),
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    lineHeight: '1.3',
+                    marginBottom: '4px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {item.name}
+                    {item.requiresAttunement && <span style={{marginLeft: '4px', fontSize: '12px'}} title="Requires Attunement">⚡</span>}
+                  </div>
 
-                <div className="item-meta">
-                  <span className="item-weight">{item.weight ? `${item.weight} lb` : '-'}</span>
-                  <span className="item-value">{item.value ? `${item.value} gp` : '-'}</span>
+                  {/* Item Stats */}
+                  <div style={{
+                    fontSize: '11px',
+                    color: 'rgba(255,255,255,0.7)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px'
+                  }}>
+                    {item.weapon && (
+                      <div>⚔️ {item.weapon.damage} {item.weapon.damageType}</div>
+                    )}
+                    {item.armor && (
+                      <div>🛡️ AC {item.armor.ac}</div>
+                    )}
+                    {item.shield && (
+                      <div>🛡️ +{item.shield.acBonus} AC</div>
+                    )}
+                    {item.quantity > 1 && (
+                      <div>×{item.quantity}</div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="item-arrow">→</div>
-            </button>
+              {/* Weight & Value */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '10px',
+                color: 'rgba(255,255,255,0.5)',
+                borderTop: '1px solid rgba(255,255,255,0.1)',
+                paddingTop: '6px',
+                marginTop: '6px'
+              }}>
+                <span>{item.weight ? `${item.weight} lb` : '-'}</span>
+                <span>{item.value ? `${item.value} gp` : '-'}</span>
+              </div>
+            </div>
           ))
         )}
       </div>
