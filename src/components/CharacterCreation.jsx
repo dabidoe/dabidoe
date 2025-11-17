@@ -86,7 +86,8 @@ function PromptCreator({ onBack }) {
 
     try {
       // Call your backend API
-      const response = await fetch('https://app.characterfoundry.io/api/characters/create', {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://app.characterfoundry.io/api'
+      const response = await fetch(`${apiUrl}/characters/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +246,8 @@ function QuickCreator({ onBack }) {
 
     try {
       // Call your backend API
-      const response = await fetch('https://app.characterfoundry.io/api/characters/create', {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || 'https://app.characterfoundry.io/api'
+      const response = await fetch(`${apiUrl}/characters/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
