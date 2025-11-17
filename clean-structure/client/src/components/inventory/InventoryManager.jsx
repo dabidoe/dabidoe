@@ -11,7 +11,6 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
   const [selectedItem, setSelectedItem] = useState(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all'); // all, weapons, armor, consumables, gear
-  const [sortBy, setSortBy] = useState('name'); // name, weight, value, rarity
 
   const inventory = character.inventory || [];
   const currency = character.currency || { cp: 0, sp: 0, gp: 0, pp: 0 };
@@ -45,18 +44,6 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
         if (filterCategory === 'gear') return !['weapon', 'armor', 'shield', 'potion', 'scroll'].includes(item.category);
         return true;
       });
-
-  // Sort items
-  const sortedInventory = [...filteredInventory].sort((a, b) => {
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    if (sortBy === 'weight') return (b.weight || 0) - (a.weight || 0);
-    if (sortBy === 'value') return (b.value || 0) - (a.value || 0);
-    if (sortBy === 'rarity') {
-      const rarityOrder = { common: 0, uncommon: 1, rare: 2, 'very-rare': 3, legendary: 4, artifact: 5 };
-      return (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0);
-    }
-    return 0;
-  });
 
   // Get item icon
   const getItemIcon = (item) => {
@@ -141,84 +128,40 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
 
   return (
     <div className="inventory-manager">
-      {/* Sort & Filter */}
+      {/* Filter */}
       <div style={{
         display: 'flex',
         gap: '8px',
         marginBottom: '12px',
-        alignItems: 'center',
-        flexWrap: 'wrap'
+        alignItems: 'center'
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          flex: '1',
-          minWidth: '150px'
+        <label style={{
+          fontSize: '12px',
+          color: 'rgba(255,255,255,0.7)',
+          whiteSpace: 'nowrap'
         }}>
-          <label style={{
+          Filter:
+        </label>
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{
+            flex: 1,
+            padding: '6px 10px',
+            background: 'rgba(0,0,0,0.3)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '6px',
+            color: '#fff',
             fontSize: '12px',
-            color: 'rgba(255,255,255,0.7)',
-            whiteSpace: 'nowrap'
-          }}>
-            Filter:
-          </label>
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '6px 10px',
-              background: 'rgba(0,0,0,0.3)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '6px',
-              color: '#fff',
-              fontSize: '12px',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="all">All Items</option>
-            <option value="weapons">⚔️ Weapons</option>
-            <option value="armor">🛡️ Armor</option>
-            <option value="consumables">🧪 Consumables</option>
-            <option value="gear">📦 Gear</option>
-          </select>
-        </div>
-
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          flex: '1',
-          minWidth: '150px'
-        }}>
-          <label style={{
-            fontSize: '12px',
-            color: 'rgba(255,255,255,0.7)',
-            whiteSpace: 'nowrap'
-          }}>
-            Sort:
-          </label>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              flex: 1,
-              padding: '6px 10px',
-              background: 'rgba(0,0,0,0.3)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '6px',
-              color: '#fff',
-              fontSize: '12px',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="name">Name</option>
-            <option value="weight">Weight</option>
-            <option value="value">Value</option>
-            <option value="rarity">Rarity</option>
-          </select>
-        </div>
+            cursor: 'pointer'
+          }}
+        >
+          <option value="all">All Items</option>
+          <option value="weapons">⚔️ Weapons</option>
+          <option value="armor">🛡️ Armor</option>
+          <option value="consumables">🧪 Consumables</option>
+          <option value="gear">📦 Gear</option>
+        </select>
       </div>
 
       {/* Inventory Grid - 4 Columns */}
@@ -228,7 +171,7 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
         gap: '12px',
         marginTop: '16px'
       }}>
-        {sortedInventory.length === 0 ? (
+        {filteredInventory.length === 0 ? (
           <div style={{
             gridColumn: '1 / -1',
             textAlign: 'center',
@@ -240,7 +183,7 @@ function InventoryManager({ character, onEquipItem, onUnequipItem, onUseItem, on
             <p style={{margin: 0, fontSize: '14px'}}>You don't have any {filterCategory !== 'all' ? filterCategory : 'items'} yet.</p>
           </div>
         ) : (
-          sortedInventory.map(item => (
+          filteredInventory.map(item => (
             <div
               key={item.id}
               onClick={() => openItemDetails(item)}
