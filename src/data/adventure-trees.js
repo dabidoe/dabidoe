@@ -512,6 +512,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.NARRATIVE,
       text: "The scorching desert sun beats down as you stand before an ancient pyramid, its weathered limestone blocks rising like a monument to forgotten gods. The entrance - a dark portal flanked by towering statues of jackal-headed warriors - seems to beckon you forward. Hieroglyphic warnings cover the entrance: 'Turn back, mortals, lest you face the wrath of eternity.'",
       characterResponse: "I have stormed the gates of Troy and faced gods themselves. What are ancient curses to one who has already defied death? Let us claim what treasures lie within.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/entrance.jpg',
+        aiPrompt: 'Ancient Egyptian pyramid entrance in desert, massive stone doorway flanked by towering jackal-headed warrior statues, hieroglyphic warnings carved into weathered limestone blocks, scorching sun, cinematic lighting, detailed, photorealistic',
+        fallback: '/images/adventures/default-exterior.jpg'
+      },
       nextNode: 'entrance-choice'
     },
 
@@ -657,6 +662,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.NARRATIVE,
       text: "You stand in a magnificent corridor stretching deep into the pyramid. The walls are covered in elaborate paintings depicting the life of Pharaoh Ka-Amon-Ra - battles won, treasures accumulated, and finally, his elaborate burial ceremony. Three passages branch off from this corridor: one leading up, one straight ahead, and one descending into darkness.",
       characterResponse: "Three paths... Each likely holds its own challenges and rewards. We must choose wisely.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/grand-corridor.jpg',
+        aiPrompt: 'Ancient Egyptian pyramid interior grand corridor, elaborate wall paintings depicting pharaoh battles and treasures, phosphorescent glow, three branching passages, atmospheric lighting, cinematic, detailed hieroglyphics',
+        fallback: '/images/adventures/default-corridor.jpg'
+      },
       nextNode: 'corridor-choice'
     },
 
@@ -891,6 +901,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.NARRATIVE,
       text: "The descending passage grows darker and colder as you venture deeper into the pyramid's foundations. The air becomes thick with the scent of ancient dust and something else... something dead. You emerge into a vast burial chamber filled with sarcophagi and wrapped mummies standing in alcoves along the walls.",
       characterResponse: "The burial chamber. If anywhere holds guardian undead, it would be here. Ready your weapon and stay close.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/burial-chamber.jpg',
+        aiPrompt: 'Dark ancient Egyptian burial chamber deep in pyramid, sarcophagi lining walls, wrapped mummies standing in shadowy alcoves, ominous atmosphere, dusty air, dim torchlight, eerie and foreboding, detailed',
+        fallback: '/images/adventures/default-chamber.jpg'
+      },
       nextNode: 'burial-chamber-choice'
     },
 
@@ -974,6 +989,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.COMBAT,
       text: "Six guardian mummies surround you, their ancient forms animated by dark magic!",
       characterResponse: "They are many, but we are mighty! Strike hard and strike true!",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/mummy-combat.jpg',
+        aiPrompt: 'Epic combat scene with six ancient Egyptian guardian mummies attacking, bandaged undead warriors animated by dark magic, burial chamber setting, dramatic action pose, torchlight, dynamic combat, detailed, cinematic',
+        fallback: '/images/adventures/default-combat.jpg'
+      },
       enemies: [
         { name: 'Guardian Mummy', hp: 20, ac: 11 },
         { name: 'Guardian Mummy', hp: 20, ac: 11 },
@@ -1169,6 +1189,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.NARRATIVE,
       text: "You enter the magnificent treasure chamber! Gold coins, jeweled artifacts, and precious relics fill the room. But the centerpiece is a golden sarcophagus bearing the name Ka-Amon-Ra, surrounded by his greatest treasures: a jeweled crown, a golden war-mace, and an amulet that radiates power.",
       characterResponse: "Magnificent! A hoard worthy of legends! Such treasures... such glory! But which prize shall we claim?",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/treasure-chamber.jpg',
+        aiPrompt: 'Magnificent Egyptian pharaoh treasure chamber, piles of gold coins and jeweled artifacts, ornate golden sarcophagus centerpiece, jeweled crown, golden war-mace, glowing magical amulet, dramatic lighting, wealth and splendor, photorealistic, cinematic',
+        fallback: '/images/adventures/default-treasure.jpg'
+      },
       nextNode: 'treasure-choice'
     },
 
@@ -1252,6 +1277,11 @@ export const pyramidRaidAdventure = {
       type: ADVENTURE_TYPES.COMBAT,
       text: "You face Ka-Amon-Ra himself, the Pharaoh of the Eternal Sands!",
       characterResponse: "A PHARAOH! Now this is a battle worthy of song! Come, ancient king - face a hero of a new age!",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/pharaoh-combat.jpg',
+        aiPrompt: 'Epic boss battle with Ka-Amon-Ra undying pharaoh mummy king, ornate golden death mask and royal regalia, eyes burning with unholy fire, powerful divine magic aura, treasure chamber throne room, dramatic lighting, legendary encounter, cinematic, detailed',
+        fallback: '/images/adventures/default-boss.jpg'
+      },
       enemies: [
         { name: 'Ka-Amon-Ra, Undying Pharaoh', hp: 100, ac: 18 }
       ],
