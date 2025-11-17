@@ -2,17 +2,19 @@ import { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { rollD20 } from '../utils/dice'
 import { ADVENTURE_TYPES } from '../data/adventure-trees'
+import AdventureCanvas from './AdventureCanvas'
 import './AdventureMode.css'
 
 /**
  * Adventure Mode Component
  * Handles solo play adventures with dialogue trees, skill checks, and combat
  */
-function AdventureMode({ character, adventure, onMessage, onCombatStart, onAdventureComplete }) {
+function AdventureMode({ character, adventure, onMessage, onCombatStart, onAdventureComplete, useCanvasView = true }) {
   const [currentNodeId, setCurrentNodeId] = useState(adventure.startNode)
   const [adventureHistory, setAdventureHistory] = useState([])
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [lastSkillCheck, setLastSkillCheck] = useState(null)
+  const [showCharacterSheet, setShowCharacterSheet] = useState(false)
 
   // Get current node
   const currentNode = adventure.nodes[currentNodeId]
@@ -58,6 +60,8 @@ function AdventureMode({ character, adventure, onMessage, onCombatStart, onAdven
       setIsTransitioning(false)
     }, 500)
   }, [isTransitioning, onMessage])
+
+  // Moved handleSkillCheck and handleCanvasChoice will be defined below
 
   // Handle skill check
   const handleSkillCheck = useCallback(() => {
@@ -112,6 +116,24 @@ function AdventureMode({ character, adventure, onMessage, onCombatStart, onAdven
     }
   }, [currentNode, onCombatStart])
 
+  // Handle canvas choice (includes skill checks and choices)
+  const handleCanvasChoice = useCallback((choice) => {
+    // If current node is a skill check, handle it
+    if (currentNode.type === ADVENTURE_TYPES.SKILL_CHECK) {
+      handleSkillCheck()
+      return
+    }
+
+    // If current node is combat, start combat
+    if (currentNode.type === ADVENTURE_TYPES.COMBAT) {
+      handleCombatStart()
+      return
+    }
+
+    // Otherwise handle normal choice
+    handleChoice(choice)
+  }, [currentNode, handleChoice, handleSkillCheck, handleCombatStart])
+
   // Handle adventure end
   useEffect(() => {
     if (currentNode && currentNode.type === ADVENTURE_TYPES.END) {
@@ -148,6 +170,41 @@ function AdventureMode({ character, adventure, onMessage, onCombatStart, onAdven
     )
   }
 
+  // Render canvas view if enabled
+  if (useCanvasView) {
+    return (
+      <div className="adventure-mode canvas-mode">
+        <AdventureCanvas
+          currentNode={currentNode}
+          character={character}
+          onChoice={handleCanvasChoice}
+          onOpenCharacterSheet={() => setShowCharacterSheet(true)}
+          combatActive={currentNode.type === ADVENTURE_TYPES.COMBAT}
+        />
+
+        {/* Character Sheet Modal/Overlay (if needed) */}
+        {showCharacterSheet && (
+          <div className="character-sheet-overlay">
+            <div className="character-sheet-modal">
+              <button
+                className="close-sheet"
+                onClick={() => setShowCharacterSheet(false)}
+              >
+                ✕
+              </button>
+              <div className="character-sheet-content">
+                <h2>{character.name}</h2>
+                {/* Character sheet would go here */}
+                <p>Character sheet coming soon...</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Traditional text-based view
   return (
     <div className="adventure-mode">
       {/* Current Node Display */}
@@ -379,7 +436,8 @@ AdventureMode.propTypes = {
   }).isRequired,
   onMessage: PropTypes.func,
   onCombatStart: PropTypes.func,
-  onAdventureComplete: PropTypes.func
+  onAdventureComplete: PropTypes.func,
+  useCanvasView: PropTypes.bool
 }
 
 export default AdventureMode

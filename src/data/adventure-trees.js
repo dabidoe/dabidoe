@@ -500,6 +500,813 @@ export const mysteriousGroveAdventure = {
 }
 
 /**
+ * Adventure: The Pyramid Raid
+ * An epic adventure through an ancient Egyptian pyramid
+ */
+export const pyramidRaidAdventure = {
+  id: 'pyramid-raid',
+  title: 'The Pyramid Raid',
+  startNode: 'pyramid-entrance',
+  nodes: {
+    'pyramid-entrance': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The scorching desert sun beats down as you stand before an ancient pyramid, its weathered limestone blocks rising like a monument to forgotten gods. The entrance - a dark portal flanked by towering statues of jackal-headed warriors - seems to beckon you forward. Hieroglyphic warnings cover the entrance: 'Turn back, mortals, lest you face the wrath of eternity.'",
+      characterResponse: "I have stormed the gates of Troy and faced gods themselves. What are ancient curses to one who has already defied death? Let us claim what treasures lie within.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/entrance.jpg',
+        aiPrompt: 'Ancient Egyptian pyramid entrance in desert, massive stone doorway flanked by towering jackal-headed warrior statues, hieroglyphic warnings carved into weathered limestone blocks, scorching sun, cinematic lighting, detailed, photorealistic',
+        fallback: '/images/adventures/default-exterior.jpg'
+      },
+      nextNode: 'entrance-choice'
+    },
+
+    'entrance-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "How do you approach the pyramid entrance?",
+      choices: [
+        {
+          id: 'examine-entrance',
+          text: "🔍 Examine the entrance for traps (Investigation check)",
+          icon: '👁️',
+          nextNode: 'examine-entrance'
+        },
+        {
+          id: 'read-hieroglyphics',
+          text: "📜 Study the hieroglyphic warnings carefully",
+          icon: '📖',
+          nextNode: 'read-hieroglyphics'
+        },
+        {
+          id: 'bold-entry',
+          text: "⚔️ Walk straight in - fortune favors the bold",
+          icon: '💪',
+          nextNode: 'bold-entry'
+        },
+        {
+          id: 'search-alternate',
+          text: "🗺️ Search for an alternate entrance",
+          icon: '🔍',
+          nextNode: 'search-alternate'
+        }
+      ]
+    },
+
+    'examine-entrance': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'investigation',
+      dc: 13,
+      text: "You carefully examine the entrance, looking for pressure plates, tripwires, or suspicious mechanisms. Roll an Investigation check!",
+      characterResponse: "A warrior's eyes must be sharp. Many battles are won before the first blow is struck.",
+      successNode: 'trap-found',
+      failureNode: 'trap-missed'
+    },
+
+    'trap-found': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Your keen eyes spot it - a nearly invisible pressure plate just inside the entrance, connected to what looks like dart launchers in the walls. You carefully mark the trap and step around it, entering safely into a grand corridor lit by an eerie phosphorescent glow.",
+      characterResponse: "Well spotted! Ancient builders were cunning, but we are cunninger still. These halls are ours to explore.",
+      nextNode: 'grand-corridor'
+    },
+
+    'trap-missed': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Finding nothing suspicious, you stride confidently into the entrance. Your foot lands on a hidden pressure plate with a soft *click*. Stone darts shoot from the walls! Roll to dodge! (You take 1d6 damage)",
+      characterResponse: "Agh! These ancient builders were craftier than I gave them credit for. Stay alert!",
+      nextNode: 'grand-corridor-wounded'
+    },
+
+    'read-hieroglyphics': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The hieroglyphics tell a story: 'Here lies Ka-Amon-Ra, Pharaoh of the Eternal Sands. His treasures are protected by sacred guardians and divine magic. Those who seek his gold must prove worthy through trials of strength, wisdom, and courage. The unworthy shall become dust.'",
+      characterResponse: "Trials? I have faced trials that would break lesser mortals. This Ka-Amon-Ra shall find that even death cannot guard against a determined warrior!",
+      nextNode: 'informed-entry'
+    },
+
+    'informed-entry': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "Armed with knowledge of what awaits, how do you proceed?",
+      choices: [
+        {
+          id: 'careful-entry',
+          text: "🛡️ Enter carefully, watching for traps",
+          icon: '👁️',
+          nextNode: 'trap-found'
+        },
+        {
+          id: 'confident-entry',
+          text: "⚔️ Enter confidently - you're ready for the trials",
+          icon: '💪',
+          nextNode: 'grand-corridor'
+        }
+      ]
+    },
+
+    'bold-entry': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Without hesitation, you stride through the entrance. Your confidence pays off - you somehow miss triggering a pressure plate by mere inches. Sometimes boldness is its own reward. You enter a grand corridor lit by mysterious glowing stones.",
+      characterResponse: "Fortune indeed favors the bold! But let us not rely solely on luck. These halls hold dangers yet.",
+      nextNode: 'grand-corridor'
+    },
+
+    'search-alternate': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'perception',
+      dc: 15,
+      text: "You circle the pyramid, looking for any other way in. Roll a Perception check!",
+      characterResponse: "A wise general knows many paths to victory. Let us see what secrets this pyramid hides.",
+      successNode: 'secret-entrance-found',
+      failureNode: 'no-alternate-found'
+    },
+
+    'secret-entrance-found': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Behind a collapsed section of wall, you discover a narrow shaft leading into darkness. It appears to be a tomb robber's entrance from ages past. The passage is tight but navigable, and it bypasses the main entrance entirely.",
+      characterResponse: "Excellent! Others have sought these treasures before us. Their path may prove safer... or more dangerous.",
+      nextNode: 'secret-passage-choice'
+    },
+
+    'secret-passage-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "You've found a secret passage. What do you do?",
+      choices: [
+        {
+          id: 'take-secret',
+          text: "🕳️ Take the secret passage",
+          icon: '🔦',
+          nextNode: 'secret-passage'
+        },
+        {
+          id: 'use-main',
+          text: "🚪 Use the main entrance instead",
+          icon: '⚡',
+          nextNode: 'entrance-choice'
+        }
+      ]
+    },
+
+    'no-alternate-found': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Despite your thorough search, you find no other entrance. The pyramid's builders ensured there was only one way in... that you can find, at least.",
+      characterResponse: "Then we take the front door. Sometimes the direct approach is best.",
+      nextNode: 'entrance-choice'
+    },
+
+    'secret-passage': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You squeeze through the narrow passage, crawling through darkness and cobwebs. After several tense minutes, you emerge into a side chamber filled with broken pottery and ancient bones - the remains of those who came before. A doorway leads to what appears to be the main corridor.",
+      characterResponse: "These bones tell a tale of greed and failure. We shall not share their fate!",
+      nextNode: 'grand-corridor'
+    },
+
+    'grand-corridor': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You stand in a magnificent corridor stretching deep into the pyramid. The walls are covered in elaborate paintings depicting the life of Pharaoh Ka-Amon-Ra - battles won, treasures accumulated, and finally, his elaborate burial ceremony. Three passages branch off from this corridor: one leading up, one straight ahead, and one descending into darkness.",
+      characterResponse: "Three paths... Each likely holds its own challenges and rewards. We must choose wisely.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/grand-corridor.jpg',
+        aiPrompt: 'Ancient Egyptian pyramid interior grand corridor, elaborate wall paintings depicting pharaoh battles and treasures, phosphorescent glow, three branching passages, atmospheric lighting, cinematic, detailed hieroglyphics',
+        fallback: '/images/adventures/default-corridor.jpg'
+      },
+      nextNode: 'corridor-choice'
+    },
+
+    'grand-corridor-wounded': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Nursing your wound from the trapped entrance, you proceed down a magnificent corridor. The walls depict the life of Pharaoh Ka-Amon-Ra. Three passages branch off: one ascending, one straight ahead, and one descending into darkness.",
+      characterResponse: "The sting of that trap reminds us to stay vigilant. Now, which path shall we take?",
+      nextNode: 'corridor-choice'
+    },
+
+    'corridor-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "Three passages await. Which do you choose?",
+      choices: [
+        {
+          id: 'ascending',
+          text: "⬆️ Take the ascending passage (toward the pyramid's peak)",
+          icon: '🔺',
+          nextNode: 'ascending-passage'
+        },
+        {
+          id: 'straight',
+          text: "➡️ Continue straight ahead",
+          icon: '🚶',
+          nextNode: 'straight-passage'
+        },
+        {
+          id: 'descending',
+          text: "⬇️ Take the descending passage (into the depths)",
+          icon: '🔻',
+          nextNode: 'descending-passage'
+        }
+      ]
+    },
+
+    'ascending-passage': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The ascending passage leads you upward through increasingly narrow corridors. Eventually, you reach a small chamber with windows overlooking the desert. In the center stands a golden altar with a mysterious crystal orb that pulses with inner light.",
+      characterResponse: "A place of ritual, perhaps. That orb... it holds power. I can feel it from here.",
+      nextNode: 'altar-chamber-choice'
+    },
+
+    'altar-chamber-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "What do you do with the mysterious orb?",
+      choices: [
+        {
+          id: 'take-orb',
+          text: "💎 Take the orb",
+          icon: '🤲',
+          nextNode: 'take-orb'
+        },
+        {
+          id: 'examine-orb',
+          text: "🔍 Examine it first (Arcana check)",
+          icon: '🔮',
+          nextNode: 'examine-orb'
+        },
+        {
+          id: 'leave-orb',
+          text: "🚫 Leave it alone and return to the corridor",
+          icon: '↩️',
+          nextNode: 'corridor-choice'
+        }
+      ]
+    },
+
+    'examine-orb': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'arcana',
+      dc: 14,
+      text: "You focus on the orb's magical energy. Roll an Arcana check!",
+      characterResponse: "Magic is not my forte, but even a warrior can sense when power is dangerous.",
+      successNode: 'orb-understood',
+      failureNode: 'orb-mystery'
+    },
+
+    'orb-understood': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You sense that the orb is a key - it will grant safe passage through certain areas of the pyramid and reveal hidden paths. However, taking it will also alert the pyramid's guardians to your presence.",
+      characterResponse: "A choice then: stealth, or power? I say we take it. Let the guardians come - we shall meet them with steel!",
+      nextNode: 'orb-decision'
+    },
+
+    'orb-mystery': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The orb's purpose remains a mystery, though you sense it holds significant power. Taking it could be beneficial... or catastrophic.",
+      characterResponse: "When in doubt, trust your instincts. What does your gut tell you?",
+      nextNode: 'orb-decision'
+    },
+
+    'orb-decision': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "Take the mysterious orb or leave it?",
+      choices: [
+        {
+          id: 'take-it',
+          text: "✊ Take the orb",
+          icon: '💎',
+          nextNode: 'take-orb'
+        },
+        {
+          id: 'leave-it',
+          text: "🚫 Leave it and return",
+          icon: '↩️',
+          nextNode: 'corridor-choice'
+        }
+      ]
+    },
+
+    'take-orb': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "As your fingers close around the orb, it flares with brilliant light. The pyramid shudders, and you hear the grinding of stone on stone echoing from deep within. A deep voice reverberates through the chamber: 'THE SEAL IS BROKEN. THE GUARDIANS AWAKEN.'",
+      characterResponse: "Well, subtlety was never my strong suit anyway! The guardians want a fight? We shall give them one!",
+      nextNode: 'orb-acquired'
+    },
+
+    'orb-acquired': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The orb feels warm in your hand, pulsing gently. You sense that certain doors will open for you now, but danger is approaching. You hurry back to the main corridor.",
+      characterResponse: "We must move quickly now. The pyramid knows we're here.",
+      nextNode: 'corridor-choice-with-orb'
+    },
+
+    'corridor-choice-with-orb': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "The orb glows brighter when you face the straight passage. Where do you go?",
+      choices: [
+        {
+          id: 'follow-orb',
+          text: "➡️ Follow the orb's light (straight passage)",
+          icon: '✨',
+          nextNode: 'straight-passage-with-orb'
+        },
+        {
+          id: 'descend',
+          text: "⬇️ Descend into the depths",
+          icon: '🔻',
+          nextNode: 'descending-passage'
+        }
+      ]
+    },
+
+    'straight-passage': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The straight passage leads to an ornate door sealed with a complex mechanism - four rotating stone wheels, each covered in hieroglyphics. Without the key or knowledge of the combination, this door seems impossible to open.",
+      characterResponse: "A puzzle lock. I could try to force it, but that might trigger more traps. Or we could try another path.",
+      nextNode: 'sealed-door-choice'
+    },
+
+    'straight-passage-with-orb': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The orb blazes brilliantly as you approach the sealed door. The stone wheels begin to turn on their own, clicking into place with ancient precision. The door swings open, revealing the pharaoh's treasure chamber beyond!",
+      characterResponse: "The orb was indeed a key! Whatever guardians we've awakened, this treasure will be worth it!",
+      nextNode: 'treasure-chamber'
+    },
+
+    'sealed-door-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "The door is sealed. What do you do?",
+      choices: [
+        {
+          id: 'force-door',
+          text: "💪 Try to force the door open (Athletics check)",
+          icon: '⚡',
+          nextNode: 'force-door'
+        },
+        {
+          id: 'solve-puzzle',
+          text: "🧩 Attempt to solve the puzzle (Investigation check)",
+          icon: '🔍',
+          nextNode: 'solve-puzzle'
+        },
+        {
+          id: 'try-other-path',
+          text: "🔙 Return and try another passage",
+          icon: '↩️',
+          nextNode: 'corridor-choice'
+        }
+      ]
+    },
+
+    'force-door': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'athletics',
+      dc: 16,
+      text: "You brace yourself against the door and push with all your might. Roll an Athletics check!",
+      characterResponse: "Sometimes brute force is the best solution! Let us see if this door can withstand a warrior's strength!",
+      successNode: 'door-forced',
+      failureNode: 'door-holds'
+    },
+
+    'door-forced': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "With a tremendous effort, you feel the mechanism crack. The wheels shatter and the door lurches open! Beyond lies the pharaoh's treasure chamber, though your forceful entry has triggered another security measure - you hear something approaching!",
+      characterResponse: "Ha! No door can withstand true determination! But that sound... prepare yourself!",
+      nextNode: 'guardian-ambush'
+    },
+
+    'door-holds': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Despite your best efforts, the door refuses to budge. The mechanism is too well-made, and you simply lack the leverage needed. You'll need to find another way.",
+      characterResponse: "Even the strongest warrior sometimes meets an immovable object. We need a different approach.",
+      nextNode: 'sealed-door-choice'
+    },
+
+    'solve-puzzle': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'investigation',
+      dc: 15,
+      text: "You study the hieroglyphics on each wheel, looking for patterns. Roll an Investigation check!",
+      characterResponse: "Patience... puzzles require a different kind of strategy than battle.",
+      successNode: 'puzzle-solved',
+      failureNode: 'puzzle-failed'
+    },
+
+    'puzzle-solved': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "After careful study, you realize the hieroglyphics tell a story - the four stages of the pharaoh's life. You align them in chronological order: Birth, Conquest, Rule, Death. The mechanism clicks, and the door swings open smoothly and silently.",
+      characterResponse: "Intelligence serves the warrior as well as strength! We've entered unseen and unheard.",
+      nextNode: 'treasure-chamber'
+    },
+
+    'puzzle-failed': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The hieroglyphics remain a mystery. You try a few combinations, but nothing works. The door stays firmly shut.",
+      characterResponse: "This puzzle defeats me. Perhaps we should seek another path.",
+      nextNode: 'sealed-door-choice'
+    },
+
+    'descending-passage': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The descending passage grows darker and colder as you venture deeper into the pyramid's foundations. The air becomes thick with the scent of ancient dust and something else... something dead. You emerge into a vast burial chamber filled with sarcophagi and wrapped mummies standing in alcoves along the walls.",
+      characterResponse: "The burial chamber. If anywhere holds guardian undead, it would be here. Ready your weapon and stay close.",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/burial-chamber.jpg',
+        aiPrompt: 'Dark ancient Egyptian burial chamber deep in pyramid, sarcophagi lining walls, wrapped mummies standing in shadowy alcoves, ominous atmosphere, dusty air, dim torchlight, eerie and foreboding, detailed',
+        fallback: '/images/adventures/default-chamber.jpg'
+      },
+      nextNode: 'burial-chamber-choice'
+    },
+
+    'burial-chamber-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "You're in a chamber of the dead. How do you proceed?",
+      choices: [
+        {
+          id: 'cross-quietly',
+          text: "🤫 Try to cross quietly (Stealth check)",
+          icon: '👣',
+          nextNode: 'stealth-through-chamber'
+        },
+        {
+          id: 'examine-sarcophagi',
+          text: "🔍 Examine the central sarcophagus",
+          icon: '⚰️',
+          nextNode: 'examine-sarcophagus'
+        },
+        {
+          id: 'combat-ready',
+          text: "⚔️ Proceed weapon-ready, expecting combat",
+          icon: '🛡️',
+          nextNode: 'ready-for-mummies'
+        },
+        {
+          id: 'retreat',
+          text: "🔙 This feels wrong - retreat",
+          icon: '🏃',
+          nextNode: 'corridor-choice'
+        }
+      ]
+    },
+
+    'stealth-through-chamber': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'stealth',
+      dc: 14,
+      text: "You begin moving carefully through the chamber, trying not to disturb anything. Roll a Stealth check!",
+      characterResponse: "Light steps... shallow breaths... sometimes the warrior must move like a shadow.",
+      successNode: 'stealth-success-chamber',
+      failureNode: 'mummies-awaken'
+    },
+
+    'stealth-success-chamber': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You move through the chamber like a ghost, your footfalls silent on the ancient stone. The mummies remain still as statues. You reach the far side where another passage leads upward toward what must be the treasure chamber.",
+      characterResponse: "Well done. We've avoided an unnecessary battle. Forward, to the treasure!",
+      nextNode: 'treasure-approach'
+    },
+
+    'examine-sarcophagus': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You approach the largest sarcophagus in the chamber's center. Its lid is carved with the image of a great warrior-priest, and hieroglyphics proclaim: 'Here lies Heb-Senu, Champion of Ka-Amon-Ra, Guardian Eternal.' As you study it, the lid begins to shift...",
+      characterResponse: "It seems we've disturbed the guardian! Weapons ready!",
+      nextNode: 'champion-awakens'
+    },
+
+    'ready-for-mummies': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You stride through the chamber boldly, weapon at the ready. Your presence and confidence don't go unnoticed - the mummies remain still, but you sense ancient eyes watching your every move. You're ready for whatever comes.",
+      characterResponse: "A warrior who expects battle is rarely surprised by it. Let them come if they dare!",
+      nextNode: 'cross-chamber'
+    },
+
+    'cross-chamber': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You make it halfway across when one of the mummies suddenly lurches forward, ancient bandages rustling. Then another. And another. Soon six mummies are shambling toward you, their movements jerky but purposeful!",
+      characterResponse: "Here they come! The dead rise to protect their pharaoh's treasure. They shall find that death is no shield against my blade!",
+      nextNode: 'mummy-combat'
+    },
+
+    'mummies-awaken': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Your foot scrapes against a loose stone with a loud grinding sound. The noise echoes through the chamber. For a moment, nothing happens. Then, one by one, the mummies begin to move, turning their eyeless faces toward you!",
+      characterResponse: "So much for stealth! Ready yourself - the dead walk!",
+      nextNode: 'mummy-combat'
+    },
+
+    'mummy-combat': {
+      type: ADVENTURE_TYPES.COMBAT,
+      text: "Six guardian mummies surround you, their ancient forms animated by dark magic!",
+      characterResponse: "They are many, but we are mighty! Strike hard and strike true!",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/mummy-combat.jpg',
+        aiPrompt: 'Epic combat scene with six ancient Egyptian guardian mummies attacking, bandaged undead warriors animated by dark magic, burial chamber setting, dramatic action pose, torchlight, dynamic combat, detailed, cinematic',
+        fallback: '/images/adventures/default-combat.jpg'
+      },
+      enemies: [
+        { name: 'Guardian Mummy', hp: 20, ac: 11 },
+        { name: 'Guardian Mummy', hp: 20, ac: 11 },
+        { name: 'Guardian Mummy', hp: 20, ac: 11 },
+        { name: 'Guardian Mummy', hp: 20, ac: 11 },
+        { name: 'Guardian Mummy', hp: 20, ac: 11 },
+        { name: 'Guardian Mummy', hp: 20, ac: 11 }
+      ],
+      victoryNode: 'mummy-victory',
+      defeatNode: 'mummy-defeat'
+    },
+
+    'mummy-victory': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The last mummy crumbles to dust, its ancient magic finally dispelled. The chamber falls silent once more. Among the remains, you find a golden amulet that pulses with protective magic. Ahead, a passage leads upward.",
+      characterResponse: "The dead return to their rest. We have earned passage! Onward, to the pharaoh's treasure!",
+      nextNode: 'treasure-approach'
+    },
+
+    'mummy-defeat': {
+      type: ADVENTURE_TYPES.END,
+      text: "The mummies overwhelm you, their ancient hands dragging you down into darkness. Your last thought is that you should have been more careful...",
+      characterResponse: "Even heroes fall... but this is not the end of our story. We shall return, stronger and wiser.",
+      endType: 'defeat'
+    },
+
+    'champion-awakens': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The sarcophagus lid crashes to the floor. A towering figure rises - a mummified warrior in ornate golden armor, wielding a massive khopesh sword that gleams with magical runes. This is no ordinary guardian!",
+      characterResponse: "A champion! Finally, a worthy opponent! Come, let us test which warrior is greater - the living or the dead!",
+      nextNode: 'champion-combat'
+    },
+
+    'champion-combat': {
+      type: ADVENTURE_TYPES.COMBAT,
+      text: "You face Heb-Senu, the Champion of Ka-Amon-Ra!",
+      characterResponse: "This is what warriors live for - a true test of skill! EN GARDE!",
+      enemies: [
+        { name: 'Heb-Senu, Eternal Champion', hp: 60, ac: 16 }
+      ],
+      victoryNode: 'champion-victory',
+      defeatNode: 'champion-defeat'
+    },
+
+    'champion-victory': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "With a final mighty blow, the champion falls. As his form crumbles, he speaks in an ancient tongue: 'You... are worthy... Take what you have... earned...' His golden armor and magical khopesh clatter to the ground. The passage to the treasure chamber stands open.",
+      characterResponse: "A formidable warrior, even in death. He has earned his rest. Let us claim our prize!",
+      nextNode: 'treasure-chamber-earned'
+    },
+
+    'champion-defeat': {
+      type: ADVENTURE_TYPES.END,
+      text: "The Champion's blade strikes true, and darkness claims you. You fought valiantly, but this ancient warrior has defended his pharaoh for millennia, and he has defended him well.",
+      characterResponse: "Defeated... by a worthy opponent. There is no shame in this. We shall meet again, champion.",
+      endType: 'defeat'
+    },
+
+    'guardian-ambush': {
+      type: ADVENTURE_TYPES.COMBAT,
+      text: "Four skeletal warriors burst from hidden alcoves, their weapons raised!",
+      characterResponse: "An ambush! But we're ready for them!",
+      enemies: [
+        { name: 'Skeletal Guardian', hp: 15, ac: 13 },
+        { name: 'Skeletal Guardian', hp: 15, ac: 13 },
+        { name: 'Skeletal Guardian', hp: 15, ac: 13 },
+        { name: 'Skeletal Guardian', hp: 15, ac: 13 }
+      ],
+      victoryNode: 'ambush-victory',
+      defeatNode: 'ambush-defeat'
+    },
+
+    'ambush-victory': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The skeletal guardians fall, their bones clattering across the floor. You stand victorious in the entrance to the treasure chamber!",
+      characterResponse: "Nothing shall keep us from our prize! The treasure awaits!",
+      nextNode: 'treasure-chamber'
+    },
+
+    'ambush-defeat': {
+      type: ADVENTURE_TYPES.END,
+      text: "The guardians prove too much. You fall defending yourself, so close to the treasure yet so far...",
+      characterResponse: "We were... so close. Next time... we shall be more careful...",
+      endType: 'defeat'
+    },
+
+    'treasure-approach': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You ascend the passage, emerging into a magnificent treasure chamber. But between you and the treasure stands one final guardian - a massive construct of stone and gold, its eyes glowing with magical fire.",
+      characterResponse: "Of course the pharaoh saved his greatest guardian for last. One final test!",
+      nextNode: 'final-guardian-choice'
+    },
+
+    'final-guardian-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "The guardian blocks your path. What do you do?",
+      choices: [
+        {
+          id: 'fight-guardian',
+          text: "⚔️ Fight the guardian",
+          icon: '💥',
+          nextNode: 'final-combat'
+        },
+        {
+          id: 'speak-guardian',
+          text: "🗣️ Try to speak to the guardian (Persuasion check)",
+          icon: '💬',
+          nextNode: 'speak-to-guardian'
+        },
+        {
+          id: 'sneak-past',
+          text: "🤫 Try to sneak past while it's dormant (Stealth check)",
+          icon: '👣',
+          nextNode: 'sneak-past-guardian'
+        }
+      ]
+    },
+
+    'speak-to-guardian': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'persuasion',
+      dc: 17,
+      text: "You address the guardian, declaring your worthiness and explaining your trials. Roll a Persuasion check!",
+      characterResponse: "Perhaps this guardian will recognize the honor in our quest. Sometimes words succeed where swords fail.",
+      successNode: 'guardian-persuaded',
+      failureNode: 'guardian-attacks'
+    },
+
+    'guardian-persuaded': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The guardian's eyes flare brighter as it considers your words. Finally, it speaks in a voice like grinding stone: 'YOU HAVE PROVEN WORTHY. THE TRIALS HAVE TESTED YOU. TAKE WHAT YOU HAVE EARNED.' It steps aside, granting you access to the treasure!",
+      characterResponse: "Sometimes the greatest victories are won without bloodshed! The treasure is ours by right!",
+      nextNode: 'treasure-chamber-peaceful'
+    },
+
+    'guardian-attacks': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "The guardian does not respond to your words. Instead, it raises its massive fists and advances!",
+      characterResponse: "So be it! We settle this the warrior's way!",
+      nextNode: 'final-combat'
+    },
+
+    'sneak-past-guardian': {
+      type: ADVENTURE_TYPES.SKILL_CHECK,
+      skill: 'stealth',
+      dc: 16,
+      text: "You attempt to slip past the guardian while it remains motionless. Roll a Stealth check!",
+      characterResponse: "If we can avoid this fight, we save our strength for whatever comes next. Move carefully...",
+      successNode: 'sneak-success-final',
+      failureNode: 'sneak-fail-final'
+    },
+
+    'sneak-success-final': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Moving with incredible care, you slip past the guardian. It remains motionless, either unaware or uncaring of your passage. The treasure lies before you, unguarded!",
+      characterResponse: "The sneakiest warrior is often the most successful warrior! The treasure is ours!",
+      nextNode: 'treasure-chamber-peaceful'
+    },
+
+    'sneak-fail-final': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Your shadow falls across the guardian. Its head snaps toward you, eyes blazing to life. It has detected you!",
+      characterResponse: "Detected! Ready for combat!",
+      nextNode: 'final-combat'
+    },
+
+    'final-combat': {
+      type: ADVENTURE_TYPES.COMBAT,
+      text: "You face the Pyramid's final guardian - a massive stone construct!",
+      characterResponse: "This is it - the final test! Let us show this ancient magic what true warrior skill can achieve!",
+      enemies: [
+        { name: 'Stone Guardian Colossus', hp: 80, ac: 17 }
+      ],
+      victoryNode: 'final-victory',
+      defeatNode: 'final-defeat'
+    },
+
+    'final-victory': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "With a thunderous crash, the guardian crumbles. Its magic dissipates like smoke, and you stand victorious. The path to the treasure is clear!",
+      characterResponse: "VICTORY! Even the mightiest guardian falls before true determination! The treasure is OURS!",
+      nextNode: 'treasure-chamber-earned'
+    },
+
+    'final-defeat': {
+      type: ADVENTURE_TYPES.END,
+      text: "The guardian's power proves too great. You fall before the final prize, so close to glory yet unable to claim it.",
+      characterResponse: "We... came so far... fell so close to victory. But even in defeat, we fought with honor.",
+      endType: 'defeat'
+    },
+
+    'treasure-chamber': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You enter the magnificent treasure chamber! Gold coins, jeweled artifacts, and precious relics fill the room. But the centerpiece is a golden sarcophagus bearing the name Ka-Amon-Ra, surrounded by his greatest treasures: a jeweled crown, a golden war-mace, and an amulet that radiates power.",
+      characterResponse: "Magnificent! A hoard worthy of legends! Such treasures... such glory! But which prize shall we claim?",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/treasure-chamber.jpg',
+        aiPrompt: 'Magnificent Egyptian pharaoh treasure chamber, piles of gold coins and jeweled artifacts, ornate golden sarcophagus centerpiece, jeweled crown, golden war-mace, glowing magical amulet, dramatic lighting, wealth and splendor, photorealistic, cinematic',
+        fallback: '/images/adventures/default-treasure.jpg'
+      },
+      nextNode: 'treasure-choice'
+    },
+
+    'treasure-chamber-earned': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You enter the pharaoh's treasure chamber, earned through trials and combat! Gold and jewels surround you. The centerpiece: a golden sarcophagus with three legendary items - a jeweled crown, a golden war-mace, and a magical amulet.",
+      characterResponse: "We have earned this through blood, sweat, and courage! The pharaoh's treasures are now ours by right of conquest!",
+      nextNode: 'treasure-choice'
+    },
+
+    'treasure-chamber-peaceful': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "You stand in the pharaoh's treasure chamber, having proven your worth without unnecessary bloodshed! The legendary treasures await: a jeweled crown, a golden war-mace, and a magical amulet.",
+      characterResponse: "Sometimes the greatest warrior is the one who knows when NOT to fight. These treasures are well earned!",
+      nextNode: 'treasure-choice'
+    },
+
+    'treasure-choice': {
+      type: ADVENTURE_TYPES.CHOICE,
+      text: "You can carry one legendary item safely. Which do you take?",
+      choices: [
+        {
+          id: 'crown',
+          text: "👑 The Crown of Ka-Amon-Ra (grants charisma and leadership)",
+          icon: '✨',
+          nextNode: 'take-crown'
+        },
+        {
+          id: 'mace',
+          text: "🔨 The Golden War-Mace (a powerful magical weapon)",
+          icon: '⚡',
+          nextNode: 'take-mace'
+        },
+        {
+          id: 'amulet',
+          text: "📿 The Amulet of Protection (grants magical defense)",
+          icon: '🛡️',
+          nextNode: 'take-amulet'
+        },
+        {
+          id: 'take-all',
+          text: "💰 Try to take everything (risky!)",
+          icon: '🎒',
+          nextNode: 'take-all'
+        }
+      ]
+    },
+
+    'take-crown': {
+      type: ADVENTURE_TYPES.END,
+      text: "You place the jeweled crown in your pack. As you do, you feel a surge of confidence and authority. The pyramid begins to rumble - it's time to leave! You make your escape as the ancient structure begins to collapse behind you. You emerge into the desert sun, crown in hand, a legendary treasure claimed!",
+      characterResponse: "A crown fit for a pharaoh, now worn by a warrior of legend! This treasure shall be told of in tales for generations! We have conquered the pyramid!",
+      endType: 'success',
+      rewards: ['Crown of Ka-Amon-Ra', '500 gold pieces in ancient coins', 'Reputation as a Tomb Raider']
+    },
+
+    'take-mace': {
+      type: ADVENTURE_TYPES.END,
+      text: "You grasp the golden war-mace. It feels perfectly balanced, and you sense great power within it. The pyramid shudders - time to go! You race through the corridors as they begin to collapse. Bursting into the sunlight, you hold the mace high in victory!",
+      characterResponse: "A weapon worthy of the greatest warriors! With this mace, no enemy shall stand against us! The pyramid has yielded its greatest treasure!",
+      endType: 'success',
+      rewards: ['Golden War-Mace of Ka-Amon-Ra', '500 gold pieces in ancient coins', 'Reputation as a Legendary Warrior']
+    },
+
+    'take-amulet': {
+      type: ADVENTURE_TYPES.END,
+      text: "You take the amulet and place it around your neck. Immediately, you feel a protective barrier form around you. The pyramid begins to crumble, but the amulet protects you from falling debris as you make your escape! You emerge unscathed, a legendary artifact in your possession!",
+      characterResponse: "The Amulet's power is extraordinary! It shielded us from harm even as the pyramid fell! A wise choice for a warrior who values survival!",
+      endType: 'success',
+      rewards: ['Amulet of Protection', '500 gold pieces in ancient coins', 'Safe passage from the collapsing pyramid']
+    },
+
+    'take-all': {
+      type: ADVENTURE_TYPES.NARRATIVE,
+      text: "Greed overtakes caution. You grab the crown, mace, and amulet, stuffing your pack with as much gold as you can carry. Immediately, the sarcophagus lid flies open and a terrible presence fills the chamber. The mummy of Ka-Amon-Ra himself rises, his eyes burning with unholy fire!",
+      characterResponse: "Perhaps... we were too greedy! The pharaoh himself rises! PREPARE YOURSELF!",
+      nextNode: 'pharaoh-combat'
+    },
+
+    'pharaoh-combat': {
+      type: ADVENTURE_TYPES.COMBAT,
+      text: "You face Ka-Amon-Ra himself, the Pharaoh of the Eternal Sands!",
+      characterResponse: "A PHARAOH! Now this is a battle worthy of song! Come, ancient king - face a hero of a new age!",
+      sceneImage: {
+        preset: '/images/adventures/pyramid-raid/pharaoh-combat.jpg',
+        aiPrompt: 'Epic boss battle with Ka-Amon-Ra undying pharaoh mummy king, ornate golden death mask and royal regalia, eyes burning with unholy fire, powerful divine magic aura, treasure chamber throne room, dramatic lighting, legendary encounter, cinematic, detailed',
+        fallback: '/images/adventures/default-boss.jpg'
+      },
+      enemies: [
+        { name: 'Ka-Amon-Ra, Undying Pharaoh', hp: 100, ac: 18 }
+      ],
+      victoryNode: 'pharaoh-victory',
+      defeatNode: 'pharaoh-defeat'
+    },
+
+    'pharaoh-victory': {
+      type: ADVENTURE_TYPES.END,
+      text: "In an epic battle for the ages, you strike down the undead pharaoh himself! As he crumbles to dust, he speaks: 'You... have... earned... ALL.' The curse lifts. You claim all three legendary items plus the pharaoh's personal treasure! The pyramid stops shaking, acknowledging your total victory!",
+      characterResponse: "WE HAVE SLAIN A PHARAOH! All the treasures are ours! This day shall be remembered in legend forever! We are INVINCIBLE!",
+      endType: 'success',
+      rewards: ['Crown of Ka-Amon-Ra', 'Golden War-Mace', 'Amulet of Protection', '2000 gold pieces', 'Title: Pharaoh-Slayer', 'The greatest glory']
+    },
+
+    'pharaoh-defeat': {
+      type: ADVENTURE_TYPES.END,
+      text: "The pharaoh's ancient power proves too great. His magic tears through your defenses. As darkness takes you, you hear his voice: 'Greedy mortals never learn...' The treasures remain, waiting for a more worthy adventurer.",
+      characterResponse: "Greed... was our downfall. A lesson learned too late. Even the greatest warrior can fall to hubris...",
+      endType: 'defeat'
+    }
+  }
+}
+
+/**
  * Get all available adventures
  */
 export function getAvailableAdventures() {
@@ -511,6 +1318,14 @@ export function getAvailableAdventures() {
       difficulty: 'Easy',
       estimatedTime: '10-15 minutes',
       adventure: mysteriousGroveAdventure
+    },
+    {
+      id: 'pyramid-raid',
+      title: 'The Pyramid Raid',
+      description: 'Raid an ancient Egyptian pyramid and claim the legendary treasures of Pharaoh Ka-Amon-Ra',
+      difficulty: 'Hard',
+      estimatedTime: '15-20 minutes',
+      adventure: pyramidRaidAdventure
     }
   ]
 }
