@@ -49,7 +49,9 @@ function CharacterCard() {
   const [tempAIBehavior, setTempAIBehavior] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [autoSpeak, setAutoSpeak] = useState(false) // Toggle for auto-speaking character responses
   const messagesEndRef = useRef(null)
+  const audioRef = useRef(null) // For playing ElevenLabs audio
 
   // Load character data
   useEffect(() => {
@@ -72,6 +74,17 @@ function CharacterCard() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // Stop audio playback when auto-speak is disabled
+  useEffect(() => {
+    if (!autoSpeak && audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      setIsPlaying(false)
+      // Also stop browser speech synthesis if active
+      window.speechSynthesis.cancel()
+    }
+  }, [autoSpeak])
 
   if (loading || !character) {
     return <div className="character-loading">Loading character...</div>
@@ -421,6 +434,77 @@ function CharacterCard() {
 
     if (type === 'character' && messageMood) {
       setMood(messageMood)
+    }
+
+    // Auto-speak character responses if enabled
+    if (type === 'character' && autoSpeak) {
+      speakText(text)
+    }
+  }
+
+  // Convert text to speech using ElevenLabs API
+  const speakText = async (text) => {
+    try {
+      setIsPlaying(true)
+
+      // Clean text: remove markdown formatting and emojis for better speech
+      const cleanText = text
+        .replace(/\*\*/g, '') // Remove bold
+        .replace(/\*/g, '') // Remove italics
+        .replace(/#{1,6}\s/g, '') // Remove headers
+        .replace(/\[.*?\]\(.*?\)/g, '') // Remove links
+        .replace(/[⚔️🛡️💚🎲✨🎒💰✅❌🧪🗑️🔄📖📜🎭🤖🎤⏺🔊💪👁️🏥🌿👀🖐️🥷🏕️🎭🗣️⛪🔍📚😠💬🤸🐴]/g, '') // Remove common emojis
+        .trim()
+
+      // TODO: Call your server's ElevenLabs endpoint
+      // For now, using browser's built-in speech synthesis as fallback
+      // Replace this with actual ElevenLabs API call
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/tts/speak`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: cleanText,
+          characterId: character.id,
+          voice: character.voiceId || 'default' // Can be set in character profile
+        })
+      })
+
+      if (response.ok) {
+        // Get audio blob from response
+        const audioBlob = await response.blob()
+        const audioUrl = URL.createObjectURL(audioBlob)
+
+        // Play audio
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl
+          audioRef.current.play()
+
+          audioRef.current.onended = () => {
+            setIsPlaying(false)
+            URL.revokeObjectURL(audioUrl) // Clean up
+          }
+        }
+      } else {
+        // Fallback to browser speech synthesis
+        console.warn('ElevenLabs API not available, using browser TTS')
+        const utterance = new SpeechSynthesisUtterance(cleanText)
+        utterance.onend = () => setIsPlaying(false)
+        window.speechSynthesis.speak(utterance)
+      }
+    } catch (error) {
+      console.error('Error speaking text:', error)
+      setIsPlaying(false)
+
+      // Fallback to browser speech synthesis
+      try {
+        const utterance = new SpeechSynthesisUtterance(text.replace(/\*\*/g, '').replace(/\*/g, ''))
+        utterance.onend = () => setIsPlaying(false)
+        window.speechSynthesis.speak(utterance)
+      } catch (fallbackError) {
+        console.error('Fallback speech synthesis also failed:', fallbackError)
+      }
     }
   }
 
@@ -2079,64 +2163,58 @@ function CharacterCard() {
             {!editingProfile && (
               <div style={{ padding: '0 40px 20px', borderTop: '1px solid rgba(212, 175, 55, 0.2)', paddingTop: '20px' }}>
                 <h3 style={{ color: '#d4af37', fontSize: '18px', marginBottom: '12px' }}>
-                  🎤 Voice Chat
+                  🎤 Voice Response
                 </h3>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <button
-                    onClick={() => {
-                      if (isRecording) {
-                        setIsRecording(false)
-                        // TODO: Stop recording and send to ElevenLabs API
-                        console.log('Stop recording and send to server')
-                      } else {
-                        setIsRecording(true)
-                        // TODO: Start recording
-                        console.log('Start recording')
-                      }
-                    }}
+                    onClick={() => setAutoSpeak(!autoSpeak)}
                     style={{
                       flex: 1,
+                      minWidth: '200px',
                       padding: '12px 20px',
-                      background: isRecording
-                        ? 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'
-                        : 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
-                      border: 'none',
+                      background: autoSpeak
+                        ? 'linear-gradient(135deg, #27ae60 0%, #229954 100%)'
+                        : 'linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%)',
+                      border: autoSpeak ? 'none' : '1px solid rgba(212, 175, 55, 0.5)',
                       borderRadius: '8px',
-                      color: '#1a1a2e',
+                      color: autoSpeak ? '#fff' : '#d4af37',
                       fontSize: '14px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.3s ease',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px'
                     }}
                   >
-                    {isRecording ? (
+                    {autoSpeak ? (
                       <>
-                        <span style={{ animation: 'pulse 1s ease infinite' }}>⏺</span>
-                        Stop Recording
+                        <span>🔊</span>
+                        Auto-Speak: ON
                       </>
                     ) : (
                       <>
-                        🎤 Start Voice Chat
+                        <span>🔇</span>
+                        Auto-Speak: OFF
                       </>
                     )}
                   </button>
                   {isPlaying && (
                     <div style={{
-                      padding: '12px',
-                      background: 'rgba(212, 175, 55, 0.2)',
+                      padding: '12px 20px',
+                      background: 'rgba(39, 174, 96, 0.2)',
                       borderRadius: '8px',
-                      color: '#d4af37',
+                      color: '#27ae60',
                       fontSize: '14px',
+                      fontWeight: '600',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px'
+                      gap: '8px',
+                      border: '1px solid rgba(39, 174, 96, 0.4)'
                     }}>
                       <span style={{ animation: 'pulse 1s ease infinite' }}>🔊</span>
-                      Playing...
+                      Speaking...
                     </div>
                   )}
                 </div>
@@ -2146,7 +2224,10 @@ function CharacterCard() {
                   marginTop: '8px',
                   marginBottom: 0
                 }}>
-                  Uses ElevenLabs for voice synthesis. Configure API key in server settings.
+                  {autoSpeak
+                    ? '🟢 Character will speak all responses using ElevenLabs voice synthesis'
+                    : '⚪ Character responses will be text-only. Click to enable voice.'
+                  }
                 </p>
               </div>
             )}
@@ -2226,6 +2307,9 @@ function CharacterCard() {
       >
         🎲
       </button>
+
+      {/* Hidden audio element for ElevenLabs playback */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
   )
 }
