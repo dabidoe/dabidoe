@@ -1449,7 +1449,7 @@ function CharacterCard() {
 
           {activeTab === 'equipment' && (
             <div className="equipment-tab">
-              {/* Consolidated Top UI - View Toggle + Browse on Right */}
+              {/* Consolidated Top UI - View Toggle + Gold + Capacity + Browse */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1458,7 +1458,8 @@ function CharacterCard() {
                 padding: '8px 12px',
                 background: 'rgba(0,0,0,0.3)',
                 borderRadius: '8px',
-                border: '1px solid rgba(212, 175, 55, 0.2)'
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+                flexWrap: 'wrap'
               }}>
                 {/* View Toggle */}
                 <div style={{display: 'flex', gap: '6px', flexShrink: 0}}>
@@ -1496,21 +1497,85 @@ function CharacterCard() {
                   </button>
                 </div>
 
-                {/* Gold Display */}
+                {/* Gold Display - Editable */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   fontSize: '13px',
-                  color: 'rgba(255,255,255,0.7)'
+                  flexShrink: 0
                 }}>
                   <span>💰</span>
-                  <span style={{color: '#ffd700', fontWeight: '600'}}>{character.gold || 0}</span>
+                  <input
+                    type="number"
+                    value={character.gold || 0}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0
+                      setCharacter(prev => ({...prev, gold: value}))
+                    }}
+                    style={{
+                      width: '70px',
+                      padding: '4px 6px',
+                      background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '4px',
+                      color: '#ffd700',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      textAlign: 'center'
+                    }}
+                  />
                   <span style={{color: 'rgba(255,255,255,0.5)'}}>gp</span>
                 </div>
 
-                {/* Spacer */}
-                <div style={{flex: 1}} />
+                {/* Carrying Capacity */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '11px',
+                  flex: '1',
+                  minWidth: '150px'
+                }}>
+                  <span style={{color: 'rgba(255,255,255,0.7)', whiteSpace: 'nowrap'}}>
+                    ⚖️ {(() => {
+                      const inventory = character.inventory || []
+                      const totalWeight = inventory.reduce((sum, item) => sum + (item.weight || 0) * (item.quantity || 1), 0)
+                      const str = character.stats?.str || 10
+                      const maxWeight = str * 15
+                      return `${totalWeight.toFixed(1)} / ${maxWeight} lbs`
+                    })()}
+                  </span>
+                  <div style={{
+                    flex: 1,
+                    height: '6px',
+                    background: 'rgba(0,0,0,0.4)',
+                    borderRadius: '3px',
+                    overflow: 'hidden',
+                    minWidth: '50px'
+                  }}>
+                    <div style={{
+                      height: '100%',
+                      background: (() => {
+                        const inventory = character.inventory || []
+                        const totalWeight = inventory.reduce((sum, item) => sum + (item.weight || 0) * (item.quantity || 1), 0)
+                        const str = character.stats?.str || 10
+                        if (totalWeight <= str * 5) return '#4caf50'
+                        if (totalWeight <= str * 10) return '#ff9800'
+                        if (totalWeight <= str * 15) return '#f44336'
+                        return '#d32f2f'
+                      })(),
+                      width: (() => {
+                        const inventory = character.inventory || []
+                        const totalWeight = inventory.reduce((sum, item) => sum + (item.weight || 0) * (item.quantity || 1), 0)
+                        const str = character.stats?.str || 10
+                        const maxWeight = str * 15
+                        return `${Math.min((totalWeight / maxWeight) * 100, 100)}%`
+                      })(),
+                      transition: 'width 0.3s ease'
+                    }} />
+                  </div>
+                </div>
 
                 {/* Browse Button - Right Aligned */}
                 <button
@@ -1525,7 +1590,8 @@ function CharacterCard() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}
                   onMouseEnter={(e) => e.target.style.background = '#d4af37'}
                   onMouseLeave={(e) => e.target.style.background = 'rgba(212, 175, 55, 0.8)'}
@@ -1561,64 +1627,6 @@ function CharacterCard() {
                   flexDirection: 'column',
                   gap: '12px'
                 }}>
-                  {/* Gold Management */}
-                  <div>
-                    <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px'}}>
-                      💰 Manage Gold
-                    </div>
-                    <div style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
-                      <input
-                        type="number"
-                        value={goldAmount}
-                        onChange={(e) => setGoldAmount(e.target.value)}
-                        placeholder="Amount"
-                        style={{
-                          flex: 1,
-                          padding: '6px 8px',
-                          background: 'rgba(0,0,0,0.4)',
-                          border: '1px solid rgba(255,255,255,0.2)',
-                          borderRadius: '4px',
-                          color: '#fff',
-                          fontSize: '12px'
-                        }}
-                      />
-                      <button
-                        onClick={() => handleUpdateGold(parseInt(goldAmount) || 0)}
-                        disabled={!goldAmount || goldAmount === 0}
-                        style={{
-                          padding: '6px 10px',
-                          background: 'rgba(76, 175, 80, 0.8)',
-                          border: '1px solid rgba(76, 175, 80, 0.4)',
-                          borderRadius: '4px',
-                          color: '#fff',
-                          fontSize: '11px',
-                          fontWeight: '600',
-                          cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
-                          opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
-                        }}
-                      >
-                        ➕
-                      </button>
-                      <button
-                        onClick={() => handleUpdateGold(-(parseInt(goldAmount) || 0))}
-                        disabled={!goldAmount || goldAmount === 0}
-                        style={{
-                          padding: '6px 10px',
-                          background: 'rgba(244, 67, 54, 0.8)',
-                          border: '1px solid rgba(244, 67, 54, 0.4)',
-                          borderRadius: '4px',
-                          color: '#fff',
-                          fontSize: '11px',
-                          fontWeight: '600',
-                          cursor: goldAmount && goldAmount !== 0 ? 'pointer' : 'not-allowed',
-                          opacity: goldAmount && goldAmount !== 0 ? 1 : 0.5
-                        }}
-                      >
-                        ➖
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Add Custom Item */}
                   <div>
                     <div style={{fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '6px'}}>
