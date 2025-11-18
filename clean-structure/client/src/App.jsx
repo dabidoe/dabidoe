@@ -7,6 +7,8 @@ import BrowsePage from './components/BrowsePage'
 import CharacterCard from './components/CharacterCard'
 import CharacterCreation from './components/CharacterCreation'
 import CharacterPreview, { CharacterSheet } from './components/CharacterPreview'
+import AdventurePicker from './components/AdventurePicker'
+import SimpleAdventurePlayer from './components/SimpleAdventurePlayer'
 import './App.css'
 
 console.log('🎨 App.jsx loading...')
@@ -35,6 +37,8 @@ function App() {
             <Route path="/character-preview" element={<CharacterPreview />} />
             <Route path="/character-sheet" element={<CharacterSheet />} />
             <Route path="/character/:characterId" element={<CharacterCard />} />
+            <Route path="/adventures" element={<AdventurePicker />} />
+            <Route path="/adventure/:adventureId" element={<SimpleAdventurePlayer />} />
           </Routes>
         </div>
       </Router>

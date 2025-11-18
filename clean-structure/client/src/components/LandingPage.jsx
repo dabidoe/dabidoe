@@ -148,6 +148,22 @@ function LandingPage() {
           </div>
         </section>
 
+        {/* Beta: Solo Adventures */}
+        <section className="beta-adventures-section">
+          <div className="beta-badge">BETA</div>
+          <h2 className="section-title">Solo Adventures</h2>
+          <p className="section-desc">Experience text-based interactive adventures with your characters</p>
+
+          <button onClick={() => navigate('/adventures')} className="adventure-btn">
+            <span>Explore Adventures</span>
+            <span className="btn-arrow">→</span>
+          </button>
+
+          <p className="beta-note">
+            <small>⚠️ Early access feature - Simple text-based adventures with dice mechanics</small>
+          </p>
+        </section>
+
         {/* More Info Toggle */}
         <section className="info-section">
           <button
