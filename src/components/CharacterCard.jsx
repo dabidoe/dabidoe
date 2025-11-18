@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { rollAttack, rollD20, getNarration } from '../utils/dice'
 import { getDemoCharacter } from '../data/demo-characters'
 import CharacterModes from './CharacterModes'
@@ -11,8 +11,9 @@ const MAX_MESSAGES = 100
 function CharacterCard() {
   const { characterId } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [mode, setMode] = useState('portrait') // portrait or battle (for image display)
-  const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, or skills
+  const [interactionMode, setInteractionMode] = useState('conversation') // conversation, battle, skills, or adventure
   const [mood, setMood] = useState('Contemplative')
   const [messages, setMessages] = useState([])
   const [inputMessage, setInputMessage] = useState('')
@@ -20,6 +21,14 @@ function CharacterCard() {
   const [currentHP, setCurrentHP] = useState(104)
   const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef(null)
+
+  // Check URL parameters for auto-selecting mode and adventure
+  useEffect(() => {
+    const urlMode = searchParams.get('mode')
+    if (urlMode === 'adventure') {
+      setInteractionMode('adventure')
+    }
+  }, [searchParams])
 
   // Load character data
   useEffect(() => {
@@ -327,6 +336,7 @@ function CharacterCard() {
                 onMessage={addMessage}
                 abilities={character.abilities}
                 onAbilityUse={handleAbilityClick}
+                initialAdventureId={searchParams.get('adventure')}
               />
             </div>
           </div>
