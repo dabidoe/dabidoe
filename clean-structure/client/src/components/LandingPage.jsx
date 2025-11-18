@@ -14,53 +14,136 @@ function LandingPage() {
     navigate('/browse')
   }
 
+  // Featured characters data
+  const featuredCharacters = [
+    {
+      id: 'burlon',
+      name: 'Burlon Throatchoppa',
+      subtitle: 'Half-Orc Hunter',
+      level: 5,
+      class: 'Ranger',
+      gradient: 'linear-gradient(135deg, #1a4d2e 0%, #0f2920 100%)'
+    },
+    {
+      id: 'achilles',
+      name: 'Achilles',
+      subtitle: 'Legendary Warrior',
+      level: 15,
+      class: 'Fighter',
+      gradient: 'linear-gradient(135deg, #8b4513 0%, #4a2511 100%)'
+    },
+    {
+      id: 'merlin',
+      name: 'Merlin the Wise',
+      subtitle: 'Archmage',
+      level: 18,
+      class: 'Wizard',
+      gradient: 'linear-gradient(135deg, #4a148c 0%, #1a0033 100%)'
+    },
+    {
+      id: 'aria',
+      name: 'Aria Moonwhisper',
+      subtitle: 'Elven Ranger',
+      level: 8,
+      class: 'Ranger',
+      gradient: 'linear-gradient(135deg, #0d47a1 0%, #01579b 100%)'
+    }
+  ]
+
   return (
     <div className="landing-page">
+      {/* Animated background elements */}
+      <div className="bg-ornament ornament-1"></div>
+      <div className="bg-ornament ornament-2"></div>
+      <div className="bg-ornament ornament-3"></div>
+
       <header className="landing-header">
         <div className="logo">
-          <span className="logo-icon">⚔️</span>
-          <h1>Character Foundry</h1>
+          <div className="logo-icon-modern">
+            <div className="shield-shape"></div>
+            <div className="sword-shape"></div>
+          </div>
+          <div className="logo-text">
+            <h1>CHARACTER FOUNDRY</h1>
+            <div className="logo-line"></div>
+          </div>
         </div>
-        <p className="tagline">Forge Your Adventure</p>
+        <p className="tagline">FORGE LEGENDARY HEROES</p>
       </header>
 
       <main className="landing-main">
         {/* Create Character Section */}
         <section className="create-section">
-          <h2 className="section-title">Create Your Character</h2>
-          <p className="section-desc">Bring your character to life with AI-powered creation</p>
+          <div className="section-badge">NEW</div>
+          <h2 className="section-title">Create Your Hero</h2>
+          <p className="section-desc">Transform your imagination into living, breathing D&D characters powered by advanced AI</p>
           <button onClick={handleCreateCharacter} className="new-character-btn">
-            <span className="btn-icon">✨</span>
-            New Character
+            <span className="btn-text">Begin Creation</span>
+            <div className="btn-shine"></div>
           </button>
         </section>
 
-        {/* Browse Section */}
+        {/* Browse Section with Character Grid */}
         <section className="browse-section">
-          <h2 className="section-title">Browse Characters</h2>
-          <p className="section-desc">Explore pre-made characters ready for your adventure</p>
-          <button onClick={handleBrowse} className="browse-btn">
-            <span className="btn-icon">📚</span>
-            Browse Gallery
-          </button>
+          <h2 className="section-title">Featured Characters</h2>
+          <p className="section-desc">Explore our gallery of pre-made heroes ready for your campaign</p>
 
-          {/* Featured Characters Preview */}
-          <div className="featured-preview">
-            <div
-              className="character-preview-card"
-              onClick={() => navigate('/character/burlon')}
-            >
-              <div className="preview-icon">🪓</div>
-              <h3>Burlon Throatchoppa</h3>
-              <p>Half-Orc Hunter</p>
+          <div className="character-grid">
+            {featuredCharacters.map(char => (
+              <div
+                key={char.id}
+                className="character-card-modern"
+                onClick={() => navigate(`/character/${char.id}`)}
+                style={{ '--card-gradient': char.gradient }}
+              >
+                <div className="card-glow"></div>
+                <div className="card-content">
+                  <div className="char-level">Lvl {char.level}</div>
+                  <h3 className="char-name">{char.name}</h3>
+                  <p className="char-subtitle">{char.subtitle}</p>
+                  <div className="char-class">{char.class}</div>
+                  <div className="card-arrow">→</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={handleBrowse} className="browse-btn">
+            <span>View Full Gallery</span>
+          </button>
+        </section>
+
+        {/* Features Section */}
+        <section className="features-section">
+          <h2 className="section-title">Powered by AI</h2>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon">
+                <div className="icon-brain"></div>
+              </div>
+              <h3>Intelligent Personalities</h3>
+              <p>Each character comes alive with unique behaviors, dialogue, and decision-making</p>
             </div>
-            <div
-              className="character-preview-card"
-              onClick={() => navigate('/character/achilles')}
-            >
-              <div className="preview-icon">🛡️</div>
-              <h3>Achilles</h3>
-              <p>Legendary Warrior</p>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <div className="icon-dice"></div>
+              </div>
+              <h3>Complete D&D 5e Rules</h3>
+              <p>Full implementation of spells, abilities, combat mechanics, and progression</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <div className="icon-chat"></div>
+              </div>
+              <h3>Interactive Dialogue</h3>
+              <p>Engage in dynamic conversations that adapt to your character's personality</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <div className="icon-stats"></div>
+              </div>
+              <h3>Real-time Stats</h3>
+              <p>Track HP, spells, equipment, and abilities with an intuitive interface</p>
             </div>
           </div>
         </section>
@@ -71,8 +154,7 @@ function LandingPage() {
             onClick={() => setShowInfo(!showInfo)}
             className="info-toggle"
           >
-            <span className="btn-icon">ℹ️</span>
-            {showInfo ? 'Hide Info' : 'More Info'}
+            {showInfo ? 'Hide Details' : 'Learn More'}
           </button>
 
           {showInfo && (
@@ -85,21 +167,23 @@ function LandingPage() {
                 character's backstory, we bring your characters to life with:
               </p>
               <ul>
-                <li>AI-generated character personalities</li>
-                <li>Interactive dialogue systems</li>
-                <li>Dynamic character stats and abilities</li>
-                <li>Rich character backgrounds and stories</li>
+                <li>AI-generated character personalities and behaviors</li>
+                <li>Interactive dialogue systems with natural responses</li>
+                <li>Complete D&D 5e stats, spells, and abilities</li>
+                <li>Rich character backgrounds and evolving stories</li>
+                <li>Real-time combat and skill check mechanics</li>
               </ul>
 
               <h3>How It Works</h3>
               <ol>
                 <li><strong>Create:</strong> Describe your character using natural language</li>
-                <li><strong>Interact:</strong> Chat with your character and explore their personality</li>
-                <li><strong>Adventure:</strong> Use character abilities in your campaigns</li>
+                <li><strong>Customize:</strong> Fine-tune stats, abilities, and personality traits</li>
+                <li><strong>Interact:</strong> Chat with your character and explore their world</li>
+                <li><strong>Adventure:</strong> Use full D&D mechanics in your campaigns</li>
               </ol>
 
               <div className="info-footer">
-                <p>Powered by Advanced AI</p>
+                <p>Powered by Advanced AI • Built for D&D 5e</p>
               </div>
             </div>
           )}

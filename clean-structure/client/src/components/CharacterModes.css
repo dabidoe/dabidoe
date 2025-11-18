@@ -216,7 +216,8 @@
 
 .skill-modifier {
   font-size: 12px;
-  opacity: 0.8;
+  color: #d4af37;
+  font-weight: 700;
   font-family: 'Courier New', monospace;
 }
 
