@@ -95,7 +95,7 @@ export const mysteriousGroveAdventure = {
 
     'call-out-result': {
       type: ADVENTURE_TYPES.NARRATIVE,
-      text: '"Show yourself!" you call into the shadows. For a moment, there's only silence. Then a gravelly voice responds: "You dare enter our territory? You will regret this, outlander!" Three goblin scouts emerge, weapons raised.',
+      text: '"Show yourself!" you call into the shadows. For a moment, there\'s only silence. Then a gravelly voice responds: "You dare enter our territory? You will regret this, outlander!" Three goblin scouts emerge, weapons raised.',
       characterResponse: "Diplomacy was worth a try, but these creatures want blood. Prepare yourself!",
       nextNode: 'combat-or-persuade'
     },
