@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { rollD20 } from '../utils/dice'
 import AbilityCard from './AbilityCard'
-import AdventureMode from './AdventureMode'
-import { getAvailableAdventures } from '../data/adventure-trees'
 import './CharacterModes.css'
 
 /**
@@ -13,7 +11,6 @@ import './CharacterModes.css'
  * - Conversation: Dialogue tree options
  * - Battle: Combat macros and abilities
  * - Skills: Skill checks with emoji icons
- * - Adventure: Solo play adventures with dialogue trees
  */
 
 // D&D Skills with emoji mappings
@@ -38,20 +35,8 @@ const SKILLS = [
   { name: 'Survival', emoji: '🏕️', ability: 'WIS' }
 ]
 
-function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse, initialAdventureId }) {
+function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse }) {
   const [selectedDialogue, setSelectedDialogue] = useState(null)
-  const [selectedAdventure, setSelectedAdventure] = useState(null)
-  const [availableAdventures] = useState(getAvailableAdventures())
-
-  // Auto-select adventure if initialAdventureId is provided
-  useEffect(() => {
-    if (initialAdventureId && mode === 'adventure' && !selectedAdventure) {
-      const adventure = availableAdventures.find(adv => adv.id === initialAdventureId)
-      if (adventure) {
-        setSelectedAdventure(adventure)
-      }
-    }
-  }, [initialAdventureId, mode, availableAdventures, selectedAdventure])
 
   // Calculate skill modifier
   const getSkillModifier = (skill) => {
@@ -268,72 +253,6 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
     </div>
   )
 
-  const renderAdventureMode = () => {
-    if (selectedAdventure) {
-      return (
-        <AdventureMode
-          character={character}
-          adventure={selectedAdventure.adventure}
-          onMessage={onMessage}
-          onCombatStart={(enemies, hasAdvantage) => {
-            onMessage(`⚔️ Combat started against ${enemies.length} enemies!`, 'system', 'Battle')
-            // In a real implementation, this would trigger the actual combat system
-          }}
-          onAdventureComplete={(result) => {
-            onMessage(
-              `Adventure complete! Type: ${result.endType}${result.message ? ` - ${result.message}` : ''}`,
-              'system',
-              'Complete'
-            )
-            setTimeout(() => {
-              setSelectedAdventure(null)
-            }, 3000)
-          }}
-        />
-      )
-    }
-
-    return (
-      <div className="adventure-select">
-        <div className="adventure-header">
-          <h4>🗺️ Solo Play Adventures</h4>
-          <p>Choose your own adventure in these interactive stories!</p>
-        </div>
-
-        <div className="adventures-list">
-          {availableAdventures.map(adventure => (
-            <button
-              key={adventure.id}
-              className="adventure-card"
-              onClick={() => setSelectedAdventure(adventure)}
-            >
-              <div className="adventure-card-header">
-                <h3>{adventure.title}</h3>
-                <span className={`difficulty-badge ${adventure.difficulty.toLowerCase()}`}>
-                  {adventure.difficulty}
-                </span>
-              </div>
-              <p className="adventure-description">{adventure.description}</p>
-              <div className="adventure-meta">
-                <span className="meta-item">⏱️ {adventure.estimatedTime}</span>
-              </div>
-              <div className="adventure-start">
-                <span className="start-arrow">▶</span>
-                <span>Begin Adventure</span>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className="adventure-info">
-          <p className="info-text">
-            💡 <strong>Tip:</strong> Adventures combine dialogue choices, skill checks, and combat encounters. Your choices matter!
-          </p>
-        </div>
-      </div>
-    )
-  }
-
   // Render current mode
   switch (mode) {
     case 'conversation':
@@ -342,8 +261,6 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
       return renderBattleMode()
     case 'skills':
       return renderSkillsMode()
-    case 'adventure':
-      return renderAdventureMode()
     default:
       return renderConversationMode()
   }
@@ -366,11 +283,10 @@ CharacterModes.propTypes = {
     }),
     proficiencyBonus: PropTypes.number,
   }).isRequired,
-  mode: PropTypes.oneOf(['conversation', 'battle', 'skills', 'adventure']).isRequired,
+  mode: PropTypes.oneOf(['conversation', 'battle', 'skills']).isRequired,
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
   onAbilityUse: PropTypes.func,
-  initialAdventureId: PropTypes.string,
 }
 
 export default CharacterModes

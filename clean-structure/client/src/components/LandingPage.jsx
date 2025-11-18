@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAvailableAdventures } from '../data/adventure-trees'
 import './LandingPage.css'
 
 function LandingPage() {
   const navigate = useNavigate()
   const [showInfo, setShowInfo] = useState(false)
-  const [availableAdventures] = useState(getAvailableAdventures())
 
   const handleCreateCharacter = () => {
     navigate('/create')
@@ -14,11 +12,6 @@ function LandingPage() {
 
   const handleBrowse = () => {
     navigate('/browse')
-  }
-
-  const handleAdventure = (adventureId) => {
-    // Navigate to Achilles with adventure mode pre-selected
-    navigate(`/character/achilles?mode=adventure&adventure=${adventureId}`)
   }
 
   return (
@@ -40,38 +33,6 @@ function LandingPage() {
             <span className="btn-icon">✨</span>
             New Character
           </button>
-        </section>
-
-        {/* Adventures Section */}
-        <section className="adventures-section">
-          <h2 className="section-title">⚔️ Begin Your Adventure</h2>
-          <p className="section-desc">Embark on solo adventures with Achilles, the legendary warrior</p>
-
-          <div className="adventures-grid">
-            {availableAdventures.map(adventure => (
-              <div
-                key={adventure.id}
-                className="adventure-card-landing"
-                onClick={() => handleAdventure(adventure.id)}
-              >
-                <div className="adventure-header-landing">
-                  <h3>{adventure.title}</h3>
-                  <span className={`difficulty-badge ${adventure.difficulty.toLowerCase()}`}>
-                    {adventure.difficulty}
-                  </span>
-                </div>
-                <p className="adventure-description-landing">{adventure.description}</p>
-                <div className="adventure-meta-landing">
-                  <span className="meta-item">⏱️ {adventure.estimatedTime}</span>
-                  <span className="meta-item">🛡️ Featuring: Achilles</span>
-                </div>
-                <div className="adventure-cta">
-                  <span className="cta-icon">▶</span>
-                  <span className="cta-text">Begin Adventure</span>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* Browse Section */}
