@@ -150,7 +150,8 @@
 .skills-header p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.7;
+  color: #fff;
+  opacity: 0.9;
 }
 
 .skills-grid {
@@ -232,7 +233,8 @@
 
 .skills-legend {
   text-align: center;
-  opacity: 0.6;
+  color: #fff;
+  opacity: 0.8;
   font-size: 13px;
 }
 

@@ -20,7 +20,7 @@ function LandingPage() {
       id: 'burlon',
       name: 'Burlon Throatchoppa',
       subtitle: 'Half-Orc Hunter',
-      level: 5,
+      level: 20,
       class: 'Ranger',
       gradient: 'linear-gradient(135deg, #1a4d2e 0%, #0f2920 100%)'
     },
@@ -33,20 +33,20 @@ function LandingPage() {
       gradient: 'linear-gradient(135deg, #8b4513 0%, #4a2511 100%)'
     },
     {
-      id: 'merlin',
-      name: 'Merlin the Wise',
-      subtitle: 'Archmage',
-      level: 18,
+      id: 'mordecai',
+      name: 'Mordecai the Arcane',
+      subtitle: 'High Elf Archmage',
+      level: 20,
       class: 'Wizard',
       gradient: 'linear-gradient(135deg, #4a148c 0%, #1a0033 100%)'
     },
     {
-      id: 'aria',
-      name: 'Aria Moonwhisper',
-      subtitle: 'Elven Ranger',
-      level: 8,
-      class: 'Ranger',
-      gradient: 'linear-gradient(135deg, #0d47a1 0%, #01579b 100%)'
+      id: 'shadowmere',
+      name: 'Shadowmere',
+      subtitle: 'Halfling Assassin',
+      level: 20,
+      class: 'Rogue',
+      gradient: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)'
     }
   ]
 
