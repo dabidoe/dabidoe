@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { rollD20 } from '../utils/dice'
 import AbilityCard from './AbilityCard'
+import AdventureMode from './AdventureMode'
+import { getAvailableAdventures } from '../data/adventure-trees'
 import './CharacterModes.css'
 
 /**
@@ -11,6 +13,7 @@ import './CharacterModes.css'
  * - Conversation: Dialogue tree options
  * - Battle: Combat macros and abilities
  * - Skills: Skill checks with emoji icons
+ * - Adventure: Solo play adventures with dialogue trees
  */
 
 // D&D Skills with emoji mappings
@@ -35,8 +38,20 @@ const SKILLS = [
   { name: 'Survival', emoji: '🏕️', ability: 'WIS' }
 ]
 
-function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse, onShowAbilityDetails }) {
+function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityUse, initialAdventureId }) {
   const [selectedDialogue, setSelectedDialogue] = useState(null)
+  const [selectedAdventure, setSelectedAdventure] = useState(null)
+  const [availableAdventures] = useState(getAvailableAdventures())
+
+  // Auto-select adventure if initialAdventureId is provided
+  useEffect(() => {
+    if (initialAdventureId && mode === 'adventure' && !selectedAdventure) {
+      const adventure = availableAdventures.find(adv => adv.id === initialAdventureId)
+      if (adventure) {
+        setSelectedAdventure(adventure)
+      }
+    }
+  }, [initialAdventureId, mode, availableAdventures, selectedAdventure])
 
   // Calculate skill modifier
   const getSkillModifier = (skill) => {
@@ -173,115 +188,55 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
     </div>
   )
 
-  const renderBattleMode = () => {
-    // Filter for usable abilities: action/bonus/reaction OR passive with usable flag
-    const usableAbilities = abilities.filter(a =>
-      a.category !== 'spell' && (
-        a.usable === true ||
-        a.details?.usable === true ||
-        (a.details?.actionType !== 'passive' && a.details?.actionType !== undefined)
-      )
-    )
-
-    return (
-      <div className="battle-mode">
-        {/* Usable Abilities Only (exclude spells and non-usable passive traits) */}
-        <div className="combat-abilities">
-          <div className="abilities-grid">
-            {usableAbilities.map((ability) => (
-              <div key={ability.abilityId} style={{ position: 'relative' }}>
-                <button
-                  onClick={() => onAbilityUse(ability)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(45, 45, 68, 0.6)',
-                    border: '1px solid rgba(212, 175, 55, 0.4)',
-                    borderRadius: '8px',
-                    color: '#fff',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    textAlign: 'left'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.7)'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
-                >
-                  <span style={{ fontSize: '20px' }}>
-                    {ability.details?.iconLayers?.[0]?.[0] || (ability.category === 'combat' ? '⚔️' : '⭐')}
-                  </span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '14px' }}>
-                      {ability.details?.name || ability.name}
-                    </div>
-                    {ability.details?.shortDescription && (
-                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '2px' }}>
-                        {ability.details.shortDescription.substring(0, 60)}
-                        {ability.details.shortDescription.length > 60 ? '...' : ''}
-                      </div>
-                    )}
-                  </div>
-                </button>
-                {/* Info button overlay */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (onShowAbilityDetails) {
-                      onShowAbilityDetails(ability)
-                    }
-                  }}
-                  style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    background: 'rgba(0,0,0,0.6)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    color: 'rgba(255,255,255,0.8)',
-                    fontSize: '12px',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(212, 175, 55, 0.8)'
-                    e.currentTarget.style.color = '#1a1a2e'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(0,0,0,0.6)'
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
-                  }}
-                  title="View details"
-                >
-                  ⓘ
-                </button>
-              </div>
-            ))}
-          </div>
-          {usableAbilities.length === 0 && (
-            <div style={{padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.5)'}}>
-              No active abilities available. Passive traits are in the Stats tab.
-            </div>
-          )}
+  const renderBattleMode = () => (
+    <div className="battle-mode">
+      {/* Battle Macros */}
+      <div className="battle-macros">
+        <div className="macros-label">Quick Actions</div>
+        <div className="macros-grid">
+          {battleMacros.map((macro, index) => (
+            <button
+              key={index}
+              className="macro-btn"
+              onClick={macro.action}
+            >
+              <span className="macro-emoji">{macro.emoji}</span>
+              <span className="macro-name">{macro.name}</span>
+            </button>
+          ))}
         </div>
       </div>
-    )
-  }
+
+      {/* Combat Abilities */}
+      <div className="combat-abilities">
+        <div className="abilities-label">Combat Abilities</div>
+        <div className="abilities-grid">
+          {abilities
+            .filter(a => ['attack', 'spell'].includes(a.category) && a.equipped)
+            .map((ability) => (
+              <AbilityCard
+                key={ability.abilityId}
+                ability={ability}
+                onUse={onAbilityUse || ((ab) => {
+                  // Handle ability use (fallback if no handler provided)
+                  onMessage(`Used: ${ab.details?.name || ab.name}`, 'character', 'Focused')
+                })}
+                character={character}
+                mode="battle"
+              />
+            ))}
+        </div>
+      </div>
+    </div>
+  )
 
   const renderSkillsMode = () => (
     <div className="skills-mode">
+      <div className="skills-header">
+        <h4>Skill Checks</h4>
+        <p>Roll a d20 + your skill modifier</p>
+      </div>
+
       <div className="skills-grid">
         {SKILLS.map(skill => {
           const modifier = getSkillModifier(skill)
@@ -313,19 +268,73 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
     </div>
   )
 
-  // Render current mode
-  if (mode === 'unified') {
-    // Unified mode: show everything at once
+  const renderAdventureMode = () => {
+    if (selectedAdventure) {
+      return (
+        <AdventureMode
+          character={character}
+          adventure={selectedAdventure.adventure}
+          onMessage={onMessage}
+          onCombatStart={(enemies, hasAdvantage) => {
+            onMessage(`⚔️ Combat started against ${enemies.length} enemies!`, 'system', 'Battle')
+            // In a real implementation, this would trigger the actual combat system
+          }}
+          onAdventureComplete={(result) => {
+            onMessage(
+              `Adventure complete! Type: ${result.endType}${result.message ? ` - ${result.message}` : ''}`,
+              'system',
+              'Complete'
+            )
+            setTimeout(() => {
+              setSelectedAdventure(null)
+            }, 3000)
+          }}
+        />
+      )
+    }
+
     return (
-      <div className="unified-mode">
-        {renderBattleMode()}
-        {renderSkillsMode()}
-        {renderConversationMode()}
+      <div className="adventure-select">
+        <div className="adventure-header">
+          <h4>🗺️ Solo Play Adventures</h4>
+          <p>Choose your own adventure in these interactive stories!</p>
+        </div>
+
+        <div className="adventures-list">
+          {availableAdventures.map(adventure => (
+            <button
+              key={adventure.id}
+              className="adventure-card"
+              onClick={() => setSelectedAdventure(adventure)}
+            >
+              <div className="adventure-card-header">
+                <h3>{adventure.title}</h3>
+                <span className={`difficulty-badge ${adventure.difficulty.toLowerCase()}`}>
+                  {adventure.difficulty}
+                </span>
+              </div>
+              <p className="adventure-description">{adventure.description}</p>
+              <div className="adventure-meta">
+                <span className="meta-item">⏱️ {adventure.estimatedTime}</span>
+              </div>
+              <div className="adventure-start">
+                <span className="start-arrow">▶</span>
+                <span>Begin Adventure</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div className="adventure-info">
+          <p className="info-text">
+            💡 <strong>Tip:</strong> Adventures combine dialogue choices, skill checks, and combat encounters. Your choices matter!
+          </p>
+        </div>
       </div>
     )
   }
 
-  // Legacy mode switching (for backwards compatibility)
+  // Render current mode
   switch (mode) {
     case 'conversation':
       return renderConversationMode()
@@ -333,6 +342,8 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
       return renderBattleMode()
     case 'skills':
       return renderSkillsMode()
+    case 'adventure':
+      return renderAdventureMode()
     default:
       return renderConversationMode()
   }
@@ -341,8 +352,10 @@ function CharacterModes({ character, mode, onMessage, abilities = [], onAbilityU
 CharacterModes.propTypes = {
   character: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    portrait: PropTypes.string,
     abilities: PropTypes.array,
     proficiencies: PropTypes.arrayOf(PropTypes.string),
+    skills: PropTypes.object,
     stats: PropTypes.shape({
       str: PropTypes.number,
       dex: PropTypes.number,
@@ -353,11 +366,11 @@ CharacterModes.propTypes = {
     }),
     proficiencyBonus: PropTypes.number,
   }).isRequired,
-  mode: PropTypes.oneOf(['conversation', 'battle', 'skills', 'unified']).isRequired,
+  mode: PropTypes.oneOf(['conversation', 'battle', 'skills', 'adventure']).isRequired,
   onMessage: PropTypes.func.isRequired,
   abilities: PropTypes.array,
   onAbilityUse: PropTypes.func,
-  onShowAbilityDetails: PropTypes.func,
+  initialAdventureId: PropTypes.string,
 }
 
 export default CharacterModes

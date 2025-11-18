@@ -1,0 +1,68 @@
+<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="divine-power">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#ff8800;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#8b0000;stop-opacity:0.2" />
+    </radialGradient>
+    <radialGradient id="fire-eyes">
+      <stop offset="0%" style="stop-color:#ffff00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff0000;stop-opacity:0.6" />
+    </radialGradient>
+  </defs>
+
+  <!-- Dramatic dark background -->
+  <rect width="1920" height="1080" fill="#000000"/>
+
+  <!-- Divine power emanating from pharaoh -->
+  <ellipse cx="960" cy="450" rx="700" ry="500" fill="url(#divine-power)"/>
+
+  <!-- Throne/sarcophagus base -->
+  <rect x="760" y="650" width="400" height="250" fill="#3d3020" stroke="#ffd700" stroke-width="10"/>
+
+  <!-- Pharaoh figure (imposing) -->
+  <g id="pharaoh" transform="translate(960, 350)">
+    <!-- Golden death mask -->
+    <ellipse cx="0" cy="0" rx="80" ry="100" fill="#ffd700" stroke="#d4af37" stroke-width="4"/>
+
+    <!-- Nemes headdress stripes -->
+    <rect x="-70" y="-90" width="30" height="180" fill="#0066cc"/>
+    <rect x="-30" y="-90" width="30" height="180" fill="#0066cc"/>
+    <rect x="10" y="-90" width="30" height="180" fill="#0066cc"/>
+    <rect x="40" y="-90" width="30" height="180" fill="#0066cc"/>
+
+    <!-- Burning eyes -->
+    <ellipse cx="-25" cy="-10" rx="18" ry="25" fill="url(#fire-eyes)"/>
+    <ellipse cx="25" cy="-10" rx="18" ry="25" fill="url(#fire-eyes)"/>
+
+    <!-- Royal regalia -->
+    <rect x="-90" y="100" width="180" height="200" fill="#d4af37" stroke="#ffd700" stroke-width="3"/>
+
+    <!-- Crook and flail crossed -->
+    <rect x="-60" y="120" width="12" height="150" fill="#8b4513" transform="rotate(-30 -54 195)"/>
+    <rect x="48" y="120" width="12" height="150" fill="#8b4513" transform="rotate(30 54 195)"/>
+
+    <!-- Crown -->
+    <polygon points="-60,-100 60,-100 50,-140 -50,-140" fill="#ffd700" stroke="#d4af37" stroke-width="3"/>
+    <circle cx="0" cy="-150" r="20" fill="#ff0000"/>
+  </g>
+
+  <!-- Magic aura particles -->
+  <circle cx="600" cy="300" r="12" fill="#ffd700" opacity="0.8"/>
+  <circle cx="750" cy="250" r="8" fill="#ff8800" opacity="0.7"/>
+  <circle cx="1320" cy="300" r="12" fill="#ffd700" opacity="0.8"/>
+  <circle cx="1170" cy="250" r="8" fill="#ff8800" opacity="0.7"/>
+  <circle cx="500" cy="500" r="10" fill="#d4af37" opacity="0.6"/>
+  <circle cx="1420" cy="500" r="10" fill="#d4af37" opacity="0.6"/>
+
+  <!-- Divine lightning -->
+  <path d="M 960,200 L 920,350 L 940,350 L 900,500" stroke="#ffff00" stroke-width="8" fill="none" opacity="0.7"/>
+  <path d="M 960,200 L 1000,350 L 980,350 L 1020,500" stroke="#ffff00" stroke-width="8" fill="none" opacity="0.7"/>
+
+  <text x="960" y="950" font-family="serif" font-size="56" fill="#ffd700" text-anchor="middle" font-weight="bold">
+    ⚱ BOSS BATTLE ⚱
+  </text>
+  <text x="960" y="1010" font-family="serif" font-size="32" fill="#d4af37" text-anchor="middle">
+    KA-AMON-RA, THE UNDYING PHARAOH
+  </text>
+</svg>

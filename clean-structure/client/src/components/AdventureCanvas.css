@@ -1,0 +1,287 @@
+.adventure-canvas {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(to bottom, #1a1410, #2d2416);
+  color: #f4e4c1;
+  font-family: 'Cinzel', 'Georgia', serif;
+}
+
+/* Scene Image Section */
+.adventure-scene {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 300px;
+  background: #0a0806;
+  overflow: hidden;
+  border-bottom: 3px solid #8b7355;
+}
+
+.scene-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.scene-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #8b7355;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #3d3020;
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scene-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(135deg, #2d2416, #1a1410);
+  color: #8b7355;
+}
+
+.placeholder-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* Character Portrait Overlay */
+.character-portrait-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #d4af37;
+  overflow: hidden;
+  background: #1a1410;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content Section */
+.adventure-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background: linear-gradient(to bottom, rgba(45, 36, 22, 0.95), rgba(26, 20, 16, 0.98));
+}
+
+.narrative-text {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(61, 48, 32, 0.5);
+  border-left: 4px solid #8b7355;
+  border-radius: 4px;
+}
+
+.narrative-text p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #f4e4c1;
+  font-family: 'Lora', 'Georgia', serif;
+}
+
+/* Character Response */
+.character-response {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+}
+
+.response-header {
+  margin-bottom: 8px;
+  color: #d4af37;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.response-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #f4e4c1;
+  font-style: italic;
+  font-family: 'Lora', 'Georgia', serif;
+}
+
+/* Choices */
+.adventure-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.adventure-choice-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(61, 48, 32, 0.8), rgba(45, 36, 22, 0.8));
+  border: 2px solid #8b7355;
+  border-radius: 8px;
+  color: #f4e4c1;
+  font-size: 15px;
+  font-family: 'Cinzel', 'Georgia', serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.adventure-choice-button:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(139, 115, 85, 0.3));
+  border-color: #d4af37;
+  transform: translateX(4px);
+  box-shadow: -4px 0 12px rgba(212, 175, 55, 0.3);
+}
+
+.choice-icon {
+  font-size: 24px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.choice-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* Toolbar */
+.adventure-toolbar {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #1a1410;
+  border-top: 2px solid #8b7355;
+}
+
+.toolbar-button {
+  padding: 12px 20px;
+  background: rgba(61, 48, 32, 0.8);
+  border: 2px solid #8b7355;
+  border-radius: 6px;
+  color: #f4e4c1;
+  font-size: 14px;
+  font-family: 'Cinzel', 'Georgia', serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-button:hover {
+  background: rgba(139, 115, 85, 0.6);
+  border-color: #d4af37;
+}
+
+.toolbar-button.combat-active {
+  background: linear-gradient(135deg, #8b0000, #a52a2a);
+  border-color: #ff4444;
+  color: #fff;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 68, 68, 0.8);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .adventure-scene {
+    height: 30vh;
+    min-height: 200px;
+  }
+
+  .character-portrait-overlay {
+    width: 60px;
+    height: 60px;
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .adventure-content {
+    padding: 16px;
+  }
+
+  .narrative-text,
+  .character-response {
+    padding: 12px;
+  }
+
+  .narrative-text p,
+  .response-text {
+    font-size: 14px;
+  }
+
+  .adventure-choice-button {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  .choice-icon {
+    font-size: 20px;
+    min-width: 28px;
+  }
+}
+
+/* Scrollbar styling */
+.adventure-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.adventure-content::-webkit-scrollbar-track {
+  background: #1a1410;
+}
+
+.adventure-content::-webkit-scrollbar-thumb {
+  background: #8b7355;
+  border-radius: 4px;
+}
+
+.adventure-content::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
